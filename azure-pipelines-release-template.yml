@@ -1,5 +1,5 @@
 parameters:
-  azureSubscription: 'LoGIC DEV'
+  azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
   environmentNameSuffix: phoenix
   environmentAutoDelete: false
   instanceId: p12345
@@ -10,6 +10,7 @@ parameters:
   diagnosticSeqApiKey: <secret>
   webAppServicePlanSku: B1
   webAppConfigAlwaysOn: true
+  autoSwapSlots: false
 
 jobs:
   - deployment: deploy_momentum_mea_${{ parameters.environmentNameSuffix }}
@@ -26,6 +27,7 @@ jobs:
       ResourceGroupName: kmd-momentum-mea-${{ parameters.instanceId }}-rg
       WebAppServicePlanSku: ${{ parameters.webAppServicePlanSku }}
       WebAppConfigAlwaysOn: ${{ parameters.webAppConfigAlwaysOn }}
+      AutoSwapSlots: ${{parameters.autoSwapSlots}}
 
     strategy:
       runOnce:
@@ -49,6 +51,6 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'
                 ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-webapps.ps1'
-                ScriptArguments: -PublishedArtifactsPath '$(Pipeline.Workspace)/Applications' -WebAppName '$(WebAppName)' -ResourceGroupName '$(ResourceGroupName)'
+                ScriptArguments: -PublishedArtifactsPath '$(Pipeline.Workspace)/Applications' -WebAppName '$(WebAppName)' -ResourceGroupName '$(ResourceGroupName)' -AutoSwapSlots '$(AutoSwapSlots)'
                 azurePowerShellVersion: 'LatestVersion'
                 pwsh: true

@@ -40,7 +40,7 @@ Param(
     [string] $ResourceGroupName,
 
     [Parameter(Mandatory=$false)]
-    [Switch] $AutoSwapSlots = $true
+    [Switch] $AutoSwapSlots = $false
 )
 
 $ErrorActionPreference = "Stop"

@@ -39,7 +39,7 @@ Param(
     [Parameter(Mandatory=$true)]
     [string] $ResourceGroupName,
 
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$true)]
     [Switch] $AutoSwapSlots = $true
 )
 

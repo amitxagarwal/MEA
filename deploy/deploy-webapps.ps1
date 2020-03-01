@@ -40,7 +40,7 @@ Param(
     [string] $ResourceGroupName,
 
     [Parameter(Mandatory=$false)]
-    [Switch] $AutoSwapSlots = $false
+    [Switch] $AutoSwapSlots = $true
 )
 
 $ErrorActionPreference = "Stop"
@@ -77,6 +77,8 @@ try {
 }
 
 if ($AutoSwapSlots) {
+    Write-Host "location..."
+    pwd
     Write-Host "Auto-swapping slots..."
-    ./deploy-swapslots.ps1 -ResourceGroupName $ResourceGroupName -WebAppName $WebAppName
+    ../deploy-swapslots.ps1 -ResourceGroupName $ResourceGroupName -WebAppName $WebAppName
 }

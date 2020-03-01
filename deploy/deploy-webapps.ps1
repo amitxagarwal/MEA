@@ -79,7 +79,8 @@ try {
 if ($AutoSwapSlots) {
     Write-Host "location..."
     pwd
+    Write-Host "location..detail ..."
     ls
     Write-Host "Auto-swapping slots..."
-    .deploy/deploy-swapslots.ps1 -ResourceGroupName $ResourceGroupName -WebAppName $WebAppName
+    ./deploy/deploy-swapslots.ps1 -ResourceGroupName $ResourceGroupName -WebAppName $WebAppName
 }

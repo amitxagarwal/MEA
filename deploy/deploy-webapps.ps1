@@ -77,7 +77,7 @@ try {
 }
 
 if ($AutoSwapSlots) {
-    Write-Host "Auto-swapping slots..."
+    Write-Host "Auto-swapping slots..."    
     $ScriptToRun= $PSScriptRoot+"\deploy-swapslots.ps1"
-    $ScriptToRun -ResourceGroupName $ResourceGroupName -WebAppName $WebAppName
+    & $ScriptToRun -ResourceGroupName $ResourceGroupName -WebAppName $WebAppName
 }

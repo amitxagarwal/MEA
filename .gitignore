@@ -328,3 +328,4 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+/src/Kmd.Momentum.Mea.Api/.config/dotnet-tools.json

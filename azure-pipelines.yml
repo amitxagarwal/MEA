@@ -52,7 +52,7 @@ stages:
       diagnosticSeqApiKey: $(PhoenixDiagnosticSeqApiKey)
       webAppServicePlanSku: S1
       webAppConfigAlwaysOn: false
-      autoSwapSlots: false
+      autoSwapSlots: true
 
 - stage: deploy_shareddev
   dependsOn: Build

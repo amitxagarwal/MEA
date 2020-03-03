@@ -37,7 +37,7 @@ stages:
         buildPlatform: '$(imageName)'
 
 - stage: deploy_phoenix
-  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
   jobs:
   - template: azure-pipelines-release-template.yml
     parameters:
@@ -66,25 +66,6 @@ stages:
       instanceId: internal
       resourceGroupLocation: westeurope
       applicationInsightsName: kmd-momentum-mea-internal-ai
-      applicationInsightsResourceGroup: kmd-momentum-mea-rg
-      diagnosticSeqServerUrl: $(ShareddevDiagnosticSeqAServerUrl)
-      diagnosticSeqApiKey: $(ShareddevDiagnosticSeqApiKey)
-      webAppServicePlanSku: S1
-      webAppConfigAlwaysOn: false
-      autoSwapSlots: true
-
-- stage: deploy_external
-  dependsOn: deploy_internal
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  jobs:
-  - template: azure-pipelines-release-template.yml
-    parameters:
-      environmentNameSuffix: external
-      environmentAutoDelete: false
-      azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
-      instanceId: external
-      resourceGroupLocation: westeurope
-      applicationInsightsName: kmd-momentum-mea-external-ai
       applicationInsightsResourceGroup: kmd-momentum-mea-rg
       diagnosticSeqServerUrl: $(ShareddevDiagnosticSeqAServerUrl)
       diagnosticSeqApiKey: $(ShareddevDiagnosticSeqApiKey)

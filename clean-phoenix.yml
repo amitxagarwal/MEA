@@ -6,10 +6,9 @@ schedules:
     always: true
 trigger: none
 pool:
-  vmImage: 'ubuntu-18.04'
+  vmImage: 'windows-2019'
 steps:
 - checkout: none
-- task: NuGetAuthenticate@0
 - task: AzurePowerShell@4
   inputs:
     azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'

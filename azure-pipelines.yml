@@ -68,3 +68,4 @@ stages:
       webAppServicePlanSku: S1
       webAppConfigAlwaysOn: false
       autoSwapSlots: true
+

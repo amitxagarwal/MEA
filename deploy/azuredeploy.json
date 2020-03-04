@@ -5,7 +5,7 @@
     "instanceId": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 9,
+      "maxLength": 16,
       "metadata": {
         "description": "The instance ID (e.g. 'udv', 'udvtest', 'shareddev', 'prod' etc.).",
         "$hint": "Generally only use the 'instanceId' part of the resourceNamePrefix"

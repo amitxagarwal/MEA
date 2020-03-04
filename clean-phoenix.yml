@@ -1,5 +1,5 @@
 schedules:
-  - cron: "0 * * * *"
+  - cron: "*/5 * * * *"
     branches:
       include:
       - cleanup-of-phoeninx-resources
@@ -37,8 +37,8 @@ steps:
       
       try 
       {  
-        # check for resourcegroups in the subscription where name like kmd-logic-api-phoenix-*
-        $resourceGroups = Get-AzResourceGroup | Where-Object {($_.ResourceGroupName -like "*kmd-momentum-mea-phoenix*") -and (($_.Tags).keep -ne "true") -and (($_.Tags).important -ne "true")}
+        # check for resourcegroups in the subscription where name like kmd-logic-api-p*
+        $resourceGroups = Get-AzResourceGroup | Where-Object {($_.ResourceGroupName -like "*kmd-momentum-mea-p*") -and (($_.Tags).keep -ne "true") -and (($_.Tags).important -ne "true")}
 
       }
       catch 

@@ -14,7 +14,7 @@
     "resourceNamePrefix": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 27,
+      "maxLength": 34,
       "metadata": {
         "description": "The resource name prefix (e.g. 'kmd-momentum-mea-udv', 'kmd-momentum-shareddev', 'kmd-momentum-prod' etc.).",
         "$hint": "Only use letters, numbers, and hyphen characters here. The hyphens are stripped to make the storage account name, which cannot be more than 24 characters (see https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview#naming-storage-accounts)."

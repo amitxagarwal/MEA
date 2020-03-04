@@ -44,7 +44,7 @@ stages:
       environmentNameSuffix: phoenix
       environmentAutoDelete: true
       azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
-      instanceId: p$(Build.BuildId)
+      instanceId: pnoenix$(Build.BuildId)
       resourceGroupLocation: westeurope
       applicationInsightsName: kmd-momentum-mea-phoenix-ai
       applicationInsightsResourceGroup: kmd-momentum-mea-rg

@@ -44,10 +44,8 @@ stages:
       environmentNameSuffix: phoenix
       environmentAutoDelete: true
       azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
-      instanceId: p$(Build.BuildId)
+      instanceId: "phoenix1"
       resourceGroupLocation: westeurope
-      applicationInsightsName: kmd-momentum-mea-phoenix-ai
-      applicationInsightsResourceGroup: kmd-momentum-mea-rg
       diagnosticSeqServerUrl: $(PhoenixDiagnosticSeqServerUrl)
       diagnosticSeqApiKey: $(PhoenixDiagnosticSeqApiKey)
       webAppServicePlanSku: S1
@@ -65,8 +63,6 @@ stages:
       azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
       instanceId: internal
       resourceGroupLocation: westeurope
-      applicationInsightsName: kmd-momentum-mea-internal-ai
-      applicationInsightsResourceGroup: kmd-momentum-mea-rg
       diagnosticSeqServerUrl: $(ShareddevDiagnosticSeqAServerUrl)
       diagnosticSeqApiKey: $(ShareddevDiagnosticSeqApiKey)
       webAppServicePlanSku: S1

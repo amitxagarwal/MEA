@@ -1,18 +1,23 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Kmd.Momentum.Mea.Api
 {
-	[ApiController]
-	[Route("")]
-	[Produces("application/json", "text/json")]
-	public class CaseworkerController : ControllerBase
-	{
-		private readonly ICaseworkerService _caseworkerService;
+    [ApiController]
+    [Route("")]
+    [Produces("application/json", "text/json")]
+    public class CaseworkerController : ControllerBase
+    {
+        private readonly ICaseworkerService _caseworkerService;
 
-		public CaseworkerController(ICaseworkerService caseworkerService)
-		{
-			_caseworkerService = caseworkerService ?? throw new ArgumentNullException(nameof(caseworkerService));
-		}
+        public CaseworkerController(ICaseworkerService caseworkerService)
+        {
+            _caseworkerService = caseworkerService ?? throw new ArgumentNullException(nameof(caseworkerService));
+        }
 
         ///<summary>
         ///Loads the data for Caseworker.
@@ -27,18 +32,12 @@ namespace Kmd.Momentum.Mea.Api
         [ProducesResponseType(404)]
         [Route("")]
         [SwaggerOperation(OperationId = "GetCaseworkerData")]
-        public async Task<ActionResult<CaseworkerData>> LoadCaseworkerData([Required] [FromRoute] String query)
+#pragma warning disable CA1822 // Mark members as static
+        public async Task<CaseworkerResponse> GetCaseworkerDetailsAsync(Guid Id, CaseworkerRequest request)
+#pragma warning restore CA1822 // Mark members as static
         {
-            var result = await _caseworkerService.LoadCaseworkerDataAsync(query).ConfigureAwait(false);
-
-            if (result.IsError)
-            {
-                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error);
-            }
-            else
-            {
-                return Ok(result.Result);
-            }
+            await Task.Delay(300).ConfigureAwait(false);
+            return new CaseworkerResponse() { citizenName = "", document = "" };
         }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api
 {
-	public interface ICaseworker
+	public interface ICaseworkerService
 	{
-		Task<ResultOrHttpError<CaseworkerResponse, string>> CaseworkerAsync( CaseworkerRequest request);
+		 Task <CaseworkerResponse> GetCaseworkerDetailsAsync(Guid Id, CaseworkerRequest request);
 	}
 }

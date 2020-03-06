@@ -1,7 +1,7 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Kmd.Momentum.Mea.Api.Caseworker;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -30,13 +30,17 @@ namespace Kmd.Momentum.Mea.Api
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [Route("")]
+        [Route("a")]
         [SwaggerOperation(OperationId = "GetCaseworkerData")]
 #pragma warning disable CA1822 // Mark members as static
         public async Task<CaseworkerResponse> GetCaseworkerDetailsAsync(Guid Id, CaseworkerRequest request)
 #pragma warning restore CA1822 // Mark members as static
         {
+
+         //   CitizenHttpClient _client = new CitizenHttpClient(new HttpClient());
+
             await Task.Delay(300).ConfigureAwait(false);
+         //   await _client.ReturnAuthorizationToken().ConfigureAwait(false);
             return new CaseworkerResponse() { citizenName = "", document = "" };
         }
     }

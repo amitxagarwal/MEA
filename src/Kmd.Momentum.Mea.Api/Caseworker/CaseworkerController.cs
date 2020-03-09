@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Kmd.Momentum.Mea.Api.Caseworker;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -37,10 +36,9 @@ namespace Kmd.Momentum.Mea.Api
 #pragma warning restore CA1822 // Mark members as static
         {
 
-         //   CitizenHttpClient _client = new CitizenHttpClient(new HttpClient());
+           //CitizenHttpClient _client = new CitizenHttpClient(new HttpClient());
 
             await Task.Delay(300).ConfigureAwait(false);
-         //   await _client.ReturnAuthorizationToken().ConfigureAwait(false);
             return new CaseworkerResponse() { citizenName = "", document = "" };
         }
     }

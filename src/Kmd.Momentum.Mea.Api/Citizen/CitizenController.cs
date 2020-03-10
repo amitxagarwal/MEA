@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
@@ -13,14 +14,16 @@ namespace Kmd.Momentum.Mea.Api.Citizen
     public class CitizenController : ControllerBase
     {
         private readonly ICitizenService _citizenService;
+        private readonly IConfiguration _config;
 
-        public CitizenController(ICitizenService caseworkerService)
+        public CitizenController(ICitizenService citizenService, IConfiguration config)
         {
-            _citizenService = caseworkerService ?? throw new ArgumentNullException(nameof(caseworkerService));
+            _citizenService = citizenService ?? throw new ArgumentNullException(nameof(citizenService));
+            _config = config;
         }
 
         ///<summary>
-        ///Loads the data for Caseworker.
+        ///Loads the data for Citizen.
         ///</summary>
         ///<response code="200">The data is loaded successfully</response>
         ///<response code="400">Bad request</response>
@@ -31,9 +34,27 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [ProducesResponseType(404)]
         [Route("/withActiveClassification")]
         [SwaggerOperation(OperationId = "GetAllActiveCitizens")]
-        public async Task<int[]> GetAllActiveCitizens()
+        public async Task<string[]> GetAllActiveCitizens()
         {
-            return await _citizenService.GetAllActiveCitizens().ConfigureAwait(false);
+            return await _citizenService.GetAllActiveCitizens(_config).ConfigureAwait(false);
+        }
+
+        ///<summary>
+        ///Get Citizens in Momentum with ID
+        ///</summary>
+        ///<response code="200">The data is loaded successfully</response>
+        ///<response code="400">Bad request</response>
+        ///<response code="404">Document is not found</response>
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [Route("/citizenById")]
+        [SwaggerOperation(OperationId = "GetCitizenById")]
+        public async Task<string[]> GetCitizenById()
+        {
+            return await _citizenService.GetCitizenById(_config, new Guid("7b51f7e4-c46e-4494-95e8-13fb8098cfd8")).ConfigureAwait(false);
+
         }
 
     }

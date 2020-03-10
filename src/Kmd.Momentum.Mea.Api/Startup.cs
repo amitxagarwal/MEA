@@ -36,7 +36,7 @@ namespace Kmd.Momentum.Mea.Api
                 });
 
             services.AddScoped<ICitizenService, CitizenService>();
-            services.AddScoped<ICitizenHttpClient, CitizenHttpClient>();
+            services.AddScoped<IHelperHttpClient, HelperHttpClient>();
 
             services.AddHttpClient();
 

@@ -1,10 +1,10 @@
-﻿using Kmd.Momentum.Mea.Test.Common;
-using Microsoft.AspNetCore.Mvc.Testing;
-using System;
+﻿using System;
 using System.Net;
-using System.Threading.Tasks;
-using Xunit;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using Kmd.Momentum.Mea.Test.Common;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Xunit;
 
 namespace Kmd.Momentum.Mea.Api.Tests
 {
@@ -18,7 +18,7 @@ namespace Kmd.Momentum.Mea.Api.Tests
         }
 
         [Fact]
-        public async Task TheHealthCheckStatusResponseIs200()
+        public async Task TheHealthCheckStatusResponseIsHealthy()
         {
             //Arrange
             var client = _factory.CreateClient();
@@ -31,6 +31,19 @@ namespace Kmd.Momentum.Mea.Api.Tests
 
             //Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);           
+        }
+
+        [Fact]
+        public async Task TheHealthCheckStatusResponseIsUnHealthy()
+        {
+            //Arrange
+            var client = _factory.CreateClient();
+
+            //Act
+            var response = await client.GetAsync(new Uri("/health/ready", UriKind.Relative)).ConfigureAwait(false);
+
+            //Assert
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
         }
 
     }

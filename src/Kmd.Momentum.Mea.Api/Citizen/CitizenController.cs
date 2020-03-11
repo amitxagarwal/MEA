@@ -14,12 +14,11 @@ namespace Kmd.Momentum.Mea.Api.Citizen
     public class CitizenController : ControllerBase
     {
         private readonly ICitizenService _citizenService;
-        private readonly IConfiguration _config;
+       
 
-        public CitizenController(ICitizenService citizenService, IConfiguration config)
+        public CitizenController(ICitizenService citizenService)
         {
-            _citizenService = citizenService ?? throw new ArgumentNullException(nameof(citizenService));
-            _config = config;
+            _citizenService = citizenService ?? throw new ArgumentNullException(nameof(citizenService));            
         }
 
         ///<summary>
@@ -36,7 +35,7 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [SwaggerOperation(OperationId = "GetAllActiveCitizens")]
         public async Task<string[]> GetAllActiveCitizens()
         {
-            return await _citizenService.GetAllActiveCitizens(_config).ConfigureAwait(false);
+            return await _citizenService.GetAllActiveCitizens().ConfigureAwait(false);
         }
 
         ///<summary>
@@ -53,7 +52,7 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [SwaggerOperation(OperationId = "GetCitizenById")]
         public async Task<string[]> GetCitizenById()
         {
-            return await _citizenService.GetCitizenById(_config, new Guid("7b51f7e4-c46e-4494-95e8-13fb8098cfd8")).ConfigureAwait(false);
+            return await _citizenService.GetCitizenById(new Guid("7b51f7e4-c46e-4494-95e8-13fb8098cfd8")).ConfigureAwait(false);
 
         }
 

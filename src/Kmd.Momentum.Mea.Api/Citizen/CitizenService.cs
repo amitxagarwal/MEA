@@ -14,13 +14,17 @@ namespace Kmd.Momentum.Mea.Api.Citizen
     {
         private readonly IHelperHttpClient _citizenHttpClient;
 
-        public CitizenService(IHelperHttpClient citizenHttpClient)
+        private readonly IConfiguration _config;
+
+        public CitizenService(IHelperHttpClient citizenHttpClient, IConfiguration config)
         {
             _citizenHttpClient = citizenHttpClient;
+            _config = config;
         }
-        public async Task<string[]> GetAllActiveCitizens(IConfiguration _config)
+        public async Task<string[]> GetAllActiveCitizens()
         {
-            HttpResponseMessage response = await _citizenHttpClient.CallMCA(_config, new Uri($"https://kmd-rct-momentum-159-api.azurewebsites.net/api/citizens/withActiveClassification"), "get").ConfigureAwait(false);
+            HttpResponseMessage response = await _citizenHttpClient.CallMCA(_config, new Uri($"{_config["McaUri"]}citizens/withActiveClassification"), "get").ConfigureAwait(false);
+
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -29,17 +33,13 @@ namespace Kmd.Momentum.Mea.Api.Citizen
             throw new Exception(response.StatusCode.ToString());
         }
 
-        public async Task<string[]> GetCitizenById(IConfiguration _config, Guid citizenId)
+        public async Task<string[]> GetCitizenById(Guid citizenId)
         {
-            // await _citizenHttpClient.ReturnAuthorizationToken().ConfigureAwait(false);
+            HttpResponseMessage response = await _citizenHttpClient.CallMCA(_config, new Uri($"{_config["McaUri"]}citizens/0809982483"), "get").ConfigureAwait(false);
 
-            HttpResponseMessage response = await _citizenHttpClient.CallMCA(_config, new Uri($"https://kmd-rct-momentum-159-api.azurewebsites.net/api/citizens/1610862558"), "get").ConfigureAwait(false);
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<string[]>(json);
-            }
-            throw new Exception(response.StatusCode.ToString());
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<string[]>(json);
+
         }
     }
 }

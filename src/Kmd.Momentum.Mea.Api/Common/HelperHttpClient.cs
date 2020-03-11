@@ -16,9 +16,13 @@ namespace Kmd.Momentum.Mea.Api.Common
 #pragma warning restore CA1001 // Types that own disposable fields should be disposable
     {
         private readonly HttpClient _httpClient;
-        public HelperHttpClient()
+
+        private readonly IConfiguration _config;
+
+        public HelperHttpClient(IConfiguration config)
         {
             _httpClient = new HttpClient();
+            _config = config;
         }
 
         public async Task<HttpResponseMessage> ReturnAuthorizationToken(IConfiguration _config)
@@ -35,7 +39,7 @@ namespace Kmd.Momentum.Mea.Api.Common
                     });
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
-            var response = await _httpClient.PostAsync(new Uri($"https://login.microsoftonline.com/momentumb2c.onmicrosoft.com/oauth2/token"),
+            var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"),
                 content).ConfigureAwait(false);
             return response;
 

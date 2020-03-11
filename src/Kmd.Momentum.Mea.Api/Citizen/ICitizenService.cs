@@ -8,9 +8,9 @@ namespace Kmd.Momentum.Mea.Api.Citizen
 {
     public interface ICitizenService
     {
-        Task<string[]> GetAllActiveCitizens(IConfiguration config);
+        Task<string[]> GetAllActiveCitizens();
 
-        Task<string[]> GetCitizenById(IConfiguration config,Guid citizenId);
+        Task<string[]> GetCitizenById(Guid citizenId);
         
     }
 }

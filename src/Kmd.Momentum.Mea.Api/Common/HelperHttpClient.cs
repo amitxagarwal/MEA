@@ -11,7 +11,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Kmd.Momentum.Mea.Api.Common
 {
+#pragma warning disable CA1001 // Types that own disposable fields should be disposable
     public class HelperHttpClient : IHelperHttpClient
+#pragma warning restore CA1001 // Types that own disposable fields should be disposable
     {
         private readonly HttpClient _httpClient;
         public HelperHttpClient()

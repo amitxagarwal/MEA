@@ -34,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kmd.Momentum.Mea.Test.Common\Kmd.Momentum.Mea.Test.Common.csproj" />
     <ProjectReference Include="..\src\Kmd.Momentum.Mea.Api\Kmd.Momentum.Mea.Api.csproj" />
   </ItemGroup>
 

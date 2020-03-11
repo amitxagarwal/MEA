@@ -13,9 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0E63EA42-0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kmd.Momentum.Mea.Tests", "test\Kmd.Momentum.Mea.Tests\Kmd.Momentum.Mea.Tests.csproj", "{EA12E001-0245-4D84-8CC8-8B4F3EB4CF98}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kmd.Momentum.Mea.Api.Tests", "Kmd.Momentum.Mea.Api.Tests\Kmd.Momentum.Mea.Api.Tests.csproj", "{0D009F7F-068A-40B9-BFD8-9E9B9FE31D57}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kmd.Momentum.Mea.Test.Common", "Kmd.Momentum.Mea.Test.Common\Kmd.Momentum.Mea.Test.Common.csproj", "{A60D88FC-F43D-4614-8A15-EAE60FFB3807}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kmd.Momentum.Mea.Integration.Tests", "Kmd.Momentum.Mea.Api.Tests\Kmd.Momentum.Mea.Integration.Tests.csproj", "{0D009F7F-068A-40B9-BFD8-9E9B9FE31D57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,18 +73,6 @@ Global
 		{0D009F7F-068A-40B9-BFD8-9E9B9FE31D57}.Release|x64.Build.0 = Release|Any CPU
 		{0D009F7F-068A-40B9-BFD8-9E9B9FE31D57}.Release|x86.ActiveCfg = Release|Any CPU
 		{0D009F7F-068A-40B9-BFD8-9E9B9FE31D57}.Release|x86.Build.0 = Release|Any CPU
-		{A60D88FC-F43D-4614-8A15-EAE60FFB3807}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A60D88FC-F43D-4614-8A15-EAE60FFB3807}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A60D88FC-F43D-4614-8A15-EAE60FFB3807}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{A60D88FC-F43D-4614-8A15-EAE60FFB3807}.Debug|x64.Build.0 = Debug|Any CPU
-		{A60D88FC-F43D-4614-8A15-EAE60FFB3807}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A60D88FC-F43D-4614-8A15-EAE60FFB3807}.Debug|x86.Build.0 = Debug|Any CPU
-		{A60D88FC-F43D-4614-8A15-EAE60FFB3807}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A60D88FC-F43D-4614-8A15-EAE60FFB3807}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A60D88FC-F43D-4614-8A15-EAE60FFB3807}.Release|x64.ActiveCfg = Release|Any CPU
-		{A60D88FC-F43D-4614-8A15-EAE60FFB3807}.Release|x64.Build.0 = Release|Any CPU
-		{A60D88FC-F43D-4614-8A15-EAE60FFB3807}.Release|x86.ActiveCfg = Release|Any CPU
-		{A60D88FC-F43D-4614-8A15-EAE60FFB3807}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,7 +82,6 @@ Global
 		{54FCEF30-EBB8-4B71-9C60-42BB076BC0B8} = {E1A04C16-5A97-440D-AECD-450348113EC0}
 		{EA12E001-0245-4D84-8CC8-8B4F3EB4CF98} = {0E63EA42-074D-441C-8515-7979BD51991F}
 		{0D009F7F-068A-40B9-BFD8-9E9B9FE31D57} = {0E63EA42-074D-441C-8515-7979BD51991F}
-		{A60D88FC-F43D-4614-8A15-EAE60FFB3807} = {0E63EA42-074D-441C-8515-7979BD51991F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C03333B-3D3E-46DA-BE1C-069DCEE6CB29}

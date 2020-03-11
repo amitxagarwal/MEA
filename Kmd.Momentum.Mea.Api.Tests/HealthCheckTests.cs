@@ -32,19 +32,5 @@ namespace Kmd.Momentum.Mea.Api.Tests
             //Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);           
         }
-
-        [Fact]
-        public async Task TheHealthCheckStatusResponseIsUnHealthy()
-        {
-            //Arrange
-            var client = _factory.CreateClient();
-
-            //Act
-            var response = await client.GetAsync(new Uri("/health/ready", UriKind.Relative)).ConfigureAwait(false);
-
-            //Assert
-            Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
-        }
-
     }
 }

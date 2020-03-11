@@ -52,14 +52,6 @@ Param
 
   [Parameter(Mandatory=$true)]
   [string]
-  $ApplicationInsightsName,
-
-  [Parameter(Mandatory=$true)]
-  [string]
-  $ApplicationInsightsResourceGroup,
-
-  [Parameter(Mandatory=$true)]
-  [string]
   $DiagnosticSeqServerUrl,
 
   [Parameter(Mandatory=$true)]
@@ -99,13 +91,13 @@ function Format-ValidationOutput {
 }
 
 $ResourceGroupName = "$ResourceNamePrefix-rg"
+$ApplicationInsightsName="$ResourceNamePrefix-ai";
 
 # Set ARM template parameter values
 $TemplateParameters = @{
   instanceId = $InstanceId;
   resourceNamePrefix = $ResourceNamePrefix;
   applicationInsightsName = $ApplicationInsightsName;
-  applicationInsightsResourceGroup = $ApplicationInsightsResourceGroup;
   diagnosticSeqServerUrl = $DiagnosticSeqServerUrl;
   diagnosticSeqApiKey = $DiagnosticSeqApiKey;
   webAppServicePlanSku = $WebAppServicePlanSku;

@@ -14,10 +14,9 @@ namespace Kmd.Momentum.Mea.Test.Common
             {
                 GrantType = "client_credentials",
                 ClientId = "4a7a4c73-f203-435e-b5c2-3cbba12f0285",
-                ClientSceret = "a8FcVZ5gwaoHJf5TppvRCEN4wBWa?._-",
+                ClientSceret = "PTY@yujcbe/kW7/9A0CvouR[qDArIpd0",
                 Resource = "74b4f45c-4e9b-4be1-98f1-ea876d9edd11",
-                TokenEndPointBaseAddress = "https://kmd-rct-momentum-159-api.azurewebsites.net/",
-                Scope = ""
+                TokenEndPointBaseAddress = "https://login.microsoftonline.com/momentumb2c.onmicrosoft.com/oauth2/token"
             };
 
             var client = new HttpClient
@@ -25,15 +24,18 @@ namespace Kmd.Momentum.Mea.Test.Common
                 BaseAddress = new Uri(clientCredentialsConfiguration.TokenEndPointBaseAddress)
             };
 
+
+
             var content = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("grant_type", "client_credentials"),
                 new KeyValuePair<string, string>("client_id", "4a7a4c73-f203-435e-b5c2-3cbba12f0285"),
-                new KeyValuePair<string, string>("client_secret", "a8FcVZ5gwaoHJf5TppvRCEN4wBWa?._-"),
+                new KeyValuePair<string, string>("client_secret", "PTY@yujcbe/kW7/9A0CvouR[qDArIpd0"),
                 new KeyValuePair<string, string>("resource", "74b4f45c-4e9b-4be1-98f1-ea876d9edd11")
             });
 
-            var requestResult = await client.PostAsync(clientCredentialsConfiguration.TokenEndPoint, content);
+            var requestResult = await client.PostAsync(new Uri($"https://login.microsoftonline.com/momentumb2c.onmicrosoft.com/oauth2/token")
+                , content);
             var contentResult = await requestResult.Content.ReadAsStringAsync();
 
             if (!requestResult.IsSuccessStatusCode)
@@ -55,8 +57,6 @@ namespace Kmd.Momentum.Mea.Test.Common
             public string ClientSceret { get; set; }
             public string Resource { get; set; }
             public string TokenEndPointBaseAddress { get; set; }
-            public string TokenEndPoint { get; set; }
-            public string Scope { get; set; }
         }
     }
 }

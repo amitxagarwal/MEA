@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Kmd.Momentum.Mea.Test.Common;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
+using FluentAssertions;
 
 namespace Kmd.Momentum.Mea.Api.Tests
 {
@@ -27,24 +28,10 @@ namespace Kmd.Momentum.Mea.Api.Tests
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
-            var response = await client.GetAsync(new Uri("Health/Ready", UriKind.Relative)).ConfigureAwait(false);
+            var response = await client.GetAsync(new Uri("health/ready", UriKind.Relative)).ConfigureAwait(false);
 
             //Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);           
         }
-
-        [Fact]
-        public async Task TheHealthCheckStatusResponseIsUnHealthy()
-        {
-            //Arrange
-            var client = _factory.CreateClient();
-
-            //Act
-            var response = await client.GetAsync(new Uri("/health/ready", UriKind.Relative)).ConfigureAwait(false);
-
-            //Assert
-            Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
-        }
-
     }
 }

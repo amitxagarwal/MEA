@@ -96,30 +96,6 @@
       "metadata": {
         "description": "true will make the web site 'always on' - incompatible with certain plans like D1 Shared"
       }
-    },
-    "clientId": {
-      "metadata": {
-        "description": "Client Id is for authentication. It is a guid"
-      },
-      "type": "string"
-    },
-    "clientSecret": {
-      "metadata": {
-        "description": "Client Secret is credentials for authentication."
-      },
-      "type": "string"
-    },
-    "resource": {
-      "metadata": {
-        "description": "It is required for authentication. It is a guid"
-      },
-      "type": "string"
-    },
-    "grantType": {
-      "metadata": {
-        "description": "Grant type required for authentication."
-      },
-      "type": "string"
     }
   },
   "variables": {

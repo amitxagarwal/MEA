@@ -91,7 +91,10 @@ function Format-ValidationOutput {
 }
 
 $ResourceGroupName = "$ResourceNamePrefix-rg"
-$ApplicationInsightsName="$ResourceNamePrefix-ai";
+$ApplicationInsightsName ="$ResourceNamePrefix-ai";
+$ClientId = $env:clientId;
+$ClientSecret = $env:clientSecret;
+$Resource = $env:resource
 
 # Set ARM template parameter values
 $TemplateParameters = @{
@@ -102,9 +105,9 @@ $TemplateParameters = @{
   diagnosticSeqApiKey = $DiagnosticSeqApiKey;
   webAppServicePlanSku = $WebAppServicePlanSku;
   webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
-  clientId = $env:clientId;
-  clientSecret = $env:clientSecret;
-  resource = $env:resource
+  clientId = $ClientId;
+  clientSecret = $ClientSecret;
+  resource = $Resource
 }
 
 # Create or update the resource group using the specified template file and template parameter values

@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Kmd.Momentum.Mea.Integrations.Tests
+namespace Kmd.Momentum.Mea.Integration.Tests
 {
     public class HealthCheckTests : IClassFixture<WebApplicationFactory<Startup>>
     {

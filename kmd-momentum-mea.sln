@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0E63EA42-0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kmd.Momentum.Mea.Tests", "test\Kmd.Momentum.Mea.Tests\Kmd.Momentum.Mea.Tests.csproj", "{EA12E001-0245-4D84-8CC8-8B4F3EB4CF98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kmd.Momentum.Mea.Integrations.Tests", "Kmd.Momentum.Mea.Integrations.Tests\Kmd.Momentum.Mea.Integrations.Tests.csproj", "{986F1099-2A49-4DD7-AAC1-EBDCAE401236}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kmd.Momentum.Mea.Integration.Tests", "Kmd.Momentum.Mea.Integrations.Tests\Kmd.Momentum.Mea.Integration.Tests.csproj", "{986F1099-2A49-4DD7-AAC1-EBDCAE401236}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

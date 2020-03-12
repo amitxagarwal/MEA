@@ -101,7 +101,7 @@ function Format-ValidationOutput {
 $ResourceGroupName = "$ResourceNamePrefix-rg"
 $ApplicationInsightsName="$ResourceNamePrefix-ai";
 
-    Write-Host "Template is valid.----------"
+    Write-Host "Template is valid.---------- 1"
 
       Write-Host "ClientId is  '$ClientId'"
       Write-Host "ClientSecret is  '$ClientSecret'"
@@ -119,6 +119,8 @@ $TemplateParameters = @{
   clientSecret = $ClientSecret; 
 }
 
+Write-Host "Template is valid.----------2"
+
 # Create or update the resource group using the specified template file and template parameter values
 $Tags = @{}
 if ($MarkForAutoDelete) {
@@ -127,9 +129,13 @@ if ($MarkForAutoDelete) {
   $Tags["important"] = "true";
 }
 
+Write-Host "Template is valid.---------3"
 New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force
 
+Write-Host "Template is valid.----------4"
+
 if ($ValidateOnly) {
+Write-Host "Template is valid.---------5"
   $ErrorMessages = Format-ValidationOutput (Test-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName `
                                                                                 -TemplateFile $TemplateFile `
                                                                                 @TemplateParameters)
@@ -141,6 +147,7 @@ if ($ValidateOnly) {
   }
 }
 else {
+Write-Host "Template is valid.----------6"
   New-AzResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
                                       -ResourceGroupName $ResourceGroupName `
                                       -TemplateFile $TemplateFile `
@@ -148,6 +155,7 @@ else {
                                       -Force -Verbose `
                                       -ErrorVariable ErrorMessages
   if ($ErrorMessages) {
+  Write-Host "Template is valid.----------7"
       Write-Output '', 'Template deployment returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
   }
 }

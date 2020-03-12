@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Kmd.Momentum.Mea.Common\Kmd.Momentum.Mea.Common.csproj" />
     <ProjectReference Include="..\Kmd.Momentum.Mea\Kmd.Momentum.Mea.csproj" />
   </ItemGroup>
 

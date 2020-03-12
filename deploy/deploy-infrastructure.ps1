@@ -120,6 +120,11 @@ if ($MarkForAutoDelete) {
   $Tags["important"] = "true";
 }
 
+Write-Output '--------clientId : ' $env:clientId
+Write-Output '--------clientSecret : ' $env:clientSecret
+Write-Output '--------resource : ' $env:resource
+Write-Output '--------clientId : ' $env:clientId
+
 New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force
 
 if ($ValidateOnly) {

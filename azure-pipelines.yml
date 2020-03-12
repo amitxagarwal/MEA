@@ -51,6 +51,8 @@ stages:
       webAppServicePlanSku: S1
       webAppConfigAlwaysOn: false
       autoSwapSlots: true
+      clientId: $(clientId)
+      clientSecret: $(clientSecret)
 
 - stage: deploy_internal
   dependsOn: Build

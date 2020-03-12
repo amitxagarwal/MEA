@@ -69,6 +69,14 @@ Param
 
   [switch] 
   $ValidateOnly
+
+  [Parameter(Mandatory=$true)]
+  [string]
+  $ClientId,
+
+  [Parameter(Mandatory=$true)]
+  [string]
+  $ClientSecret,
 )
 
 Push-Location $PSScriptRoot
@@ -92,8 +100,8 @@ function Format-ValidationOutput {
 
 $ResourceGroupName = "$ResourceNamePrefix-rg"
 $ApplicationInsightsName="$ResourceNamePrefix-ai";
-$ClientId = $env:clientId;
-$ClientSecret = $env:clientSecret;
+#$ClientId = $env:clientId;
+#$ClientSecret = $env:clientSecret;
 
 Write-Host "ClientId---'$env:clientId'"
 Write-Host "ClientSecret---'$env:clientSecret'"

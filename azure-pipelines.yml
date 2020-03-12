@@ -51,8 +51,8 @@ stages:
       webAppServicePlanSku: S1
       webAppConfigAlwaysOn: false
       autoSwapSlots: true
-      clientId1: $(clientId)
-      clientSecret1: $(clientSecret)
+      clientId: $(McaClientId)
+      clientSecret: $(McaClientSecret)
 
 - stage: deploy_internal
   dependsOn: Build
@@ -70,3 +70,5 @@ stages:
       webAppServicePlanSku: S1
       webAppConfigAlwaysOn: false
       autoSwapSlots: true
+      clientId: $(McaClientId)
+      clientSecret: $(McaClientSecret)

@@ -5,13 +5,13 @@
     "clientId": {
       "type": "string",
       "metadata": {
-        "description": "The instance ID (e.g. 'udv', 'udvtest', 'shareddev', 'prod' etc.)."
+        "description": "Client Id for authentication"
       }
     },
     "clientSecret": {
       "type": "string",
       "metadata": {
-        "description": "The instance ID (e.g. 'udv', 'udvtest', 'shareddev', 'prod' etc.)."
+        "description": "client Secret for authentication"
       }
     },
     "instanceId": {

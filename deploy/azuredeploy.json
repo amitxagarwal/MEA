@@ -180,15 +180,15 @@
               "value": "[parameters('diagnosticSeqApiKey')]"
             },
             {
-              "name": "client_id",
+              "name": "KMD_MOMENTUM_MEA_ClientId",
               "value": "[parameters('clientId')]"
             },
             {
-              "name": "client_secret",
+              "name": "KMD_MOMENTUM_MEA_ClientSecret",
               "value": "[parameters('clientSecret')]"
             },
             {
-              "name": "resource",
+              "name": "KMD_MOMENTUM_MEA_Resource",
               "value": "[parameters('resource')]"
             }
           ]
@@ -250,15 +250,15 @@
               "value": "[parameters('diagnosticSeqApiKey')]"
             },
             {
-              "name": "client_id",
+              "name": "KMD_MOMENTUM_MEA_ClientId",
               "value": "[parameters('clientId')]"
             },
             {
-              "name": "client_secret",
+              "name": "KMD_MOMENTUM_MEA_ClientSecret",
               "value": "[parameters('clientSecret')]"
             },
             {
-              "name": "resource",
+              "name": "KMD_MOMENTUM_MEA_Resource",
               "value": "[parameters('resource')]"
             }
           ]

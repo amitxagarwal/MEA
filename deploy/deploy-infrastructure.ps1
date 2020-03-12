@@ -101,10 +101,10 @@ function Format-ValidationOutput {
 $ResourceGroupName = "$ResourceNamePrefix-rg"
 $ApplicationInsightsName="$ResourceNamePrefix-ai";
 
-    Write-Output '', 'Template is valid.----------'
+    Write-Host "Template is valid.----------"
 
-      Write-Output '', 'ClientId is  $ClientId.'
-      Write-Output '', 'ClientSecret is  $ClientSecret.'
+      Write-Host "ClientId is  '$ClientId'"
+      Write-Host "ClientSecret is  '$ClientSecret.'"
 
 # Set ARM template parameter values
 $TemplateParameters = @{

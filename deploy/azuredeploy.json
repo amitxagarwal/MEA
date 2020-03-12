@@ -184,22 +184,6 @@
             {
               "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
               "value": "[parameters('diagnosticSeqApiKey')]"
-            },
-            {
-              "name": "KMD_MOMENTUM_MEA_ClientId",
-              "value": "[parameters('clientId')]"
-            },
-            {
-              "name": "KMD_MOMENTUM_MEA_ClientSecret",
-              "value": "[parameters('clientSecret')]"
-            },
-            {
-              "name": "KMD_MOMENTUM_MEA_Resource",
-              "value": "[parameters('resource')]"
-            },
-            {
-              "name": "KMD_MOMENTUM_MEA_GrantType",
-              "value": "[parameters('grantType')]"
             }
           ]
         }
@@ -258,22 +242,6 @@
             {
               "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
               "value": "[parameters('diagnosticSeqApiKey')]"
-            },
-            {
-              "name": "KMD_MOMENTUM_MEA_ClientId",
-              "value": "[parameters('clientId')]"
-            },
-            {
-              "name": "KMD_MOMENTUM_MEA_ClientSecret",
-              "value": "[parameters('clientSecret')]"
-            },
-            {
-              "name": "KMD_MOMENTUM_MEA_Resource",
-              "value": "[parameters('resource')]"
-            },
-            {
-              "name": "KMD_MOMENTUM_MEA_GrantType",
-              "value": "[parameters('grantType')]"
             }
           ]
         }

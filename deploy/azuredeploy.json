@@ -8,6 +8,12 @@
       },
       "type": "string"
     },
+    "applicationInsightsResourceGroup": {
+      "metadata": {
+        "description": "Resource group name of app insights instance. E.g. 'kmd-momentum-udv-rg' or 'kmd-momentum-shareddev-rg'"
+      },
+      "type": "string"
+    },
     "clientId": {
       "metadata": {
         "description": "Client Id is for authentication. It is a guid"
@@ -17,18 +23,6 @@
     "clientSecret": {
       "metadata": {
         "description": "Client Secret is credentials for authentication."
-      },
-      "type": "string"
-    },
-    "resource": {
-      "metadata": {
-        "description": "It is required for authentication. It is a guid"
-      },
-      "type": "string"
-    },
-    "applicationInsightsResourceGroup": {
-      "metadata": {
-        "description": "Resource group name of app insights instance. E.g. 'kmd-momentum-udv-rg' or 'kmd-momentum-shareddev-rg'"
       },
       "type": "string"
     },
@@ -71,6 +65,12 @@
       "defaultValue": "[resourceGroup().location]",
       "metadata": {
         "description": "Location for all created resources. If not specified, then the resource group location is used."
+      },
+      "type": "string"
+    },
+    "resource": {
+      "metadata": {
+        "description": "It is required for authentication. It is a guid"
       },
       "type": "string"
     },

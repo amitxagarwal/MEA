@@ -92,6 +92,8 @@ function Format-ValidationOutput {
 
 $ResourceGroupName = "$ResourceNamePrefix-rg"
 $ApplicationInsightsName="$ResourceNamePrefix-ai";
+$ClientId = $env:clientId;
+$ClientSecret = $env:clientSecret;
 
 Write-Host "ClientId---'$env:clientId'"
 Write-Host "ClientSecret---'$env:clientSecret'"
@@ -107,6 +109,8 @@ $TemplateParameters = @{
   diagnosticSeqApiKey = $DiagnosticSeqApiKey;
   webAppServicePlanSku = $WebAppServicePlanSku;
   webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
+  clientId = $ClientId;
+  clientSecret = $ClientSecret;
 }
 
 # Create or update the resource group using the specified template file and template parameter values

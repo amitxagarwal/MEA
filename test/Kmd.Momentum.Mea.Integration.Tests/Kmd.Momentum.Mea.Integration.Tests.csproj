@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Kmd.Momentum.Mea.Api\Kmd.Momentum.Mea.Api.csproj" />
+    <ProjectReference Include="..\..\src\Kmd.Momentum.Mea.Api\Kmd.Momentum.Mea.Api.csproj" />
   </ItemGroup>
 
 </Project>

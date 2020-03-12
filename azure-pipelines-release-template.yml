@@ -11,9 +11,9 @@ parameters:
   webAppServicePlanSku: B1
   webAppConfigAlwaysOn: true
   autoSwapSlots: false
-  clientId:<secret>
-  clientSecret:<secret>
-  resource:<secret>
+  clientId: <secret>
+  clientSecret: <secret>
+  resource: <secret>
 
 jobs:
   - deployment: deploy_momentum_mea_${{ parameters.environmentNameSuffix }}

@@ -2,6 +2,18 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "clientId": {
+      "type": "string",
+      "metadata": {
+        "description": "The instance ID (e.g. 'udv', 'udvtest', 'shareddev', 'prod' etc.)."
+      }
+    },
+    "clientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "The instance ID (e.g. 'udv', 'udvtest', 'shareddev', 'prod' etc.)."
+      }
+    },
     "instanceId": {
       "type": "string",
       "minLength": 1,
@@ -160,6 +172,14 @@
             {
               "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
               "value": "[parameters('diagnosticSeqApiKey')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ClientId",
+              "value": "[parameters('clientId')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ClientSecret",
+              "value": "[parameters('clientSecret')]"
             }
           ]
         }
@@ -218,6 +238,14 @@
             {
               "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
               "value": "[parameters('diagnosticSeqApiKey')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ClientId",
+              "value": "[parameters('clientId')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ClientSecret",
+              "value": "[parameters('clientSecret')]"
             }
           ]
         }

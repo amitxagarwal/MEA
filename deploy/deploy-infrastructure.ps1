@@ -92,11 +92,15 @@ function Format-ValidationOutput {
 
 $ResourceGroupName = "$ResourceNamePrefix-rg"
 $ApplicationInsightsName="$ResourceNamePrefix-ai";
-$ClientId = $env:CLIENTID;
-$ClientSecret = $env:CLIENTSECRET;
-$Resource = $env:RESOURCE
+$ClientId = $env:clientId;
+$ClientSecret = $env:clientSecret;
+$Resource = $env:resource;
 
-Write-Host "ClientId---$ClientId'"
+Write-Host "ClientId---'$env:clientId'"
+Write-Host "ClientSecret---'$env:clientSecret'"
+Write-Host "Resource---'$env:resource'"
+
+Write-Host "ClientId---'$ClientId'"
 Write-Host "ClientSecret---'$ClientSecret'"
 Write-Host "Resource---'$Resource'"
 

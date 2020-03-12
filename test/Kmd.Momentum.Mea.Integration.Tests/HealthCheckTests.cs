@@ -23,7 +23,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests
             var client = _factory.CreateClient();
 
             //Act
-            var response = await client.GetAsync(new Uri("Health/Ready", UriKind.Relative)).ConfigureAwait(false);
+            var response = await client.GetAsync(new Uri("health/ready", UriKind.Relative)).ConfigureAwait(false);
 
             //Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);

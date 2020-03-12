@@ -134,7 +134,6 @@ New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -T
 
 Write-Host "Template is valid.----------4"
 
-if ($ValidateOnly) {
 Write-Host "Template is valid.---------5"
   $ErrorMessages = Format-ValidationOutput (Test-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName `
                                                                                 -TemplateFile $TemplateFile `
@@ -145,8 +144,8 @@ Write-Host "Template is valid.---------5"
   else {
       Write-Output '', 'Template is valid.'
   }
-}
-else {
+
+
 Write-Host "Template is valid.----------6"
   New-AzResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
                                       -ResourceGroupName $ResourceGroupName `
@@ -157,7 +156,7 @@ Write-Host "Template is valid.----------6"
   if ($ErrorMessages) {
   Write-Host "Template is valid.----------7"
       Write-Output '', 'Template deployment returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
-  }
+  
 }
 
 Pop-Location

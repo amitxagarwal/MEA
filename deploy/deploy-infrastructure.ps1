@@ -110,6 +110,9 @@ $TemplateParameters = @{
   diagnosticSeqApiKey = $DiagnosticSeqApiKey;
   webAppServicePlanSku = $WebAppServicePlanSku;
   webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
+  clientId = $env:clientId;
+  clientSecret = $env:clientSecret;
+  resource = $env:resource
 }
 
 # Create or update the resource group using the specified template file and template parameter values
@@ -119,11 +122,6 @@ if ($MarkForAutoDelete) {
 } else {
   $Tags["important"] = "true";
 }
-
-Write-Output '--------clientId : ' $env:clientId
-Write-Output '--------clientSecret : ' $env:clientSecret
-Write-Output '--------resource : ' $env:resource
-Write-Output '--------clientId : ' $env:clientId
 
 New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force
 

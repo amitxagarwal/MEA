@@ -107,143 +107,145 @@
       "type": "string",
       "metadata": {
         "description": "Client Id is for authentication. It is a guid"
-      },
-      "clientSecret": {
-        "type": "string",
-        "metadata": {
-          "description": "Client Secret is credentials for authentication."
-        },
-        "resource": {
-          "type": "string",
-          "metadata": {
-            "description": "It is required for authentication. It is a guid"
-          }
+      }
+    },
+    "clientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "Client Secret is credentials for authentication."
+      }
+    },
+    "resource": {
+      "type": "string",
+      "metadata": {
+        "description": "It is required for authentication. It is a guid"
+      }
+    }
+  },
+  "variables": {
+    "resourceNamePrefixLower": "[tolower(parameters('resourceNamePrefix'))]",
+    "webAppName": "[concat(variables('resourceNamePrefixLower'),'-webapp')]",
+    "stagingSlotName": "staging",
+    "webAppStagingSlotName": "[concat(variables('webAppName'), '/', variables('stagingSlotName'))]",
+    "hostingPlanName": "[concat(variables('resourceNamePrefixLower'),'-appsvcplan')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2018-02-01",
+      "name": "[variables('hostingPlanName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[parameters('webAppServicePlanSku')]"
+      }
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('webAppName')]",
+      "location": "[parameters('location')]",
+      "kind": "app",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
+      ],
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "siteConfig": {
+          "alwaysOn": "[parameters('webAppConfigAlwaysOn')]",
+          "appSettings": [
+            {
+              "name": "SlotName",
+              "value": "production"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_EnvironmentInstanceId",
+              "value": "[parameters('instanceId')]"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId(parameters('applicationInsightsResourceGroup'), 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ConsoleLoggingMinLevel",
+              "value": "[parameters('consoleLoggingMinLevel')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_DiagnosticSeqServerUrl",
+              "value": "[parameters('diagnosticSeqServerUrl')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
+              "value": "[parameters('diagnosticSeqApiKey')]"
+            }
+          ]
         }
-      },
-      "variables": {
-        "resourceNamePrefixLower": "[tolower(parameters('resourceNamePrefix'))]",
-        "webAppName": "[concat(variables('resourceNamePrefixLower'),'-webapp')]",
-        "stagingSlotName": "staging",
-        "webAppStagingSlotName": "[concat(variables('webAppName'), '/', variables('stagingSlotName'))]",
-        "hostingPlanName": "[concat(variables('resourceNamePrefixLower'),'-appsvcplan')]"
       },
       "resources": [
         {
-          "type": "Microsoft.Web/serverfarms",
-          "apiVersion": "2018-02-01",
-          "name": "[variables('hostingPlanName')]",
-          "location": "[parameters('location')]",
-          "sku": {
-            "name": "[parameters('webAppServicePlanSku')]"
-          }
-        },
-        {
+          "name": "slotConfigNames",
+          "type": "config",
           "apiVersion": "2015-08-01",
-          "type": "Microsoft.Web/sites",
-          "name": "[variables('webAppName')]",
-          "location": "[parameters('location')]",
-          "kind": "app",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
+            "[resourceId('Microsoft.Web/Sites', variables('webAppName'))]"
           ],
-          "properties": {
-            "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
-            "siteConfig": {
-              "alwaysOn": "[parameters('webAppConfigAlwaysOn')]",
-              "appSettings": [
-                {
-                  "name": "SlotName",
-                  "value": "production"
-                },
-                {
-                  "name": "KMD_MOMENTUM_MEA_EnvironmentInstanceId",
-                  "value": "[parameters('instanceId')]"
-                },
-                {
-                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference(resourceId(parameters('applicationInsightsResourceGroup'), 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
-                },
-                {
-                  "name": "KMD_MOMENTUM_MEA_ConsoleLoggingMinLevel",
-                  "value": "[parameters('consoleLoggingMinLevel')]"
-                },
-                {
-                  "name": "KMD_MOMENTUM_MEA_DiagnosticSeqServerUrl",
-                  "value": "[parameters('diagnosticSeqServerUrl')]"
-                },
-                {
-                  "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
-                  "value": "[parameters('diagnosticSeqApiKey')]"
-                }
-              ]
-            }
+          "tags": {
+            "displayName": "slotConfigNames"
           },
-          "resources": [
-            {
-              "name": "slotConfigNames",
-              "type": "config",
-              "apiVersion": "2015-08-01",
-              "dependsOn": [
-                "[resourceId('Microsoft.Web/Sites', variables('webAppName'))]"
-              ],
-              "tags": {
-                "displayName": "slotConfigNames"
-              },
-              "properties": {
-                "appSettingNames": [ "SlotName" ]
-              }
-            }
-          ]
-        },
-        {
-          "apiVersion": "2016-08-01",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', variables('webAppName'))]"
-          ],
-          "kind": "app",
-          "type": "Microsoft.Web/sites/slots",
-          "location": "[resourceGroup().location]",
-          "name": "[variables('webAppStagingSlotName')]",
           "properties": {
-            "enabled": true,
-            "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
-            "siteConfig": {
-              "appSettings": [
-                {
-                  "name": "SlotName",
-                  "value": "staging"
-                },
-                {
-                  "name": "KMD_MOMENTUM_MEA_EnvironmentInstanceId",
-                  "value": "[parameters('instanceId')]"
-                },
-                {
-                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference(resourceId(parameters('applicationInsightsResourceGroup'), 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
-                },
-                {
-                  "name": "KMD_MOMENTUM_MEA_ConsoleLoggingMinLevel",
-                  "value": "[parameters('consoleLoggingMinLevel')]"
-                },
-                {
-                  "name": "KMD_MOMENTUM_MEA_DiagnosticSeqServerUrl",
-                  "value": "[parameters('diagnosticSeqServerUrl')]"
-                },
-                {
-                  "name": "client_id",
-                  "value": "[parameters('clientId')]"
-                },
-                {
-                  "name": "client_secret",
-                  "value": "[parameters('clientSecret')]"
-                },
-                {
-                  "name": "resource",
-                  "value": "[parameters('resource')]"
-                }
-              ]
-            }
+            "appSettingNames": [ "SlotName" ]
           }
         }
       ]
+    },
+    {
+      "apiVersion": "2016-08-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('webAppName'))]"
+      ],
+      "kind": "app",
+      "type": "Microsoft.Web/sites/slots",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('webAppStagingSlotName')]",
+      "properties": {
+        "enabled": true,
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "SlotName",
+              "value": "staging"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_EnvironmentInstanceId",
+              "value": "[parameters('instanceId')]"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId(parameters('applicationInsightsResourceGroup'), 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ConsoleLoggingMinLevel",
+              "value": "[parameters('consoleLoggingMinLevel')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_DiagnosticSeqServerUrl",
+              "value": "[parameters('diagnosticSeqServerUrl')]"
+            },
+            {
+              "name": "client_id",
+              "value": "[parameters('clientId')]"
+            },
+            {
+              "name": "client_secret",
+              "value": "[parameters('clientSecret')]"
+            },
+            {
+              "name": "resource",
+              "value": "[parameters('resource')]"
+            }
+          ]
+        }
+      }
     }
+  ]
+}

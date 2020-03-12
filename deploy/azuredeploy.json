@@ -114,6 +114,12 @@
         "description": "It is required for authentication. It is a guid"
       },
       "type": "string"
+    },
+    "grantType": {
+      "metadata": {
+        "description": "Grant type required for authentication."
+      },
+      "type": "string"
     }
   },
   "variables": {
@@ -190,6 +196,10 @@
             {
               "name": "KMD_MOMENTUM_MEA_Resource",
               "value": "[parameters('resource')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_GrantType",
+              "value": "[parameters('grantType')]"
             }
           ]
         }
@@ -260,6 +270,10 @@
             {
               "name": "KMD_MOMENTUM_MEA_Resource",
               "value": "[parameters('resource')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_GrantType",
+              "value": "[parameters('grantType')]"
             }
           ]
         }

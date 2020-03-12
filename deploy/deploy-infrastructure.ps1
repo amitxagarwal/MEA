@@ -92,23 +92,11 @@ function Format-ValidationOutput {
 
 $ResourceGroupName = "$ResourceNamePrefix-rg"
 $ApplicationInsightsName="$ResourceNamePrefix-ai";
-$ClientId = $env:clientId;
-$ClientSecret = $env:clientSecret;
-$Resource = $env:resource;
-$GrantType = $env:grantType;
-
-
 
 Write-Host "ClientId---'$env:clientId'"
 Write-Host "ClientSecret---'$env:clientSecret'"
 Write-Host "Resource---'$env:resource'"
 Write-Host "GrantType---'$env:grantType'"
-
-
-Write-Host "ClientId---'$ClientId'"
-Write-Host "ClientSecret---'$ClientSecret'"
-Write-Host "Resource---'$Resource'"
-Write-Host "GrantType---'$GrantType'"
 
 # Set ARM template parameter values
 $TemplateParameters = @{
@@ -119,15 +107,11 @@ $TemplateParameters = @{
   diagnosticSeqApiKey = $DiagnosticSeqApiKey;
   webAppServicePlanSku = $WebAppServicePlanSku;
   webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
-  clientId = $ClientId;
-  clientSecret = $ClientSecret;
-  resource = $Resource
+  clientId = $env:clientId;
+  clientSecret = $env:clientSecret;
+  resource = $env:resource;
+  grantType = $env:grantType;
 }
-
-Write-Host "ClientId--1-$ClientId'"
-Write-Host "ClientSecret--1-'$ClientSecret'"
-Write-Host "Resource--1-'$Resource'"
-Write-Host "TemplateParameters--1-'$TemplateParameters'"
 
 # Create or update the resource group using the specified template file and template parameter values
 $Tags = @{}
@@ -137,17 +121,7 @@ if ($MarkForAutoDelete) {
   $Tags["important"] = "true";
 }
 
-Write-Host "ClientId--2-$ClientId'"
-Write-Host "ClientSecret--2-'$ClientSecret'"
-Write-Host "Resource--2-'$Resource'"
-Write-Host "TemplateParameters--2-'$TemplateParameters'"
-
 New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force
-
-Write-Host "ClientId--3-$ClientId'"
-Write-Host "ClientSecret--3-'$ClientSecret'"
-Write-Host "Resource--3-'$Resource'"
-Write-Host "TemplateParameters--3-'$TemplateParameters'"
 
 if ($ValidateOnly) {
   $ErrorMessages = Format-ValidationOutput (Test-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName `

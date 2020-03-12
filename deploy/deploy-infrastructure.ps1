@@ -107,10 +107,6 @@ $TemplateParameters = @{
   diagnosticSeqApiKey = $DiagnosticSeqApiKey;
   webAppServicePlanSku = $WebAppServicePlanSku;
   webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
-  clientId = $env:clientId;
-  clientSecret = $env:clientSecret;
-  resource = $env:resource;
-  grantType = $env:grantType;
 }
 
 # Create or update the resource group using the specified template file and template parameter values

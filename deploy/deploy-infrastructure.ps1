@@ -101,6 +101,10 @@ function Format-ValidationOutput {
 $ResourceGroupName = "$ResourceNamePrefix-rg"
 $ApplicationInsightsName="$ResourceNamePrefix-ai";
 
+    Write-Output '', 'Template is valid.----------'
+
+      Write-Output '', 'ClientId is  $ClientId.'
+      Write-Output '', 'ClientSecret is  $ClientSecret.'
 
 # Set ARM template parameter values
 $TemplateParameters = @{
@@ -125,7 +129,7 @@ if ($MarkForAutoDelete) {
 
 New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force
 
-if ($true) {
+if ($ValidateOnly) {
   $ErrorMessages = Format-ValidationOutput (Test-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName `
                                                                                 -TemplateFile $TemplateFile `
                                                                                 @TemplateParameters)

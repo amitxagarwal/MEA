@@ -9,6 +9,8 @@ parameters:
   webAppServicePlanSku: B1
   webAppConfigAlwaysOn: true
   autoSwapSlots: false
+  clientId1: <secret>
+  clientSecret1: <secret>
 
 jobs:
   - deployment: deploy_momentum_mea_${{ parameters.environmentNameSuffix }}
@@ -23,8 +25,8 @@ jobs:
       ResourceGroupName: kmd-momentum-mea-${{ parameters.instanceId }}-rg
       WebAppServicePlanSku: ${{ parameters.webAppServicePlanSku }}
       WebAppConfigAlwaysOn: ${{ parameters.webAppConfigAlwaysOn }}
-      ClientId: ${{ parameters.clientId }}
-      ClientSecret: ${{ parameters.clientSecret }}
+      ClientId: ${{ parameters.clientId1 }}
+      ClientSecret: ${{ parameters.clientSecret1 }}
 
     strategy:
       runOnce:

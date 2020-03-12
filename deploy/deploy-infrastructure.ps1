@@ -108,6 +108,16 @@ Write-Host "ClientSecret---'$env:clientSecret'"
 Write-Host "Resource---'$env:resource'"
 Write-Host "GrantType---'$env:grantType'"
 
+Write-Host "ClientId---'$($env:clientId)'"
+Write-Host "ClientSecret---'$($env:clientSecret)'"
+Write-Host "Resource---'$($env:resource)'"
+Write-Host "GrantType---'$($env:grantType)'"
+        
+Write-Host "ClientId---'$($env:ClientId)'"
+Write-Host "ClientSecret---'$($env:ClientSecret)'"
+Write-Host "Resource---'$($env:Resource)'"
+Write-Host "GrantType---'$($env:GrantType)'"
+
 # Set ARM template parameter values
 $TemplateParameters = @{
   instanceId = $InstanceId;
@@ -118,7 +128,7 @@ $TemplateParameters = @{
   webAppServicePlanSku = $WebAppServicePlanSku;
   webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
   clientId = $ClientId;
-  clientSecret = $ClientSecret;
+  clientSecret = $ClientSecret; 
 }
 
 # Create or update the resource group using the specified template file and template parameter values

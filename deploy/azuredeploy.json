@@ -96,6 +96,24 @@
       "metadata": {
         "description": "true will make the web site 'always on' - incompatible with certain plans like D1 Shared"
       }
+    },
+    "clientId": {
+      "metadata": {
+        "description": "Client Id is for authentication. It is a guid"
+      },
+      "type": "string"
+    },
+    "clientSecret": {
+      "metadata": {
+        "description": "Client Secret is credentials for authentication."
+      },
+      "type": "string"
+    },
+    "resource": {
+      "metadata": {
+        "description": "It is required for authentication. It is a guid"
+      },
+      "type": "string"
     }
   },
   "variables": {
@@ -160,6 +178,18 @@
             {
               "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
               "value": "[parameters('diagnosticSeqApiKey')]"
+            },
+            {
+              "name": "client_id",
+              "value": "[parameters('clientId')]"
+            },
+            {
+              "name": "client_secret",
+              "value": "[parameters('clientSecret')]"
+            },
+            {
+              "name": "resource",
+              "value": "[parameters('resource')]"
             }
           ]
         }
@@ -218,6 +248,18 @@
             {
               "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
               "value": "[parameters('diagnosticSeqApiKey')]"
+            },
+            {
+              "name": "client_id",
+              "value": "[parameters('clientId')]"
+            },
+            {
+              "name": "client_secret",
+              "value": "[parameters('clientSecret')]"
+            },
+            {
+              "name": "resource",
+              "value": "[parameters('resource')]"
             }
           ]
         }

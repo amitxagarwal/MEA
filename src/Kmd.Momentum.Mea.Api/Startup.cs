@@ -10,6 +10,8 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Kmd.Momentum.Mea.Api
 {
@@ -34,6 +36,9 @@ namespace Kmd.Momentum.Mea.Api
                 });
 
             services.AddControllers();
+
+            services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
+                .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
 
             services.AddSwaggerGen(c =>
             {

@@ -96,9 +96,9 @@ $ClientId = $env:CLIENTID;
 $ClientSecret = $env:CLIENTSECRET;
 $Resource = $env:RESOURCE
 
-Write-Output 'ClientId---', @($ClientId)
-Write-Output 'ClientSecret---', @($ClientSecret)
-Write-Output 'Resource---', @($Resource)
+Write-Host "ClientId---$ClientId'"
+Write-Host "ClientSecret---'$ClientSecret'"
+Write-Host "Resource---'$Resource'"
 
 # Set ARM template parameter values
 $TemplateParameters = @{
@@ -114,10 +114,10 @@ $TemplateParameters = @{
   resource = $Resource
 }
 
-Write-Output 'ClientId--1-', @($ClientId)
-Write-Output 'ClientSecret--1-', @($ClientSecret)
-Write-Output 'Resource--1-', @($Resource)
-Write-Output 'TemplateParameters--1-', @($TemplateParameters)
+Write-Host "ClientId--1-$ClientId'"
+Write-Host "ClientSecret--1-'$ClientSecret'"
+Write-Host "Resource--1-'$Resource'"
+Write-Host "TemplateParameters--1-'$TemplateParameters'"
 
 # Create or update the resource group using the specified template file and template parameter values
 $Tags = @{}
@@ -127,17 +127,17 @@ if ($MarkForAutoDelete) {
   $Tags["important"] = "true";
 }
 
-Write-Output 'ClientId--2-', @($ClientId)
-Write-Output 'ClientSecret--2-', @($ClientSecret)
-Write-Output 'Resource--2-', @($Resource)
-Write-Output 'TemplateParameters--2-', @($TemplateParameters)
+Write-Host "ClientId--2-$ClientId'"
+Write-Host "ClientSecret--2-'$ClientSecret'"
+Write-Host "Resource--2-'$Resource'"
+Write-Host "TemplateParameters--2-'$TemplateParameters'"
 
 New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force
 
-Write-Output 'ClientId--3-', @($ClientId)
-Write-Output 'ClientSecret--3-', @($ClientSecret)
-Write-Output 'Resource--3-', @($Resource)
-Write-Output 'TemplateParameters--3-', @($TemplateParameters)
+Write-Host "ClientId--3-$ClientId'"
+Write-Host "ClientSecret--3-'$ClientSecret'"
+Write-Host "Resource--3-'$Resource'"
+Write-Host "TemplateParameters--3-'$TemplateParameters'"
 
 if ($ValidateOnly) {
   $ErrorMessages = Format-ValidationOutput (Test-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName `

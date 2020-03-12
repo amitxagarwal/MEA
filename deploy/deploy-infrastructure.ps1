@@ -103,21 +103,6 @@ $ApplicationInsightsName="$ResourceNamePrefix-ai";
 #$ClientId = $env:clientId;
 #$ClientSecret = $env:clientSecret;
 
-Write-Host "ClientId---'$env:clientId'"
-Write-Host "ClientSecret---'$env:clientSecret'"
-Write-Host "Resource---'$env:resource'"
-Write-Host "GrantType---'$env:grantType'"
-
-Write-Host "ClientId---'$($env:clientId)'"
-Write-Host "ClientSecret---'$($env:clientSecret)'"
-Write-Host "Resource---'$($env:resource)'"
-Write-Host "GrantType---'$($env:grantType)'"
-        
-Write-Host "ClientId---'$($env:ClientId)'"
-Write-Host "ClientSecret---'$($env:ClientSecret)'"
-Write-Host "Resource---'$($env:Resource)'"
-Write-Host "GrantType---'$($env:GrantType)'"
-
 # Set ARM template parameter values
 $TemplateParameters = @{
   instanceId = $InstanceId;

@@ -3,7 +3,6 @@
     public class CitizenDataResponse
     {
         public string CitizenId { get; }
-        public bool? IsBookable { get; }
         public string DisplayName { get; }
         public string GivenName { get; }
         public string MiddleName { get; }
@@ -12,12 +11,10 @@
         public string Phone { get; }
         public string CaseworkerIdentifier { get; }
         public string Description { get; }
-        public bool? IsActive { get; }
 
-        public CitizenDataResponse(string citizenId, bool? isBookable, string displayName, string givenName, string middleName, string initials, string email, string phone, string caseworkerIdentifier, string description, bool? isActive)
+        public CitizenDataResponse(string citizenId, string displayName, string givenName, string middleName, string initials, string email, string phone, string caseworkerIdentifier, string description)
         {
             CitizenId = citizenId;
-            IsBookable = isBookable;
             DisplayName = displayName;
             GivenName = givenName;
             MiddleName = middleName;
@@ -26,7 +23,6 @@
             Phone = phone;
             CaseworkerIdentifier = caseworkerIdentifier;
             Description = description;
-            IsActive = isActive;
         }
     }
 }

@@ -28,17 +28,32 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")).ConfigureAwait(false);
             var json = JObject.Parse(response);
+            string email = string.Empty;
+            string phone = string.Empty;
 
-            return new CitizenDataResponse("", null, "", null, null, null, "",
-                "", null, null, null);
+            if (!String.IsNullOrEmpty(json["contactInformation"]["email"].ToString()))
+                email = json["contactInformation"]["email"]["address"].ToString();
+
+            if (!String.IsNullOrEmpty(json["contactInformation"]["phone"].ToString()))
+                phone = json["contactInformation"]["phone"]["number"].ToString();
+
+            return new CitizenDataResponse(json["id"].ToString(),
+            json["displayName"].ToString(),
+            json["givenName"].ToString(),
+            json["middleName"].ToString(),
+            json["initials"].ToString(),
+            email,
+            phone,
+            json["caseworkerIdentifier"].ToString(),
+            json["description"].ToString());
         }
 
         public async Task<CitizenDataResponse> GetCitizenById(string citizenId)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")).ConfigureAwait(false);
 
-            return new CitizenDataResponse("", null, "", null, null, null, "",
-                "", null, null, null);
+            return new CitizenDataResponse("",  "", null, null, null, "",
+                "", null, null);
         }
     }
 }

@@ -111,7 +111,8 @@ $TemplateParameters = @{
   webAppServicePlanSku = $WebAppServicePlanSku;
   webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
   clientId = $ClientId;
-  clientSecret = $ClientSecret; 
+  clientSecret = $ClientSecret;
+  mcaApiUri=$env:McaApiUri;
 }
 
 # Create or update the resource group using the specified template file and template parameter values

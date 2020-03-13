@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Common
@@ -12,7 +9,7 @@ namespace Kmd.Momentum.Mea.Api.Common
     {
         Task<HttpResponseMessage> ReturnAuthorizationToken(IConfiguration config);
 
-        Task<HttpResponseMessage> CallMCA(IConfiguration config, Uri url, string httpMethod = "get", StringContent requestBody = null);
+        Task<HttpResponseMessage> GetMcaData(IConfiguration config, Uri url, string httpMethod = "get", StringContent requestBody = null);
 
     }
 }

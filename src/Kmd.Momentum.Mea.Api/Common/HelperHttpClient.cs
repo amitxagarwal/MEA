@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using System.Net.Http.Headers;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
@@ -16,7 +13,6 @@ namespace Kmd.Momentum.Mea.Api.Common
 #pragma warning restore CA1001 // Types that own disposable fields should be disposable
     {
         private readonly HttpClient _httpClient;
-
         private readonly IConfiguration _config;
 
         public HelperHttpClient(IConfiguration config)
@@ -45,7 +41,7 @@ namespace Kmd.Momentum.Mea.Api.Common
 
         }
 
-        public async Task<HttpResponseMessage> CallMCA(IConfiguration _config, Uri url, string httpMethod = "get", StringContent requestBody = null)
+        public async Task<HttpResponseMessage> GetMcaData(IConfiguration _config, Uri url, string httpMethod = "get", StringContent requestBody = null)
         {
             var authResponse = await ReturnAuthorizationToken(_config).ConfigureAwait(false);
 

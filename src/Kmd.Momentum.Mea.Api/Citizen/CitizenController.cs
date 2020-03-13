@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Citizen
@@ -14,15 +12,13 @@ namespace Kmd.Momentum.Mea.Api.Citizen
     public class CitizenController : ControllerBase
     {
         private readonly ICitizenService _citizenService;
-       
-
         public CitizenController(ICitizenService citizenService)
         {
             _citizenService = citizenService ?? throw new ArgumentNullException(nameof(citizenService));            
         }
 
         ///<summary>
-        ///Loads the data for Citizen.
+        ///Get all active citizens
         ///</summary>
         ///<response code="200">The data is loaded successfully</response>
         ///<response code="400">Bad request</response>
@@ -39,6 +35,23 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         }
 
         ///<summary>
+        ///Get Citizens in Momentum with CPR
+        ///</summary>
+        ///<response code="200">The data is loaded successfully</response>
+        ///<response code="400">Bad request</response>
+        ///<response code="404">Document is not found</response>
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [Route("/citizenByCpr/{cpr}")]
+        [SwaggerOperation(OperationId = "GetCitizenByCpr")]
+        public async Task<CitizenDataResponse> GetCitizenByCpr([Required] [FromRoute] string cpr)
+        {
+            return await _citizenService.getCitizenByCpr(cpr).ConfigureAwait(false);
+        }
+
+        ///<summary>
         ///Get Citizens in Momentum with ID
         ///</summary>
         ///<response code="200">The data is loaded successfully</response>
@@ -48,11 +61,12 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [Route("/citizenById")]
-        [SwaggerOperation(OperationId = "GetCitizenById")]
-        public async Task<string[]> GetCitizenById()
+        [Route("/citizenById/{citizenId}")]
+        [SwaggerOperation(OperationId = "getCitizenById")]
+        public async Task<CitizenDataResponse> GetCitizenById([Required] [FromRoute] string citizenId)
         {
-            return await _citizenService.GetCitizenById(new Guid("7b51f7e4-c46e-4494-95e8-13fb8098cfd8")).ConfigureAwait(false);
+            var response = await _citizenService.getCitizenById(citizenId).ConfigureAwait(false);
+            return response;
 
         }
 

@@ -1,8 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Citizen
 {
@@ -10,7 +6,8 @@ namespace Kmd.Momentum.Mea.Api.Citizen
     {
         Task<string[]> GetAllActiveCitizens();
 
-        Task<string[]> GetCitizenById(Guid citizenId);
-        
+        Task<CitizenDataResponse> getCitizenByCpr(string cpr);
+
+        Task<CitizenDataResponse> getCitizenById(string citizenId);
     }
 }

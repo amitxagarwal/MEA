@@ -37,7 +37,7 @@ steps:
       
       try 
       {  
-        # check for resourcegroups in the subscription where name like kmd-momentum-mea-api-p*
+        # check for resourcegroups in the subscription where name like kmd-momentum-mea-phoenix*
         $resourceGroups = Get-AzResourceGroup | Where-Object {($_.ResourceGroupName -like "*kmd-momentum-mea-phoenix*") -and (($_.Tags).keep -ne "true") -and (($_.Tags).important -ne "true")}
 
       }

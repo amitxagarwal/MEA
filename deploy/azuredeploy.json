@@ -54,7 +54,7 @@
     "applicationInsightsName": {
       "type": "string",
       "metadata": {
-        "description": "The name of the application insights instance. E.g. 'kmd-momentum-udv-ai' or 'kmd-momentum-ai'."
+        "description": "The name of the application insights instance. E.g. 'kmd-momentum-mea-udv-ai' or 'kmd-momentum-mea-ai'."
       }
     },
     "consoleLoggingMinLevel": {

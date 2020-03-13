@@ -19,32 +19,24 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         }
         public async Task<string[]> GetAllActiveCitizens()
         {
-            HttpResponseMessage response = await _citizenHttpClient.GetDataFromMomentumCore(_config, new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/withActiveClassification"), "get").ConfigureAwait(false);
-
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<string[]>(json);
-            }
-            throw new Exception(response.StatusCode.ToString());
+            var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCore(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/withActiveClassification")).ConfigureAwait(false);
+            return response;
         }
 
         public async Task<CitizenDataResponse> GetCitizenByCpr(string cpr)
         {
-            var response = await _citizenHttpClient.GetDataFromMomentumCore(_config, new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}"), "get").ConfigureAwait(false);
-            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var data = JsonConvert.DeserializeObject<CitizenDataModel>(json);
-            return new CitizenDataResponse(data.Id, null, data.DisplayName, null, null, null, data.ContactInformation.Email,
-                data.ContactInformation.Phone, null, null, null);
+            var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")).ConfigureAwait(false);
+            
+            return new CitizenDataResponse(response.Id, null, response.DisplayName, null, null, null, response.ContactInformation.Email,
+                response.ContactInformation.Phone, null, null, null);
         }
 
         public async Task<CitizenDataResponse> GetCitizenById(string citizenId)
         {
-            var url = await _citizenHttpClient.GetDataFromMomentumCore(_config, new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}"), "get").ConfigureAwait(false);
-            var response = await url.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<CitizenDataModel>(response);
-            return new CitizenDataResponse(actualResponse.Id, null, actualResponse.DisplayName, null, null, null, actualResponse.ContactInformation.Email,
-                actualResponse.ContactInformation.Phone, null, null, null);
+            var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")).ConfigureAwait(false);
+            
+            return new CitizenDataResponse(response.Id, null, response.DisplayName, null, null, null, response.ContactInformation.Email,
+                response.ContactInformation.Phone, null, null, null);
         }
     }
 }

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Kmd.Momentum.Mea.Api
+﻿namespace Kmd.Momentum.Mea.Api
 {
-    public class EnrollmentStatus
+    public enum EnrollmentStatus
     {
-        public DateTimeOffset? EndDate { get; set; }
-        public int Status { get; set; }
+        Active = 0,
+        Inactive = 1,
+        AwaitingClosure = 2
     }
 }

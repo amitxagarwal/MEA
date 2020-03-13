@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api
 {
-    public class Profile
+    public class CitizenProfile
     {
         public bool GuestAuthorityParticipationUnwantedByCitizen { get; set; }
         public string ParticipationUnwantedByCitizenUpdatedAt { get; set; }

@@ -7,63 +7,80 @@ namespace Kmd.Momentum.Mea.Api
 {
     public class CitizenDataModel
     {
-        public string Cpr { get; }
-        public int Age { get; }
-        public int? ResidenceMunicipalityId { get; }
-        public int? ResponsibleMunicipalityId { get; }
-        public int JobcenterId { get; }
-        public bool HasProtectedAddress { get; }
-        public ResponsibleActors[] ResponsibleActors { get; }
-        public DateTimeOffset BirthDate { get; }
-        public ContactInformation ContactInformation { get; }
-        public bool IsExternalLookup { get; }
-        public int? ClassificationStatus { get; }
-        public string TargetGroupCode { get; }
-        public bool IsBelongingToOtherJobCenter { get; }
-        public string JobCenterName { get; }
-        public Profile Profile { get; }
-        public string IsDead { get; }
-        public string MaritalStatusCode { get; }
-        public string CitizenshipCode { get; }
-        public EnrollmentStatus EnrollmentStatus { get; }
-        public string CurrentContactGroupCode { get; }
-        public string CurrentPersonCategory { get; }
-        public string IsHandledInUnemploymentFund { get; }
-        public string PersonCivilRegistrationStatus { get; }
-        public string Id { get; }
-        public string DisplayName { get; }
+        public string Cpr { get; set; }
 
-        public CitizenDataModel(string cpr, int age, int residenceMunicipalityId, int responsibleMunicipalityId, int jobcenterId, bool hasProtectedAddress,
-            ResponsibleActors[] responsibleActors, DateTimeOffset birthDate, ContactInformation contactInformation, bool isExternalLookup, int classificationStatus,
-            string targetGroupCode, bool isBelongingToOtherJobCenter, string jobCenterName, Profile profile, string isDead, string maritalStatusCode,
-            string citizenshipCode, EnrollmentStatus enrollmentStatus, string currentContactGroupCode, string currentPersonCategory, string isHandledInUnemploymentFund,
-            string personCivilRegistrationStatus, string id, string displayName)
+        public int Age
         {
-            Cpr = cpr;
-            Age = age;
-            ResidenceMunicipalityId = residenceMunicipalityId;
-            ResponsibleMunicipalityId = responsibleMunicipalityId;
-            JobcenterId = jobcenterId;
-            HasProtectedAddress = hasProtectedAddress;
-            ResponsibleActors = responsibleActors;
-            BirthDate = birthDate;
-            ContactInformation = contactInformation;
-            IsExternalLookup = isExternalLookup;
-            ClassificationStatus = classificationStatus;
-            TargetGroupCode = targetGroupCode;
-            IsBelongingToOtherJobCenter = isBelongingToOtherJobCenter;
-            JobCenterName = jobCenterName;
-            Profile = profile;
-            IsDead = isDead;
-            MaritalStatusCode = maritalStatusCode;
-            CitizenshipCode = citizenshipCode;
-            EnrollmentStatus = enrollmentStatus;
-            CurrentContactGroupCode = currentContactGroupCode;
-            CurrentPersonCategory = currentPersonCategory;
-            IsHandledInUnemploymentFund = isHandledInUnemploymentFund;
-            PersonCivilRegistrationStatus = personCivilRegistrationStatus;
-            Id = id;
-            DisplayName = displayName;
+            get
+            {
+                var age = DateTime.Now.Year - BirthDate.Year;
+                var now = DateTime.Now;
+                if (now.Month < BirthDate.Month || (now.Month == BirthDate.Month && now.Day < BirthDate.Day))
+                {
+                    age--;
+                }
+
+                return age;
+            }
+        }
+
+        public int ResidenceMunicipalityId { get; set; }
+        public int? ResponsibleMunicipalityId { get; set; }
+        public int JobcenterId { get; set; }
+        public bool HasProtectedAddress { get; set; }
+        public IEnumerable<ResponsibleActors> ResponsibleActors { get; set; }
+        public DateTime BirthDate { get; set; }
+        public ContactInformation ContactInformation { get; set; }
+        public bool IsExternalLookup { get; set; }
+        public ClassificationStatus? ClassificationStatus { get; private set; }
+        public string TargetGroupCode { get; private set; }
+        public bool IsBelongingToOtherJobCenter { get; set; }
+        public string JobCenterName { get; set; }
+        public CitizenProfile Profile { get; set; }
+        public bool IsDead { get; private set; }
+        public string MaritalStatusCode { get; set; }
+        public string CitizenshipCode { get; set; }
+        public CitizenEnrollmentStatus EnrollmentStatus { get; set; }
+        public string CurrentContactGroupCode { get; private set; }
+        public string CurrentPersonCategory { get; private set; }
+        public bool? IsHandledInUnemploymentFund { get; set; }
+        public string PersonCivilRegistrationStatus { get; set; }
+
+        public Classification CurrentClassification
+        {
+            set
+            {
+                if (value == null)
+                {
+                    return;
+                }
+
+                CurrentPersonCategory = (value as IHasPersonCategoryCode)?.PersonCategoryCode;
+                CurrentContactGroupCode = value.ContactGroupCode;
+            }
+        }
+
+        public Classification LatestClassification
+        {
+            set
+            {
+                if (value == null)
+                {
+                    return;
+                }
+
+
+                IsDead = value.ClosingReasonCode == ClassificationClosingReasons.Doed ||
+                         (!string.IsNullOrEmpty(PersonCivilRegistrationStatus) && (PersonCivilRegistrationStatus.Equals(CprStatusTypes.Dead)));
+                ClassificationStatus = value.Status;
+
+                if (!value.IsActive)
+                {
+                    return;
+                }
+
+                TargetGroupCode = value.TargetGroupCode;
+            }
         }
     }
 }

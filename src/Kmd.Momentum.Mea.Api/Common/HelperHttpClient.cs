@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace Kmd.Momentum.Mea.Api.Common
 {
@@ -21,7 +22,7 @@ namespace Kmd.Momentum.Mea.Api.Common
             _config = config;
         }
 
-        private async Task<HttpResponseMessage> ReturnAuthorizationToken(IConfiguration _config)
+        private async Task<HttpResponseMessage> ReturnAuthorizationToken()
         {
 #pragma warning disable CA2000 // Dispose objects before losing scope
             var content = new FormUrlEncodedContent(new[]
@@ -38,35 +39,32 @@ namespace Kmd.Momentum.Mea.Api.Common
             var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"),
                 content).ConfigureAwait(false);
             return response;
-
         }
 
-        public async Task<HttpResponseMessage> GetDataFromMomentumCore(IConfiguration _config, Uri url, string httpMethod = "get", StringContent requestBody = null)
+        public async Task<string[]> GetAllActiveCitizenDataFromMomentumCore(Uri url)
         {
-            var authResponse = await ReturnAuthorizationToken(_config).ConfigureAwait(false);
+            var authResponse = await ReturnAuthorizationToken().ConfigureAwait(false);
+            
+            var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
 
-            if (authResponse.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                return authResponse;
-            }
+            var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<string[]>(json);
+        }
+
+        public async Task<CitizenDataModel> GetCitizenDataByCprOrCitizenIdFromMomentumCore(Uri url)
+        {
+            var authResponse = await ReturnAuthorizationToken().ConfigureAwait(false);
 
             var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
 
-            switch (httpMethod?.ToLower(CultureInfo.CurrentCulture))
-            {
-                case "get":
-                    return await _httpClient.GetAsync(url).ConfigureAwait(false);
+            var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
-                case "post":
-                    if (string.IsNullOrEmpty(requestBody?.ToString()))
-                        return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
-
-                    return await _httpClient.PostAsync(url, requestBody).ConfigureAwait(false);
-
-                default: return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
-
-            }
+            var citizenData = await response.Content.ReadAsAsync<CitizenDataModel>().ConfigureAwait(false);
+            return citizenData;
         }
     }
 }

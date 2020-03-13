@@ -7,6 +7,7 @@ namespace Kmd.Momentum.Mea.Api.Common
 {
     public interface IHelperHttpClient
     {
-        Task<HttpResponseMessage> GetDataFromMomentumCore(IConfiguration config, Uri url, string httpMethod = "get", StringContent requestBody = null);
+        Task<string[]> GetAllActiveCitizenDataFromMomentumCore(Uri url);
+        Task<CitizenDataModel> GetCitizenDataByCprOrCitizenIdFromMomentumCore(Uri url);        
     }
 }

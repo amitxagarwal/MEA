@@ -17,9 +17,9 @@ namespace Kmd.Momentum.Mea.Api.Citizen
             _citizenHttpClient = citizenHttpClient;
             _config = config;
         }
-        public async Task<string[]> GetAllActiveCitizens()
+        public async Task<string[]> GetDataFromMomentumCore()
         {
-            HttpResponseMessage response = await _citizenHttpClient.GetMcaData(_config, new Uri($"{_config["McaUri"]}citizens/withActiveClassification"), "get").ConfigureAwait(false);
+            HttpResponseMessage response = await _citizenHttpClient.GetMcaData(_config, new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/withActiveClassification"), "get").ConfigureAwait(false);
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -29,18 +29,18 @@ namespace Kmd.Momentum.Mea.Api.Citizen
             throw new Exception(response.StatusCode.ToString());
         }
 
-        public async Task<CitizenDataResponse> getCitizenByCpr(string cpr)
+        public async Task<CitizenDataResponse> GetCitizenByCpr(string cpr)
         {
-            var response = await _citizenHttpClient.GetMcaData(_config, new Uri($"{_config["McaUri"]}citizens/{cpr}"), "get").ConfigureAwait(false);
+            var response = await _citizenHttpClient.GetMcaData(_config, new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}"), "get").ConfigureAwait(false);
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var data = JsonConvert.DeserializeObject<CitizenDataModel>(json);
             return new CitizenDataResponse(data.Id, true, data.DisplayName, null, null, null, data.ContactInformation.Email,
                 data.ContactInformation.Phone, null, null, true);
         }
 
-        public async Task<CitizenDataResponse> getCitizenById(string citizenId)
+        public async Task<CitizenDataResponse> GetCitizenById(string citizenId)
         {
-            var url = await _citizenHttpClient.GetMcaData(_config, new Uri($"{_config["McaUri"]}citizens/{citizenId}"), "get").ConfigureAwait(false);
+            var url = await _citizenHttpClient.GetMcaData(_config, new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}"), "get").ConfigureAwait(false);
             var response = await url.Content.ReadAsStringAsync().ConfigureAwait(false);
             var actualResponse = JsonConvert.DeserializeObject<CitizenDataModel>(response);
             return new CitizenDataResponse(actualResponse.Id, true, actualResponse.DisplayName, null, null, null, actualResponse.ContactInformation.Email,

@@ -21,7 +21,7 @@ namespace Kmd.Momentum.Mea.Api.Common
             _config = config;
         }
 
-        public async Task<HttpResponseMessage> ReturnAuthorizationToken(IConfiguration _config)
+        private async Task<HttpResponseMessage> ReturnAuthorizationToken(IConfiguration _config)
         {
 #pragma warning disable CA2000 // Dispose objects before losing scope
             var content = new FormUrlEncodedContent(new[]

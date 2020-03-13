@@ -2,7 +2,7 @@
 {
     public class CitizenDataResponse
     {
-        public string Id { get; }
+        public string CitizenId { get; }
         public bool IsBookable { get; }
         public string DisplayName { get; }
         public string GivenName { get; }
@@ -14,9 +14,9 @@
         public string Description { get; }
         public bool IsActive { get; }
 
-        public CitizenDataResponse(string id, bool isBookable, string displayName, string givenName, string middleName, string initials, string email, string phone, string caseworkerIdentifier, string description, bool isActive)
+        public CitizenDataResponse(string citizenId, bool isBookable, string displayName, string givenName, string middleName, string initials, string email, string phone, string caseworkerIdentifier, string description, bool isActive)
         {
-            Id = id;
+            CitizenId = citizenId;
             IsBookable = isBookable;
             DisplayName = displayName;
             GivenName = givenName;

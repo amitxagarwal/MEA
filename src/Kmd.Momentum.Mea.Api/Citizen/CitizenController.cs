@@ -31,7 +31,7 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [SwaggerOperation(OperationId = "GetAllActiveCitizens")]
         public async Task<string[]> GetAllActiveCitizens()
         {
-            return await _citizenService.GetAllActiveCitizens().ConfigureAwait(false);
+            return await _citizenService.GetDataFromMomentumCore().ConfigureAwait(false);
         }
 
         ///<summary>
@@ -48,7 +48,7 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [SwaggerOperation(OperationId = "GetCitizenByCpr")]
         public async Task<CitizenDataResponse> GetCitizenByCpr([Required] [FromRoute] string cpr)
         {
-            return await _citizenService.getCitizenByCpr(cpr).ConfigureAwait(false);
+            return await _citizenService.GetCitizenByCpr(cpr).ConfigureAwait(false);
         }
 
         ///<summary>
@@ -62,10 +62,10 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [Route("/citizenById/{citizenId}")]
-        [SwaggerOperation(OperationId = "getCitizenById")]
+        [SwaggerOperation(OperationId = "GetCitizenById")]
         public async Task<CitizenDataResponse> GetCitizenById([Required] [FromRoute] string citizenId)
         {
-            var response = await _citizenService.getCitizenById(citizenId).ConfigureAwait(false);
+            var response = await _citizenService.GetCitizenById(citizenId).ConfigureAwait(false);
             return response;
 
         }

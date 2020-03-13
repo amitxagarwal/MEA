@@ -5,7 +5,7 @@
     "instanceId": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 9,
+      "maxLength": 16,
       "metadata": {
         "description": "The instance ID (e.g. 'udv', 'udvtest', 'shareddev', 'prod' etc.).",
         "$hint": "Generally only use the 'instanceId' part of the resourceNamePrefix"
@@ -43,12 +43,6 @@
       "type": "string",
       "metadata": {
         "description": "The name of the application insights instance. E.g. 'kmd-momentum-udv-ai' or 'kmd-momentum-ai'."
-      }
-    },
-    "applicationInsightsResourceGroup": {
-      "type": "string",
-      "metadata": {
-        "description": "Resource group name of app insights instance. E.g. 'kmd-momentum-udv-rg' or 'kmd-momentum-shareddev-rg'"
       }
     },
     "consoleLoggingMinLevel": {
@@ -113,6 +107,14 @@
   },
   "resources": [
     {
+      "name": "[parameters('applicationInsightsName')]",
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2015-05-01",
+      "location": "[parameters('location')]",
+      "tags": {},
+      "properties": {}
+    },
+    {
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2018-02-01",
       "name": "[variables('hostingPlanName')]",
@@ -145,7 +147,7 @@
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-              "value": "[reference(resourceId(parameters('applicationInsightsResourceGroup'), 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
+              "value": "[reference(resourceId(resourceGroup().Name, 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
             },
             {
               "name": "KMD_MOMENTUM_MEA_ConsoleLoggingMinLevel",
@@ -203,7 +205,7 @@
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-              "value": "[reference(resourceId(parameters('applicationInsightsResourceGroup'), 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
+              "value": "[reference(resourceId(resourceGroup().Name, 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
             },
             {
               "name": "KMD_MOMENTUM_MEA_ConsoleLoggingMinLevel",

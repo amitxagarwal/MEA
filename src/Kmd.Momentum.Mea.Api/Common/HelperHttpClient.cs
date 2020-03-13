@@ -41,7 +41,7 @@ namespace Kmd.Momentum.Mea.Api.Common
 
         }
 
-        public async Task<HttpResponseMessage> GetMcaData(IConfiguration _config, Uri url, string httpMethod = "get", StringContent requestBody = null)
+        public async Task<HttpResponseMessage> GetDataFromMomentumCore(IConfiguration _config, Uri url, string httpMethod = "get", StringContent requestBody = null)
         {
             var authResponse = await ReturnAuthorizationToken(_config).ConfigureAwait(false);
 

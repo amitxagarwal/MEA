@@ -7,6 +7,6 @@ namespace Kmd.Momentum.Mea.Api.Common
 {
     public interface IHelperHttpClient
     {
-        Task<HttpResponseMessage> GetMcaData(IConfiguration config, Uri url, string httpMethod = "get", StringContent requestBody = null);
+        Task<HttpResponseMessage> GetDataFromMomentumCore(IConfiguration config, Uri url, string httpMethod = "get", StringContent requestBody = null);
     }
 }

@@ -31,7 +31,7 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [SwaggerOperation(OperationId = "GetAllActiveCitizens")]
         public async Task<string[]> GetAllActiveCitizens()
         {
-            return await _citizenService.GetDataFromMomentumCore().ConfigureAwait(false);
+            return await _citizenService.GetAllActiveCitizens().ConfigureAwait(false);
         }
 
         ///<summary>

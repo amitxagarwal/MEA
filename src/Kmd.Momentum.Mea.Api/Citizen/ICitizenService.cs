@@ -4,7 +4,7 @@ namespace Kmd.Momentum.Mea.Api.Citizen
 {
     public interface ICitizenService
     {
-        Task<string[]> GetDataFromMomentumCore();
+        Task<string[]> GetAllActiveCitizens();
 
         Task<CitizenDataResponse> GetCitizenByCpr(string cpr);
 

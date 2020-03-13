@@ -9,6 +9,8 @@ parameters:
   webAppServicePlanSku: B1
   webAppConfigAlwaysOn: true
   autoSwapSlots: false
+  clientId: <secret>
+  clientSecret: <secret>
 
 jobs:
   - deployment: deploy_momentum_mea_${{ parameters.environmentNameSuffix }}
@@ -23,6 +25,8 @@ jobs:
       ResourceGroupName: kmd-momentum-mea-${{ parameters.instanceId }}-rg
       WebAppServicePlanSku: ${{ parameters.webAppServicePlanSku }}
       WebAppConfigAlwaysOn: ${{ parameters.webAppConfigAlwaysOn }}
+      ClientId: ${{ parameters.clientId }}
+      ClientSecret: ${{ parameters.clientSecret }}
 
     strategy:
       runOnce:
@@ -36,7 +40,7 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'
                 ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-infrastructure.ps1'
-                ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)'
+                ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)' -ClientId '$(ClientId)' -ClientSecret '$(ClientSecret)'
                 azurePowerShellVersion: 'LatestVersion'
                 pwsh: true
 

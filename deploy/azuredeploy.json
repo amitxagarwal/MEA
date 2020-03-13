@@ -2,6 +2,24 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "mcaApiUri": {
+      "type": "string",
+      "metadata": {
+        "description": "Base Uri for calling MCA API"
+      }
+    },
+    "clientId": {
+      "type": "string",
+      "metadata": {
+        "description": "Client Id for authentication"
+      }
+    },
+    "clientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "client Secret for authentication"
+      }
+    },
     "instanceId": {
       "type": "string",
       "minLength": 1,
@@ -42,7 +60,7 @@
     "applicationInsightsName": {
       "type": "string",
       "metadata": {
-        "description": "The name of the application insights instance. E.g. 'kmd-momentum-udv-ai' or 'kmd-momentum-ai'."
+        "description": "The name of the application insights instance. E.g. 'kmd-momentum-mea-udv-ai' or 'kmd-momentum-mea-ai'."
       }
     },
     "consoleLoggingMinLevel": {
@@ -160,6 +178,18 @@
             {
               "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
               "value": "[parameters('diagnosticSeqApiKey')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ClientId",
+              "value": "[parameters('clientId')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ClientSecret",
+              "value": "[parameters('clientSecret')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_McaApiUri",
+              "value": "[parameters('mcaApiUri')]"
             }
           ]
         }
@@ -218,6 +248,18 @@
             {
               "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
               "value": "[parameters('diagnosticSeqApiKey')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ClientId",
+              "value": "[parameters('clientId')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ClientSecret",
+              "value": "[parameters('clientSecret')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_McaApiUri",
+              "value": "[parameters('mcaApiUri')]"
             }
           ]
         }

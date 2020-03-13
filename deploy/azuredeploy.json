@@ -2,6 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "mcaApiUri": {
+      "type": "string",
+      "metadata": {
+        "description": "Base Uri for calling MCA API"
+      }
+    },
     "clientId": {
       "type": "string",
       "metadata": {
@@ -180,6 +186,10 @@
             {
               "name": "KMD_MOMENTUM_MEA_ClientSecret",
               "value": "[parameters('clientSecret')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_McaApiUri",
+              "value": "[parameters('mcaApiUri')]"
             }
           ]
         }
@@ -246,6 +256,10 @@
             {
               "name": "KMD_MOMENTUM_MEA_ClientSecret",
               "value": "[parameters('clientSecret')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_McaApiUri",
+              "value": "[parameters('mcaApiUri')]"
             }
           ]
         }

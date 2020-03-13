@@ -1,6 +1,7 @@
 ﻿using Kmd.Momentum.Mea.Api.Common;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -26,17 +27,18 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         public async Task<CitizenDataResponse> GetCitizenByCpr(string cpr)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")).ConfigureAwait(false);
-            
-            return new CitizenDataResponse(response.Id, null, response.DisplayName, null, null, null, response.ContactInformation.Email,
-                response.ContactInformation.Phone, null, null, null);
+            var json = JObject.Parse(response);
+
+            return new CitizenDataResponse("", null, "", null, null, null, "",
+                "", null, null, null);
         }
 
         public async Task<CitizenDataResponse> GetCitizenById(string citizenId)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")).ConfigureAwait(false);
-            
-            return new CitizenDataResponse(response.Id, null, response.DisplayName, null, null, null, response.ContactInformation.Email,
-                response.ContactInformation.Phone, null, null, null);
+
+            return new CitizenDataResponse("", null, "", null, null, null, "",
+                "", null, null, null);
         }
     }
 }

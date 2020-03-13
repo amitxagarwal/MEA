@@ -54,7 +54,7 @@ namespace Kmd.Momentum.Mea.Api.Common
             return JsonConvert.DeserializeObject<string[]>(json);
         }
 
-        public async Task<CitizenDataModel> GetCitizenDataByCprOrCitizenIdFromMomentumCore(Uri url)
+        public async Task<string> GetCitizenDataByCprOrCitizenIdFromMomentumCore(Uri url)
         {
             var authResponse = await ReturnAuthorizationToken().ConfigureAwait(false);
 
@@ -63,7 +63,7 @@ namespace Kmd.Momentum.Mea.Api.Common
 
             var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
-            var citizenData = await response.Content.ReadAsAsync<CitizenDataModel>().ConfigureAwait(false);
+            var citizenData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return citizenData;
         }
     }

@@ -2,10 +2,22 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "clientId": {
+      "type": "string",
+      "metadata": {
+        "description": "Client Id for authentication"
+      }
+    },
+    "clientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "client Secret for authentication"
+      }
+    },
     "instanceId": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 9,
+      "maxLength": 16,
       "metadata": {
         "description": "The instance ID (e.g. 'udv', 'udvtest', 'shareddev', 'prod' etc.).",
         "$hint": "Generally only use the 'instanceId' part of the resourceNamePrefix"
@@ -14,7 +26,7 @@
     "resourceNamePrefix": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 27,
+      "maxLength": 34,
       "metadata": {
         "description": "The resource name prefix (e.g. 'kmd-momentum-mea-udv', 'kmd-momentum-shareddev', 'kmd-momentum-prod' etc.).",
         "$hint": "Only use letters, numbers, and hyphen characters here. The hyphens are stripped to make the storage account name, which cannot be more than 24 characters (see https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview#naming-storage-accounts)."
@@ -42,13 +54,7 @@
     "applicationInsightsName": {
       "type": "string",
       "metadata": {
-        "description": "The name of the application insights instance. E.g. 'kmd-momentum-udv-ai' or 'kmd-momentum-ai'."
-      }
-    },
-    "applicationInsightsResourceGroup": {
-      "type": "string",
-      "metadata": {
-        "description": "Resource group name of app insights instance. E.g. 'kmd-momentum-udv-rg' or 'kmd-momentum-shareddev-rg'"
+        "description": "The name of the application insights instance. E.g. 'kmd-momentum-mea-udv-ai' or 'kmd-momentum-mea-ai'."
       }
     },
     "consoleLoggingMinLevel": {
@@ -113,6 +119,14 @@
   },
   "resources": [
     {
+      "name": "[parameters('applicationInsightsName')]",
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2015-05-01",
+      "location": "[parameters('location')]",
+      "tags": {},
+      "properties": {}
+    },
+    {
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2018-02-01",
       "name": "[variables('hostingPlanName')]",
@@ -145,7 +159,7 @@
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-              "value": "[reference(resourceId(parameters('applicationInsightsResourceGroup'), 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
+              "value": "[reference(resourceId(resourceGroup().Name, 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
             },
             {
               "name": "KMD_MOMENTUM_MEA_ConsoleLoggingMinLevel",
@@ -158,6 +172,14 @@
             {
               "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
               "value": "[parameters('diagnosticSeqApiKey')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ClientId",
+              "value": "[parameters('clientId')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ClientSecret",
+              "value": "[parameters('clientSecret')]"
             }
           ]
         }
@@ -203,7 +225,7 @@
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-              "value": "[reference(resourceId(parameters('applicationInsightsResourceGroup'), 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
+              "value": "[reference(resourceId(resourceGroup().Name, 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
             },
             {
               "name": "KMD_MOMENTUM_MEA_ConsoleLoggingMinLevel",
@@ -216,6 +238,14 @@
             {
               "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
               "value": "[parameters('diagnosticSeqApiKey')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ClientId",
+              "value": "[parameters('clientId')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ClientSecret",
+              "value": "[parameters('clientSecret')]"
             }
           ]
         }

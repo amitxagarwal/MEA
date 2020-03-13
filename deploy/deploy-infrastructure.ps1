@@ -52,14 +52,6 @@ Param
 
   [Parameter(Mandatory=$true)]
   [string]
-  $ApplicationInsightsName,
-
-  [Parameter(Mandatory=$true)]
-  [string]
-  $ApplicationInsightsResourceGroup,
-
-  [Parameter(Mandatory=$true)]
-  [string]
   $DiagnosticSeqServerUrl,
 
   [Parameter(Mandatory=$true)]
@@ -76,7 +68,15 @@ Param
   $WebAppConfigAlwaysOn = $false,
 
   [switch] 
-  $ValidateOnly
+  $ValidateOnly,
+
+  [Parameter(Mandatory=$true)]
+  [string]
+  $ClientId,
+
+  [Parameter(Mandatory=$true)]
+  [string]
+  $ClientSecret
 )
 
 Push-Location $PSScriptRoot
@@ -99,17 +99,19 @@ function Format-ValidationOutput {
 }
 
 $ResourceGroupName = "$ResourceNamePrefix-rg"
+$ApplicationInsightsName="$ResourceNamePrefix-ai";
 
 # Set ARM template parameter values
 $TemplateParameters = @{
   instanceId = $InstanceId;
   resourceNamePrefix = $ResourceNamePrefix;
   applicationInsightsName = $ApplicationInsightsName;
-  applicationInsightsResourceGroup = $ApplicationInsightsResourceGroup;
   diagnosticSeqServerUrl = $DiagnosticSeqServerUrl;
   diagnosticSeqApiKey = $DiagnosticSeqApiKey;
   webAppServicePlanSku = $WebAppServicePlanSku;
   webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
+  clientId = $ClientId;
+  clientSecret = $ClientSecret; 
 }
 
 # Create or update the resource group using the specified template file and template parameter values

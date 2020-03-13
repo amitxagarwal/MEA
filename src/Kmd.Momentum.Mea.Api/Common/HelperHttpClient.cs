@@ -27,11 +27,11 @@ namespace Kmd.Momentum.Mea.Api.Common
             var content = new FormUrlEncodedContent(new[]
            {
 #pragma warning disable CA1062 // Validate arguments of public methods
-                        new KeyValuePair<string, string>("grant_type", _config["grant_type"]),
+                        new KeyValuePair<string, string>("grant_type","client_credentials"),
 #pragma warning restore CA1062 // Validate arguments of public methods
-                        new KeyValuePair<string, string>("client_id", _config["client_id"]),
-                        new KeyValuePair<string, string>("client_secret", _config["client_secret"]),
-                        new KeyValuePair<string, string>("resource", _config["resource"])
+                        new KeyValuePair<string, string>("client_id", _config["KMD_MOMENTUM_MEA_ClientId"]),
+                        new KeyValuePair<string, string>("client_secret", _config["KMD_MOMENTUM_MEA_ClientSecret"]),
+                        new KeyValuePair<string, string>("resource", "74b4f45c-4e9b-4be1-98f1-ea876d9edd11")
                     });
 #pragma warning restore CA2000 // Dispose objects before losing scope
 

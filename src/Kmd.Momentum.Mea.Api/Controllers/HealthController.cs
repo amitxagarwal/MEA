@@ -24,7 +24,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers
         /// <response code="503">API is unhealthy or in degraded state</response>
         [HttpGet]
         [ProducesResponseType(typeof(HealthReport), (int)HttpStatusCode.OK)]
-        // [Authorize(Scopes.Access)]
+        //[Authorize(Scopes.Access)]
         public async Task<IActionResult> Ready()
         {
             var report = await _healthCheckService.CheckHealthAsync().ConfigureAwait(true);

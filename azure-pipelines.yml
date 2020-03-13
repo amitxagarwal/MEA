@@ -51,10 +51,12 @@ stages:
       webAppServicePlanSku: S1
       webAppConfigAlwaysOn: false
       autoSwapSlots: true
+      clientId: $(McaClientId)
+      clientSecret: $(McaClientSecret)
 
 - stage: deploy_internal
   dependsOn: Build
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
   jobs:
   - template: azure-pipelines-release-template.yml
     parameters:
@@ -68,3 +70,5 @@ stages:
       webAppServicePlanSku: S1
       webAppConfigAlwaysOn: false
       autoSwapSlots: true
+      clientId: $(McaClientId)
+      clientSecret: $(McaClientSecret)

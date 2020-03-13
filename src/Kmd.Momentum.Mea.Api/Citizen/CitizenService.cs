@@ -28,32 +28,52 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")).ConfigureAwait(false);
             var json = JObject.Parse(response);
-            string email = string.Empty;
-            string phone = string.Empty;
 
-            if (!String.IsNullOrEmpty(json["contactInformation"]["email"].ToString()))
-                email = json["contactInformation"]["email"]["address"].ToString();
+            return new CitizenDataResponse(
+                GetVal(json, "id"),
+                GetVal(json, "displayName"),
+                GetVal(json, "givenName"),
+                GetVal(json, "middleName"),
+                GetVal(json, "initials"),
+                GetVal(json, "contactInformation.email.address"),
+                GetVal(json, "contactInformation.phone.number"),
+                GetVal(json, "caseworkerIdentifier"),
+                GetVal(json, "description"));
 
-            if (!String.IsNullOrEmpty(json["contactInformation"]["phone"].ToString()))
-                phone = json["contactInformation"]["phone"]["number"].ToString();
 
-            return new CitizenDataResponse(json["id"].ToString(),
-            json["displayName"].ToString(),
-            json["givenName"].ToString(),
-            json["middleName"].ToString(),
-            json["initials"].ToString(),
-            email,
-            phone,
-            json["caseworkerIdentifier"].ToString(),
-            json["description"].ToString());
         }
 
         public async Task<CitizenDataResponse> GetCitizenById(string citizenId)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")).ConfigureAwait(false);
+            var json = JObject.Parse(response);
 
-            return new CitizenDataResponse("",  "", null, null, null, "",
-                "", null, null);
+            return new CitizenDataResponse(
+                GetVal(json, "id"),
+                GetVal(json, "displayName"),
+                GetVal(json, "givenName"),
+                GetVal(json, "middleName"),
+                GetVal(json, "initials"),
+                GetVal(json, "contactInformation.email.address"),
+                GetVal(json, "contactInformation.phone.number"),
+                GetVal(json, "caseworkerIdentifier"),
+                GetVal(json, "description"));
+        }
+
+        private string GetVal(JObject _json, string _key)
+        {
+            string[] _keyArrr = _key.Split('.');
+            var _subJson = _json[_keyArrr[0]];
+
+            if (_subJson == null || String.IsNullOrEmpty(_subJson.ToString()))
+                return String.Empty;
+
+            if (_keyArrr.Length > 1)
+            {
+                _key = _key.Replace(_keyArrr[0] + ".", string.Empty, System.StringComparison.CurrentCulture);
+                return GetVal((JObject)_subJson, _key);
+            }
+            return _subJson.ToString();
         }
     }
 }

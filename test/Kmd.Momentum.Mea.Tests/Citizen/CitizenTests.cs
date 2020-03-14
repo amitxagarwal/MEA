@@ -26,7 +26,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             _configurationRoot.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com");
 
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCore(new Uri($"{_configurationRoot.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/withActiveClassification"))).Returns(Task.FromResult( cprArray));
+            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCore(new Uri($"{_configurationRoot.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/withActiveClassification"))).Returns(Task.FromResult(cprArray));
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configurationRoot.Object);
@@ -44,45 +44,18 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         {
             //Arrange
             var helperHttpClientMoq = new Mock<IHelperHttpClient>();
-            var primaryAddress = new PrimaryAddress("building", "city", "coName", "end", "floor", "id", true, true, true, "latitude", "longitutde", "postalCode",
-                "start", "street", "suite", null);
-            
-            var responsibleActors = new ResponsibleActors() { ActorId = "actor", ResponsibilityCodes = new int?[] { 1, 2 }, Role = 1 };
-            var responsibleActorsArray = new ResponsibleActors[] { responsibleActors };
-            var enrollmentStatus = new CitizenEnrollmentStatus() { EndDate = DateTimeOffset.UtcNow, Status = 1 };
-            var profile = new CitizenProfile()
-            {
-                GuestAuthorityParticipationUnwantedByCitizen = true,
-                GuestAuthorityParticipationUnwantedByGuestAuthority = true,
-                ParticipationUnwantedByCitizenUpdatedAt = "ParticipationUnwantedByCitizenUpdatedAt",
-                ParticipationUnwantedByGuestAuthorityUpdatedAt = "ParticipationUnwantedByGuestAuthorityUpdatedAt"
-            };
+            var httpClientCitizenDataResponse = "{\"cpr\":\"dummyCpr\",\"id\":\"test-test-test-test-test\",\"displayName\":\"test display name\",\"contactInformation\":{\"email\":{\"id\":\"testId-testId-testId-testId-testId\",\"address\":\"test@test.com\"},\"phone\":{\"id\":\"testId-testId-testId-testId-testId\",\"number\":\"+99999999\",\"isMobile\":true}}}";
 
-            var contactInformation = new ContactInformation() { 
-             Email = "test@test.com",
-             Phone = "11111111",
-             PrimaryAddress= primaryAddress,
-             TemporaryAddress ="temporary address"};
+            var citizenDataResponse = new CitizenDataResponse("test-test-test-test-test", "test display name", "", "", "", "test@test.com", "+99999999", "", "");
+            var _configuration = new Mock<IConfiguration>();
+            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            var citizenDataModel = new CitizenDataModel("cpr",37,1,1,1,true, responsibleActorsArray, DateTimeOffset.UtcNow,contactInformation,true,1,"targetgroupcode",
-                true,"jobcentrename", profile, "isDead", "married","citizenshipcode", enrollmentStatus, "currentcontact groupcode","currentpersponcategory",
-                "ishandled","civilregistrationstatus","1","displayname");
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCpr"))).Returns(Task.FromResult(httpClientCitizenDataResponse));
 
-            var citizenDataResponse =
-                new CitizenDataResponse(citizenDataModel.Id, null, citizenDataModel.DisplayName, null, null, null, citizenDataModel.ContactInformation.Email,
-                citizenDataModel.ContactInformation.Phone, null, null, null);
-
-            var _configurationRoot = new Mock<IConfiguration>();
-            _configurationRoot.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com");
-
-#pragma warning disable CA2000 // Dispose objects before losing scope
-            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_configurationRoot.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenDataModel.Cpr}"))).Returns(Task.FromResult(citizenDataModel));
-#pragma warning restore CA2000 // Dispose objects before losing scope
-
-            var citizenService = new CitizenService(helperHttpClientMoq.Object, _configurationRoot.Object);
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 
             //Act
-            var result = await citizenService.GetCitizenByCpr(citizenDataModel.Cpr).ConfigureAwait(false);
+            var result = await citizenService.GetCitizenByCpr("dummyCpr").ConfigureAwait(false);
 
             //Asert
             result.Should().NotBeNull();
@@ -94,48 +67,18 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         {
             //Arrange
             var helperHttpClientMoq = new Mock<IHelperHttpClient>();
-            var primaryAddress = new PrimaryAddress("building", "city", "coName", "end", "floor", "id", true, true, true, "latitude", "longitutde", "postalCode",
-                "start", "street", "suite", null);
+            var httpClientCitizenDataResponse = "{\"cpr\":\"dummyCpr\",\"id\":\"test-test-test-test-test\",\"displayName\":\"test display name\",\"contactInformation\":{\"email\":{\"id\":\"testId-testId-testId-testId-testId\",\"address\":\"test@test.com\"},\"phone\":{\"id\":\"testId-testId-testId-testId-testId\",\"number\":\"+99999999\",\"isMobile\":true}}}";
 
-            var responsibleActors = new ResponsibleActors() { ActorId = "actor", ResponsibilityCodes = new int?[] { 1, 2 }, Role = 1 };
-            var responsibleActorsArray = new ResponsibleActors[] { responsibleActors };
-            var enrollmentStatus = new CitizenEnrollmentStatus() { EndDate = DateTimeOffset.UtcNow, Status = 1 };
-            var profile = new CitizenProfile()
-            {
-                GuestAuthorityParticipationUnwantedByCitizen = true,
-                GuestAuthorityParticipationUnwantedByGuestAuthority = true,
-                ParticipationUnwantedByCitizenUpdatedAt = "ParticipationUnwantedByCitizenUpdatedAt",
-                ParticipationUnwantedByGuestAuthorityUpdatedAt = "ParticipationUnwantedByGuestAuthorityUpdatedAt"
-            };
+            var citizenDataResponse = new CitizenDataResponse("test-test-test-test-test", "test display name", "", "", "", "test@test.com", "+99999999", "", "");
+            var _configuration = new Mock<IConfiguration>();
+            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            var contactInformation = new ContactInformation()
-            {
-                Email = "test@test.com",
-                Phone = "11111111",
-                PrimaryAddress = primaryAddress,
-                TemporaryAddress = "temporary address"
-            };
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCitizenId"))).Returns(Task.FromResult(httpClientCitizenDataResponse));
 
-            var citizenDataModel = new CitizenDataModel("cpr", 37, 1, 1, 1, true, responsibleActorsArray, DateTimeOffset.UtcNow, contactInformation, true, 1, "targetgroupcode",
-                true, "jobcentrename", profile, "isDead", "married", "citizenshipcode", enrollmentStatus, "currentcontact groupcode", "currentpersponcategory",
-                "ishandled", "civilregistrationstatus", "1", "displayname");
-
-            var citizenDataResponse =
-               new CitizenDataResponse(citizenDataModel.Id, null, citizenDataModel.DisplayName, null, null, null, citizenDataModel.ContactInformation.Email,
-               citizenDataModel.ContactInformation.Phone, null, null, null);
-
-
-            var _configurationRoot = new Mock<IConfiguration>();
-            _configurationRoot.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com");
-
-#pragma warning disable CA2000 // Dispose objects before losing scope
-            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_configurationRoot.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenDataModel.Id}"))).Returns(Task.FromResult(citizenDataModel));
-#pragma warning restore CA2000 // Dispose objects before losing scope
-
-            var citizenService = new CitizenService(helperHttpClientMoq.Object, _configurationRoot.Object);
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 
             //Act
-            var result = await citizenService.GetCitizenById(citizenDataModel.Id).ConfigureAwait(false);
+            var result = await citizenService.GetCitizenById("dummyCitizenId").ConfigureAwait(false);
 
             //Asert
             result.Should().NotBeNull();

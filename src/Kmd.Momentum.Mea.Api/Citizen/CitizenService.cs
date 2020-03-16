@@ -59,15 +59,15 @@ namespace Kmd.Momentum.Mea.Api.Citizen
 
         private string GetVal(JObject _json, string _key)
         {
-            string[] _keyArrr = _key.Split('.');
-            var _subJson = _json[_keyArrr[0]];
+            string[] _keyArr = _key.Split('.');
+            var _subJson = _json[_keyArr[0]];
 
             if (_subJson == null || String.IsNullOrEmpty(_subJson.ToString()))
                 return String.Empty;
 
-            if (_keyArrr.Length > 1)
+            if (_keyArr.Length > 1)
             {
-                _key = _key.Replace(_keyArrr[0] + ".", string.Empty, System.StringComparison.CurrentCulture);
+                _key = _key.Replace(_keyArr[0] + ".", string.Empty, System.StringComparison.CurrentCulture);
                 return GetVal((JObject)_subJson, _key);
             }
             return _subJson.ToString();

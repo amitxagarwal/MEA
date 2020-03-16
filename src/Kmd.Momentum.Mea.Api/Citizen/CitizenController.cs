@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Kmd.Momentum.Mea.Api.Citizen
 {
     [ApiController]
-    [Route("citizen")]
+    [Route("citizens")]
     [Produces("application/json", "text/json")]
     public class CitizenController : ControllerBase
     {
@@ -28,7 +28,6 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [Route("withActiveClassification")]
         [SwaggerOperation(OperationId = "GetAllActiveCitizens")]
         public async Task<string[]> GetAllActiveCitizens()
         {
@@ -45,11 +44,11 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [Route("{cpr}/citizenByCpr")]
+        [Route("cpr/{cprNumber}")]
         [SwaggerOperation(OperationId = "GetCitizenByCpr")]
-        public async Task<CitizenDataResponse> GetCitizenByCpr([Required] [FromRoute] string cpr)
+        public async Task<CitizenDataResponse> GetCitizenByCpr([Required] [FromRoute] string cprNumber)
         {
-            return await _citizenService.GetCitizenByCprAsync(cpr).ConfigureAwait(false);
+            return await _citizenService.GetCitizenByCprAsync(cprNumber).ConfigureAwait(false);
         }
 
         ///<summary>
@@ -62,7 +61,7 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [Route("/citizenById/{citizenId}")]
+        [Route("kss/{citizenId}")]
         [SwaggerOperation(OperationId = "GetCitizenById")]
         public async Task<CitizenDataResponse> GetCitizenById([Required] [FromRoute] string citizenId)
         {

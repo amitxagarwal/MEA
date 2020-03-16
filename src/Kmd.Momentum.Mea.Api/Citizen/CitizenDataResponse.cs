@@ -12,7 +12,8 @@
         public string CaseworkerIdentifier { get; }
         public string Description { get; }
 
-        public CitizenDataResponse(string citizenId, string displayName, string givenName, string middleName, string initials, string email, string phone, string caseworkerIdentifier, string description)
+        public CitizenDataResponse(string citizenId, string displayName, string givenName, string middleName, string initials, string email, string phone,
+            string caseworkerIdentifier, string description)
         {
             CitizenId = citizenId;
             DisplayName = displayName;

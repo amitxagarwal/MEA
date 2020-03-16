@@ -1,9 +1,7 @@
 ﻿using Kmd.Momentum.Mea.Api.Common;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Citizen
@@ -18,15 +16,16 @@ namespace Kmd.Momentum.Mea.Api.Citizen
             _citizenHttpClient = citizenHttpClient;
             _config = config;
         }
-        public async Task<string[]> GetAllActiveCitizens()
+
+        public async Task<string[]> GetAllActiveCitizensAsync()
         {
-            var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCore(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/withActiveClassification")).ConfigureAwait(false);
+            var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/withActiveClassification")).ConfigureAwait(false);
             return response;
         }
 
-        public async Task<CitizenDataResponse> GetCitizenByCpr(string cpr)
+        public async Task<CitizenDataResponse> GetCitizenByCprAsync(string cpr)
         {
-            var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")).ConfigureAwait(false);
+            var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")).ConfigureAwait(false);
             var json = JObject.Parse(response);
 
             return new CitizenDataResponse(
@@ -39,13 +38,11 @@ namespace Kmd.Momentum.Mea.Api.Citizen
                 GetVal(json, "contactInformation.phone.number"),
                 GetVal(json, "caseworkerIdentifier"),
                 GetVal(json, "description"));
-
-
         }
 
-        public async Task<CitizenDataResponse> GetCitizenById(string citizenId)
+        public async Task<CitizenDataResponse> GetCitizenByIdAsync(string citizenId)
         {
-            var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCore(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")).ConfigureAwait(false);
+            var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")).ConfigureAwait(false);
             var json = JObject.Parse(response);
 
             return new CitizenDataResponse(

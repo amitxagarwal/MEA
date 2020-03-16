@@ -4,10 +4,10 @@ namespace Kmd.Momentum.Mea.Api.Citizen
 {
     public interface ICitizenService
     {
-        Task<string[]> GetAllActiveCitizens();
+        Task<string[]> GetAllActiveCitizensAsync();
 
-        Task<CitizenDataResponse> GetCitizenByCpr(string cpr);
+        Task<CitizenDataResponse> GetCitizenByCprAsync(string cpr);
 
-        Task<CitizenDataResponse> GetCitizenById(string citizenId);
+        Task<CitizenDataResponse> GetCitizenByIdAsync(string citizenId);
     }
 }

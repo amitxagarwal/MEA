@@ -12,51 +12,52 @@ namespace Kmd.Momentum.Mea.Api.Citizen
     public class CitizenController : ControllerBase
     {
         private readonly ICitizenService _citizenService;
+
         public CitizenController(ICitizenService citizenService)
         {
-            _citizenService = citizenService ?? throw new ArgumentNullException(nameof(citizenService));            
+            _citizenService = citizenService ?? throw new ArgumentNullException(nameof(citizenService));
         }
 
         ///<summary>
         ///Get all active citizens
         ///</summary>
-        ///<response code="200">The data is loaded successfully</response>
+        ///<response code="200">The active citizen data is loaded successfully</response>
         ///<response code="400">Bad request</response>
-        ///<response code="404">Document is not found</response>
+        ///<response code="404">The active citizen data is not found</response>
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [Route("/withActiveClassification")]
+        [Route("withActiveClassification")]
         [SwaggerOperation(OperationId = "GetAllActiveCitizens")]
         public async Task<string[]> GetAllActiveCitizens()
         {
-            return await _citizenService.GetAllActiveCitizens().ConfigureAwait(false);
+            return await _citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
         }
 
         ///<summary>
-        ///Get Citizens in Momentum with CPR
+        ///Get Citizen in Momentum by CPR
         ///</summary>
-        ///<response code="200">The data is loaded successfully</response>
+        ///<response code="200">The citizen detail by CPR no is loaded successfully</response>
         ///<response code="400">Bad request</response>
-        ///<response code="404">Document is not found</response>
+        ///<response code="404">The citizen detail by CPR no is not found</response>
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [Route("/citizenByCpr/{cpr}")]
+        [Route("{cpr}/citizenByCpr")]
         [SwaggerOperation(OperationId = "GetCitizenByCpr")]
         public async Task<CitizenDataResponse> GetCitizenByCpr([Required] [FromRoute] string cpr)
         {
-            return await _citizenService.GetCitizenByCpr(cpr).ConfigureAwait(false);
+            return await _citizenService.GetCitizenByCprAsync(cpr).ConfigureAwait(false);
         }
 
         ///<summary>
-        ///Get Citizens in Momentum with ID
+        ///Get Citizen in Momentum by ID
         ///</summary>
-        ///<response code="200">The data is loaded successfully</response>
+        ///<response code="200">The citizen detail by id is loaded successfully</response>
         ///<response code="400">Bad request</response>
-        ///<response code="404">Document is not found</response>
+        ///<response code="404">The citizen detail by id is not found</response>
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -65,10 +66,8 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [SwaggerOperation(OperationId = "GetCitizenById")]
         public async Task<CitizenDataResponse> GetCitizenById([Required] [FromRoute] string citizenId)
         {
-            var response = await _citizenService.GetCitizenById(citizenId).ConfigureAwait(false);
+            var response = await _citizenService.GetCitizenByIdAsync(citizenId).ConfigureAwait(false);
             return response;
-
         }
-
     }
 }

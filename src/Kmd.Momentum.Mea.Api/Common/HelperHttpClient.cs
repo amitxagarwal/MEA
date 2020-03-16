@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
-using System.Globalization;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 
 namespace Kmd.Momentum.Mea.Api.Common
 {
@@ -22,7 +21,7 @@ namespace Kmd.Momentum.Mea.Api.Common
             _config = config;
         }
 
-        private async Task<HttpResponseMessage> ReturnAuthorizationToken()
+        private async Task<HttpResponseMessage> ReturnAuthorizationTokenAsync()
         {
 #pragma warning disable CA2000 // Dispose objects before losing scope
             var content = new FormUrlEncodedContent(new[]
@@ -36,15 +35,14 @@ namespace Kmd.Momentum.Mea.Api.Common
                     });
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
-            var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"),
-                content).ConfigureAwait(false);
+            var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"), content).ConfigureAwait(false);
             return response;
         }
 
-        public async Task<string[]> GetAllActiveCitizenDataFromMomentumCore(Uri url)
+        public async Task<string[]> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
         {
-            var authResponse = await ReturnAuthorizationToken().ConfigureAwait(false);
-            
+            var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
+
             var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
 
@@ -54,9 +52,9 @@ namespace Kmd.Momentum.Mea.Api.Common
             return JsonConvert.DeserializeObject<string[]>(json);
         }
 
-        public async Task<string> GetCitizenDataByCprOrCitizenIdFromMomentumCore(Uri url)
+        public async Task<string> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
         {
-            var authResponse = await ReturnAuthorizationToken().ConfigureAwait(false);
+            var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
             var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");

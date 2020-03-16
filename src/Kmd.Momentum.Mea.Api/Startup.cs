@@ -1,3 +1,5 @@
+using Kmd.Momentum.Mea.Api.Citizen;
+using Kmd.Momentum.Mea.Api.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +34,11 @@ namespace Kmd.Momentum.Mea.Api
                     a.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                     a.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
+
+            services.AddScoped<ICitizenService, CitizenService>();
+            services.AddScoped<IHelperHttpClient, HelperHttpClient>();
+
+            services.AddHttpClient();
 
             services.AddControllers();
 

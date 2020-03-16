@@ -11,7 +11,7 @@
 using System;
 using System.Reflection;
 
-[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("08f3f8a9-ee84-4833-8e6a-0e8360f81928")]
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("476527d6-c5f5-458b-b17e-b76f08e3a5b1")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("Kmd.Momentum.Mea.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]

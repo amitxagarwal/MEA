@@ -117,7 +117,7 @@ $TemplateParameters = @{
   dbServerName = $DbServerName;
   dbLoginId = $env:DbLoginId;
   dbLoginPassword = $env:DbLoginPassword;
-  dbName = $DbName;
+  dbName = $DbName
 }
 
 # Create or update the resource group using the specified template file and template parameter values

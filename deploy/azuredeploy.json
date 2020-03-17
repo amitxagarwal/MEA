@@ -307,7 +307,7 @@
       "type": "Microsoft.DBforPostgreSQL/servers",
       "resources": [
         {
-          "apiVersion": "2017-04-30-preview",
+          "apiVersion": "2017-12-01-preview",
           "name": "[parameters('dbName')]",
           "type": "databases",
           "location": "[parameters('location')]",

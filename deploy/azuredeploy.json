@@ -310,7 +310,10 @@
           "apiVersion": "2017-04-30-preview",
           "name": "[parameters('dbName')]",
           "type": "databases",
-          "location": "[parameters('location')]"
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('dbServerName'))]"
+          ]
         }
       ]
     }

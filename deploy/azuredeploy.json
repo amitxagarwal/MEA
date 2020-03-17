@@ -8,6 +8,24 @@
         "description": "Base Uri for calling MCA API"
       }
     },
+    "dbServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for database server"
+      }
+    },
+    "dbLoginId": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for database login"
+      }
+    },
+    "dbLoginPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "Password for database login"
+      }
+    },
     "clientId": {
       "type": "string",
       "metadata": {
@@ -129,8 +147,12 @@
       "type": "Microsoft.Insights/components",
       "apiVersion": "2015-05-01",
       "location": "[parameters('location')]",
-      "tags": {},
-      "properties": {}
+      "tags": {
+
+      },
+      "properties": {
+
+      }
     },
     {
       "type": "Microsoft.Web/serverfarms",
@@ -206,7 +228,9 @@
             "displayName": "slotConfigNames"
           },
           "properties": {
-            "appSettingNames": [ "SlotName" ]
+            "appSettingNames": [
+              "SlotName"
+            ]
           }
         }
       ]
@@ -264,6 +288,17 @@
           ]
         }
       }
+    },
+    {
+      "apiVersion": "2017-12-01-preview",
+      "kind": "",
+      "location": "[parameters('location')]",
+      "name": "[parameters('dbServerName')]",
+      "properties": {
+        "administratorLogin": "[parameters('dbLoginId')]",
+        "administratorLoginPassword": "[parameters('dbLoginPassword')]"
+      },
+      "type": "Microsoft.DBforPostgreSQL/servers"
     }
   ]
 }

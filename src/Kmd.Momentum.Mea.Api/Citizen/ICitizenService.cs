@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Citizen
 {
     public interface ICitizenService
     {
-        Task<string[]> GetAllActiveCitizensAsync();
+        Task<IReadOnlyList<CitizenSearchData>> GetAllActiveCitizensAsync();
 
         Task<CitizenDataResponse> GetCitizenByCprAsync(string cpr);
 

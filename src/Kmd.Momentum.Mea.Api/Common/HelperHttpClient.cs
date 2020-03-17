@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Kmd.Momentum.Mea.Api.Citizen;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Common
@@ -39,17 +41,29 @@ namespace Kmd.Momentum.Mea.Api.Common
             return response;
         }
 
-        public async Task<string[]> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
+        public async Task<IReadOnlyList<CitizenSearchData>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
         {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
             var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
 
-            var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+            var content = new RequestPost()
+            {
+                Term = "25",
+
+
+            };
+            //RequestPost
+
+            var response1 = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"), content).ConfigureAwait(false);
+
+
+            var response = await _httpClient.PostAsync(url, new StringContent(content, Encoding.UTF8, "application/json")).ConfigureAwait(false);
 
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<string[]>(json);
+            var abc = JsonConvert.DeserializeObject<IReadOnlyList<CitizenSearchData>>(json);
+            return abc;
         }
 
         public async Task<string> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)

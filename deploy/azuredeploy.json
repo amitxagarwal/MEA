@@ -305,7 +305,7 @@
         "administratorLoginPassword": "[parameters('dbLoginPassword')]"
       },
       "type": "Microsoft.DBforPostgreSQL/servers",
-      "resources" [
+      "resources": [
         {
           "apiVersion": "2017-04-30-preview",
           "name": "[parameters('dbName')]",

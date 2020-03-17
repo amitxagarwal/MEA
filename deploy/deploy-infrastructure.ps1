@@ -100,8 +100,8 @@ function Format-ValidationOutput {
 
 $ResourceGroupName = "$ResourceNamePrefix-rg"
 $ApplicationInsightsName="$ResourceNamePrefix-ai";
-$DbServerName="$ResourceNamePrefix-db";
-
+$DbServerName="$ResourceNamePrefix-dbsvr";
+$DbName="$ResourceNamePrefix-db";
 # Set ARM template parameter values
 $TemplateParameters = @{
   instanceId = $InstanceId;
@@ -116,7 +116,8 @@ $TemplateParameters = @{
   mcaApiUri = $env:McaApiUri;
   dbServerName = $DbServerName;
   dbLoginId = $env:DbLoginId;
-  dbLoginPassword = $env:DbLoginPassword
+  dbLoginPassword = $env:DbLoginPassword;
+  dbName = $DbName;
 }
 
 # Create or update the resource group using the specified template file and template parameter values

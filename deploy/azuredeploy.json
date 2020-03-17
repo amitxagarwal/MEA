@@ -26,6 +26,12 @@
         "description": "Password for database login"
       }
     },
+    "dbName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for database"
+      }
+    },
     "clientId": {
       "type": "string",
       "metadata": {
@@ -298,7 +304,18 @@
         "administratorLogin": "[parameters('dbLoginId')]",
         "administratorLoginPassword": "[parameters('dbLoginPassword')]"
       },
-      "type": "Microsoft.DBforPostgreSQL/servers"
+      "type": "Microsoft.DBforPostgreSQL/servers",
+      "resources" [
+        {
+          "apiVersion": "2017-04-30-preview",
+          "name": "[parameters('dbName')]",
+          "type": "databases",
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('dbServerName'))]"
+          ]
+        }
+      ]
     }
   ]
 }

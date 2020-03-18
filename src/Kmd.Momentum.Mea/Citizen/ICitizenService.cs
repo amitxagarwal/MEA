@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Kmd.Momentum.Mea.Api.Citizen
+namespace Kmd.Momentum.Mea.Citizen
 {
     public interface ICitizenService
     {

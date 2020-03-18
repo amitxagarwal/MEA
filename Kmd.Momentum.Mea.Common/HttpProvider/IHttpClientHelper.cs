@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Kmd.Momentum.Mea.Api.Common
+namespace Kmd.Momentum.Mea.Common.HttpProvider
 {
-    public interface IHelperHttpClient
+    public interface IHttpClientHelper
     {
         Task<string[]> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url);
 

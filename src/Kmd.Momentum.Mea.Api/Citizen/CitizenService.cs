@@ -1,6 +1,7 @@
 ﻿using Kmd.Momentum.Mea.Api.Common;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
+using Serilog;
 using System;
 using System.Threading.Tasks;
 
@@ -28,6 +29,9 @@ namespace Kmd.Momentum.Mea.Api.Citizen
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")).ConfigureAwait(false);
             var json = JObject.Parse(response);
 
+            Log.ForContext("CPR", cpr)
+                .Information("The citizen details by CPR number is returned successfully"); 
+
             return new CitizenDataResponse(
                 GetVal(json, "id"),
                 GetVal(json, "displayName"),
@@ -44,6 +48,9 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")).ConfigureAwait(false);
             var json = JObject.Parse(response);
+
+            Log.ForContext("CitizenID", citizenId)
+                .Information("The citizen details by CitizenId has been returned successfully");
 
             return new CitizenDataResponse(
                 GetVal(json, "id"),

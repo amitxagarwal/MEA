@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -49,6 +50,10 @@ namespace Kmd.Momentum.Mea.Api.Common
             var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            Log.Information("The active citizen data from Momentum core are returned successfully");
+
+
             return JsonConvert.DeserializeObject<string[]>(json);
         }
 
@@ -62,6 +67,9 @@ namespace Kmd.Momentum.Mea.Api.Common
             var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
             var citizenData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            Log.Information("The citizen details by CPR or CitizenId from Momentum core are returned successfully");
+            
             return citizenData;
         }
     }

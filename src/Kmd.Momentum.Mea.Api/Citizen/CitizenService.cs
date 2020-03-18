@@ -8,17 +8,10 @@ using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Citizen
 {
-
-    //public class Result
-    //{ 
-    //    public CitizenSearchData[] results { get; set; }
-    //}
-
     public class CitizenService : ICitizenService
     {
         private readonly IHelperHttpClient _citizenHttpClient;
         private readonly IConfiguration _config;
-
 
         public CitizenService(IHelperHttpClient citizenHttpClient, IConfiguration config)
         {
@@ -26,20 +19,10 @@ namespace Kmd.Momentum.Mea.Api.Citizen
             _config = config;
         }
 
-        public async Task<IReadOnlyList<CitizenSearchData>> GetAllActiveCitizensAsync()
+        public async Task<IReadOnlyList<Data>> GetAllActiveCitizensAsync()
         {
-            //var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/search?term=Citizen&skip=0&isActive=true&size=15")).ConfigureAwait(false);
             var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/citizensearch")).ConfigureAwait(false);
-
-            //var abc= JsonConvert.DeserializeObject(response);
-
             return response;
-
-            //return response;
-            ////var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            ////return JsonConvert.DeserializeObject<CitizenDataResponse[]>(json);
-            //var json = await response.
-            //return JsonConvert.DeserializeObject<CitizenDataResponse[]>(json);
         }
 
         public async Task<CitizenDataResponse> GetCitizenByCprAsync(string cpr)

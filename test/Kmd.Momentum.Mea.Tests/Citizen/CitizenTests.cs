@@ -12,28 +12,28 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 {
     public class CitizenTests
     {
-        [Fact]
-        public async Task GetAllActiveCitizensSuccess()
-        {
-            //Arrange
-            var helperHttpClientMoq = new Mock<IHelperHttpClient>();
-            var cprArray = new string[] { "1234", "12345" };
-            var _configurationRoot = new Mock<IConfiguration>();
-            _configurationRoot.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com");
+//        [Fact]
+//        public async Task GetAllActiveCitizensSuccess()
+//        {
+//            //Arrange
+//            var helperHttpClientMoq = new Mock<IHelperHttpClient>();
+//            var cprArray = new string[] { "1234", "12345" };
+//            var _configurationRoot = new Mock<IConfiguration>();
+//            _configurationRoot.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com");
 
-#pragma warning disable CA2000 // Dispose objects before losing scope
-            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configurationRoot.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/withActiveClassification"))).Returns(Task.FromResult(cprArray));
-#pragma warning restore CA2000 // Dispose objects before losing scope
+//#pragma warning disable CA2000 // Dispose objects before losing scope
+//            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configurationRoot.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/withActiveClassification"))).Returns(Task.FromResult(cprArray));
+//#pragma warning restore CA2000 // Dispose objects before losing scope
 
-            var citizenService = new CitizenService(helperHttpClientMoq.Object, _configurationRoot.Object);
+//            var citizenService = new CitizenService(helperHttpClientMoq.Object, _configurationRoot.Object);
 
-            //Act
-            var result = await citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
+//            //Act
+//            var result = await citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
 
-            //Asert
-            result.Should().NotBeNull();
-            result.Should().BeEquivalentTo(cprArray);
-        }
+//            //Asert
+//            result.Should().NotBeNull();
+//            result.Should().BeEquivalentTo(cprArray);
+//        }
 
         [Fact]
         public async Task GetCitizenByCprSuccess()

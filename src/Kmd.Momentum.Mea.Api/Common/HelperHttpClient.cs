@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Kmd.Momentum.Mea.Api.Common
 {
@@ -41,29 +42,40 @@ namespace Kmd.Momentum.Mea.Api.Common
             return response;
         }
 
-        public async Task<IReadOnlyList<CitizenSearchData>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
+        public async Task<IReadOnlyList<Data>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
         {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
             var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
 
-            var content = new RequestPost()
+            var sort = new Sort();
+            sort.FieldName = "cpr";
+            sort.Ascending = true;
+
+            var paging = new Paging();
+            paging.PageNumber = -1;
+            paging.pageSize = 50;
+
+            var req = new Request("25");
+            req.Paging = paging;
+            req.Sort = sort;
+
+            bool hasMore = true;
+            var citizenDataObj = new CitizenSearchData();
+            Data[] totalRecords = new Data[0];
+            while (hasMore)
             {
-                Term = "25",
+                req.Paging.PageNumber += 1;
+                var response = await _httpClient.PostAsync(url, new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json")).ConfigureAwait(false);
+                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                citizenDataObj = JsonConvert.DeserializeObject<CitizenSearchData>(json);
+                var records = citizenDataObj.Data;
 
-
-            };
-            //RequestPost
-
-            var response1 = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"), content).ConfigureAwait(false);
-
-
-            var response = await _httpClient.PostAsync(url, new StringContent(content, Encoding.UTF8, "application/json")).ConfigureAwait(false);
-
-            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var abc = JsonConvert.DeserializeObject<IReadOnlyList<CitizenSearchData>>(json);
-            return abc;
+                totalRecords = totalRecords.Concat(records).ToArray();
+                hasMore = citizenDataObj.HasMore;
+            }
+            return totalRecords;
         }
 
         public async Task<string> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)

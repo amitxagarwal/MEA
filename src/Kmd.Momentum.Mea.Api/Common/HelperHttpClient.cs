@@ -53,7 +53,6 @@ namespace Kmd.Momentum.Mea.Api.Common
 
             Log.Information("The active citizen data from Momentum core are returned successfully");
 
-
             return JsonConvert.DeserializeObject<string[]>(json);
         }
 

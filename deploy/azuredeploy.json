@@ -218,6 +218,22 @@
             {
               "name": "KMD_MOMENTUM_MEA_McaApiUri",
               "value": "[parameters('mcaApiUri')]"
+            },
+            {
+              "name": "DbServerName",
+              "value": "[parameters('dbServerName')]"
+            },
+            {
+              "name": "DbLoginId",
+              "value": "[parameters('dbLoginId')]"
+            },
+            {
+              "name": "DbLoginPassword",
+              "value": "[parameters('dbLoginPassword')]"
+            },
+            {
+              "name": "dbName",
+              "value": "[parameters('DbName')]"
             }
           ]
         }

@@ -1,5 +1,3 @@
-using Kmd.Momentum.Mea.Api.Citizen;
-using Kmd.Momentum.Mea.Api.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +14,8 @@ using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Kmd.Momentum.Mea.Common.Authorization;
+using Kmd.Momentum.Mea.Citizen;
+using Kmd.Momentum.Mea.Common.Http;
 
 namespace Kmd.Momentum.Mea.Api
 {
@@ -40,7 +40,7 @@ namespace Kmd.Momentum.Mea.Api
                 });
 
             services.AddScoped<ICitizenService, CitizenService>();
-            services.AddScoped<IHelperHttpClient, HelperHttpClient>();
+            services.AddScoped<IHttpClientHelper, HttpClientHelper>();
 
             services.AddHttpClient();
 

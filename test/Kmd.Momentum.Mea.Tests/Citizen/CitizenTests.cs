@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
-using Kmd.Momentum.Mea.Api;
-using Kmd.Momentum.Mea.Api.Citizen;
-using Kmd.Momentum.Mea.Api.Common;
+using Kmd.Momentum.Mea.Citizen;
+using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.Http;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using System;
@@ -16,7 +16,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task GetAllActiveCitizensSuccess()
         {
             //Arrange
-            var helperHttpClientMoq = new Mock<IHelperHttpClient>();
+            var helperHttpClientMoq = new Mock<IHttpClientHelper>();
             var cprArray = new string[] { "1234", "12345" };
             var _configurationRoot = new Mock<IConfiguration>();
             _configurationRoot.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com");
@@ -39,11 +39,11 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task GetCitizenByCprSuccess()
         {
             //Arrange
-            var helperHttpClientMoq = new Mock<IHelperHttpClient>();
+            var helperHttpClientMoq = new Mock<IHttpClientHelper>();
             var httpClientCitizenDataResponse = "{\"cpr\":\"dummyCpr\",\"id\":\"test-test-test-test-test\",\"displayName\":\"test display name\",\"" +
                 "contactInformation\":{\"email\":{\"id\":\"testId-testId-testId-testId-testId\",\"address\":\"test@test.com\"},\"phone\":{\"id\":\"testId-testId-testId-testId-testId\",\"number\":\"+99999999\",\"isMobile\":true}}}";
 
-            var citizenDataResponse = new CitizenDataResponse("test-test-test-test-test", "test display name", "", "", "", "test@test.com", "+99999999", "", "");
+            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name", "", "", "", "test@test.com", "+99999999", "", "");
             var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
@@ -63,11 +63,11 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task GetCitizenByIdSuccess()
         {
             //Arrange
-            var helperHttpClientMoq = new Mock<IHelperHttpClient>();
+            var helperHttpClientMoq = new Mock<IHttpClientHelper>();
             var httpClientCitizenDataResponse = "{\"cpr\":\"dummyCpr\",\"id\":\"test-test-test-test-test\",\"displayName\":\"test display name\",\"" +
                 "contactInformation\":{\"email\":{\"id\":\"testId-testId-testId-testId-testId\",\"address\":\"test@test.com\"},\"phone\":{\"id\":\"testId-testId-testId-testId-testId\",\"number\":\"+99999999\",\"isMobile\":true}}}";
 
-            var citizenDataResponse = new CitizenDataResponse("test-test-test-test-test", "test display name", "", "", "", "test@test.com", "+99999999", "", "");
+            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name", "", "", "", "test@test.com", "+99999999", "", "");
             var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 

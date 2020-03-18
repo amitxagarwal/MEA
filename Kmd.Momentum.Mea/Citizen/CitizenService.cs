@@ -1,17 +1,18 @@
-﻿using Kmd.Momentum.Mea.Api.Common;
+﻿using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Threading.Tasks;
 
-namespace Kmd.Momentum.Mea.Api.Citizen
+namespace Kmd.Momentum.Mea.Citizen
 {
     public class CitizenService : ICitizenService
     {
-        private readonly IHelperHttpClient _citizenHttpClient;
+        private readonly IHttpClientHelper _citizenHttpClient;
         private readonly IConfiguration _config;
 
-        public CitizenService(IHelperHttpClient citizenHttpClient, IConfiguration config)
+        public CitizenService(IHttpClientHelper citizenHttpClient, IConfiguration config)
         {
             _citizenHttpClient = citizenHttpClient;
             _config = config;
@@ -23,12 +24,12 @@ namespace Kmd.Momentum.Mea.Api.Citizen
             return response;
         }
 
-        public async Task<CitizenDataResponse> GetCitizenByCprAsync(string cpr)
+        public async Task<CitizenDataResponseModel> GetCitizenByCprAsync(string cpr)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")).ConfigureAwait(false);
             var json = JObject.Parse(response);
 
-            return new CitizenDataResponse(
+            return new CitizenDataResponseModel(
                 GetVal(json, "id"),
                 GetVal(json, "displayName"),
                 GetVal(json, "givenName"),
@@ -40,12 +41,12 @@ namespace Kmd.Momentum.Mea.Api.Citizen
                 GetVal(json, "description"));
         }
 
-        public async Task<CitizenDataResponse> GetCitizenByIdAsync(string citizenId)
+        public async Task<CitizenDataResponseModel> GetCitizenByIdAsync(string citizenId)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")).ConfigureAwait(false);
             var json = JObject.Parse(response);
 
-            return new CitizenDataResponse(
+            return new CitizenDataResponseModel(
                 GetVal(json, "id"),
                 GetVal(json, "displayName"),
                 GetVal(json, "givenName"),

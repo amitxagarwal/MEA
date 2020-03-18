@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Kmd.Momentum.Mea.Common.Authorization;
 using Kmd.Momentum.Mea.Citizen;
-using Kmd.Momentum.Mea.Common.Http;
+using Kmd.Momentum.Mea.Common.HttpProvider;
 
 namespace Kmd.Momentum.Mea.Api
 {

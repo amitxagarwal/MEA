@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Kmd.Momentum.Mea.Common.Http
+namespace Kmd.Momentum.Mea.Common.HttpProvider
 {
 #pragma warning disable CA1001 // Types that own disposable fields should be disposable
     public class HttpClientHelper : IHttpClientHelper

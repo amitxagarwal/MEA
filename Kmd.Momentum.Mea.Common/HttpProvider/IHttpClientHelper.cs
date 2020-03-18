@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Kmd.Momentum.Mea.Common.Http
+namespace Kmd.Momentum.Mea.Common.HttpProvider
 {
     public interface IHttpClientHelper
     {

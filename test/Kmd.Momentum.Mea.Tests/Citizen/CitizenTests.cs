@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Kmd.Momentum.Mea.Citizen;
 using Kmd.Momentum.Mea.Citizen.Model;
-using Kmd.Momentum.Mea.Common.Http;
+using Kmd.Momentum.Mea.Common.HttpProvider;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using System;

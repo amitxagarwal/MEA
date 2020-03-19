@@ -19,7 +19,7 @@ namespace Kmd.Momentum.Mea.Api.Citizen
             _config = config;
         }
 
-        public async Task<IReadOnlyList<Data>> GetAllActiveCitizensAsync()
+        public async Task<IReadOnlyList<CitizenListResponse>> GetAllActiveCitizensAsync()
         {
             var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/citizensearch")).ConfigureAwait(false);
             return response;

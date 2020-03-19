@@ -5,6 +5,7 @@ using Kmd.Momentum.Mea.Api.Common;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -12,28 +13,32 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 {
     public class CitizenTests
     {
-//        [Fact]
-//        public async Task GetAllActiveCitizensSuccess()
-//        {
-//            //Arrange
-//            var helperHttpClientMoq = new Mock<IHelperHttpClient>();
-//            var cprArray = new string[] { "1234", "12345" };
-//            var _configurationRoot = new Mock<IConfiguration>();
-//            _configurationRoot.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com");
+        [Fact]
+        public async Task GetAllActiveCitizensSuccess()
+        {
 
-//#pragma warning disable CA2000 // Dispose objects before losing scope
-//            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configurationRoot.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/withActiveClassification"))).Returns(Task.FromResult(cprArray));
-//#pragma warning restore CA2000 // Dispose objects before losing scope
 
-//            var citizenService = new CitizenService(helperHttpClientMoq.Object, _configurationRoot.Object);
+            var helperHttpClientMoq = new Mock<IHelperHttpClient>();
+            
+            var citizenDataResponse = new CitizenDataResponse("test-test-test-test-test", "test display name", "", "", "", "test@test.com", "+99999999", "", "");
+            var _configuration = new Mock<IConfiguration>();
+            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-//            //Act
-//            var result = await citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
+            var mockResponseData = new CitizenListResponse[2];
 
-//            //Asert
-//            result.Should().NotBeNull();
-//            result.Should().BeEquivalentTo(cprArray);
-//        }
+            mockResponseData[0] = new CitizenListResponse("testId1","TestCPR1","TestDisplay1");
+            mockResponseData[1] = new CitizenListResponse("testId2", "TestCPR2", "TestDisplay2");
+            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/citizensearch"))).Returns(Task.FromResult( (IReadOnlyList <CitizenListResponse>)mockResponseData));
+
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
+
+            //Act
+            var result = await citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
+
+            //Asert
+            result.Should().NotBeNull();
+            result.Should().BeEquivalentTo(mockResponseData);
+        }
 
         [Fact]
         public async Task GetCitizenByCprSuccess()

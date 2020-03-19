@@ -42,7 +42,7 @@ namespace Kmd.Momentum.Mea.Api.Common
             return response;
         }
 
-        public async Task<IReadOnlyList<Data>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
+        public async Task<IReadOnlyList<CitizenListResponse>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
         {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
@@ -55,7 +55,7 @@ namespace Kmd.Momentum.Mea.Api.Common
 
             var paging = new Paging();
             paging.PageNumber = -1;
-            paging.pageSize = 50;
+            paging.pageSize = 100;
 
             var req = new Request("25");
             req.Paging = paging;
@@ -63,7 +63,7 @@ namespace Kmd.Momentum.Mea.Api.Common
 
             bool hasMore = true;
             var citizenDataObj = new CitizenSearchData();
-            Data[] totalRecords = new Data[0];
+            CitizenListResponse[] totalRecords = new CitizenListResponse[0];
             while (hasMore)
             {
                 req.Paging.PageNumber += 1;

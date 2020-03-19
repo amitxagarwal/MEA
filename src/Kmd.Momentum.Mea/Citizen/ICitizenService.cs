@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Kmd.Momentum.Mea.Citizen.Model;
+using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Citizen
 {
@@ -6,8 +7,8 @@ namespace Kmd.Momentum.Mea.Citizen
     {
         Task<string[]> GetAllActiveCitizensAsync();
 
-        Task<CitizenDataResponse> GetCitizenByCprAsync(string cpr);
+        Task<CitizenDataResponseModel> GetCitizenByCprAsync(string cpr);
 
-        Task<CitizenDataResponse> GetCitizenByIdAsync(string citizenId);
+        Task<CitizenDataResponseModel> GetCitizenByIdAsync(string citizenId);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Kmd.Momentum.Mea.Api
+﻿namespace Kmd.Momentum.Mea.Api.Citizen
 {
     public class CitizenDataResponse
     {

@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Kmd.Momentum.Mea.Common.Authorization;
 using Kmd.Momentum.Mea.Citizen;
 using Kmd.Momentum.Mea.Common.HttpProvider;
-
+using Kmd.Momentum.Mea.Common.Framework;
 namespace Kmd.Momentum.Mea.Api
 {
     public class Startup
@@ -40,10 +40,11 @@ namespace Kmd.Momentum.Mea.Api
                 });
 
             services.AddScoped<ICitizenService, CitizenService>();
-            services.AddScoped<IHttpClientHelper, HttpClientHelper>();
+            services.AddProviderHttpClient<IHttpClientHelper, HttpClientHelper>();
 
             services.AddHttpClient();
-
+            services.AddPolicies();
+            services.AddPolicyRegistry();
             services.AddControllers();
 
             services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)

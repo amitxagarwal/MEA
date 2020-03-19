@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Kmd.Momentum.Mea.Common.DatabaseStore
 {
@@ -14,6 +13,14 @@ namespace Kmd.Momentum.Mea.Common.DatabaseStore
         {
             Assemblies = assemblies.ToArray();
         }
+
+        /// <summary>
+        /// Discovers all types decorated with the DocumentMappable attribute
+        /// </summary>
+        public IReadOnlyCollection<Type> DiscoverDocumentMappingTypes() => Assemblies
+           .SelectMany(x => x.GetTypes())
+           .Where(x => x.GetCustomAttribute<DocumentMappableAttribute>() != null)
+           .ToList();
 
         /// <summary>
         /// Returns the types decorated with the AutoCreateDocumentCollectionAttribute and the attribute itself

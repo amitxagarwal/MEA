@@ -3,7 +3,6 @@ using Npgsql;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -12,8 +11,6 @@ using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.DbAdmin
 {
-    [SuppressMessage("CodeAnalysis", "S2325", Justification = "Looks nicer")]
-    [SuppressMessage("CodeAnalysis", "CA1822", Justification = "Looks nicer")]
     public class DbActions
     {
         public async Task<int> CreateAsync(CreateOptions options)

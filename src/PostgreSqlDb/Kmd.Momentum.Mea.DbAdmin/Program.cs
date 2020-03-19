@@ -1,13 +1,11 @@
 ﻿using CommandLine;
 using Serilog;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.DbAdmin
 {
-    [SuppressMessage("CodeAnalysis", "S2068")]
     static class Program
     {
         static async Task<int> Main(string[] args)

@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
-namespace Kmd.Momentum.Mea.Common.DatabaseStore
+namespace Kmd.Momentum.Mea.Common.Modules
 {
-    public class LogicOpenApiProduct : ILogicOpenApiProduct
+    public class MeaOpenApiProduct : IMeaOpenApiProduct
     {
         private readonly Assembly[] assemblies;
 
-        public LogicOpenApiProduct(string productPathName, string openApiProductName, Version openApiVersion, Assembly[] assemblies)
+        public MeaOpenApiProduct(string productPathName, string openApiProductName, Version openApiVersion, Assembly[] assemblies)
         {
             ProductPathName = productPathName; // null means "no product"
             OpenApiProductName = openApiProductName; // Null means "no product"

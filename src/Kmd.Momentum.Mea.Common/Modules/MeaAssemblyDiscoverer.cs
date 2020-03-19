@@ -5,21 +5,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
-namespace Kmd.Momentum.Mea.Common.DatabaseStore
+namespace Kmd.Momentum.Mea.Common.Modules
 {
-    public class LogicAssemblyDiscoverer : DocumentStoreAssemblyDiscoverer, ILogicAssemblyDiscoverer
+    public class MeaAssemblyDiscoverer : DocumentStoreAssemblyDiscoverer, IMeaAssemblyDiscoverer
     {
         private readonly List<(Assembly assembly, string productPathName, string openApiProductName, Version apiVersion)> _openApiProducts;
 
-        public LogicAssemblyDiscoverer(IReadOnlyCollection<(Assembly assembly, string productPathName, string openApiProductName, Version apiVersion)> logicParts) :
-            base(logicParts.Select(p => p.assembly))
+        public MeaAssemblyDiscoverer(IReadOnlyCollection<(Assembly assembly, string productPathName, string openApiProductName, Version apiVersion)> meaParts) :
+            base(meaParts.Select(p => p.assembly))
         {
-            _openApiProducts = logicParts.ToList();
+            _openApiProducts = meaParts.ToList();
         }
 
-        public IReadOnlyCollection<ILogicOpenApiProduct> DiscoverOpenApiProducts()
+        public IReadOnlyCollection<IMeaOpenApiProduct> DiscoverOpenApiProducts()
         {
             return _openApiProducts
                 .Select(t => new { t.productPathName, t.openApiProductName, t.apiVersion, t.assembly })
@@ -28,7 +27,7 @@ namespace Kmd.Momentum.Mea.Common.DatabaseStore
                 {
                     var assemblies = g.Select(x => x.assembly).ToArray();
                     var apiVersion = g.Min(x => x.apiVersion);
-                    return new LogicOpenApiProduct(g.Key.productPathName, g.Key.openApiProductName, apiVersion, assemblies);
+                    return new MeaOpenApiProduct(g.Key.productPathName, g.Key.openApiProductName, apiVersion, assemblies);
                 }).ToArray();
         }
 

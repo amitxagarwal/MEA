@@ -6,8 +6,6 @@ using Npgsql.Logging;
 using Serilog;
 using Serilog.Events;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Kmd.Momentum.Mea.Common.DatabaseStore
@@ -44,7 +42,7 @@ namespace Kmd.Momentum.Mea.Common.DatabaseStore
             this.serializationBinder = serializationBinder ?? throw new ArgumentNullException(nameof(serializationBinder));
             this.discoverer = discoverer ?? throw new ArgumentNullException(nameof(discoverer));
 
-            connectionString = configuration["ConnectionStrings:LogicDatabase"];
+            connectionString = configuration["ConnectionStrings:MeaDatabase"];
         }
 
         public IScopedDocumentStore GetStore()

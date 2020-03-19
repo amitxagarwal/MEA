@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Kmd.Momentum.Mea.Common.DatabaseStore
 {
-    public class ScopedDocumentStore : IScopedDocumentStore
+    internal sealed class ScopedDocumentStore : IScopedDocumentStore
     {
         private readonly Marten.DocumentStore store;
         private bool disposedValue;

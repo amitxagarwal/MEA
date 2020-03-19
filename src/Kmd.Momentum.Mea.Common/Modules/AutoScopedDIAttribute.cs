@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Kmd.Momentum.Mea.Common.DatabaseStore
+namespace Kmd.Momentum.Mea.Common.Modules
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class AutoScopedDIAttribute : Attribute

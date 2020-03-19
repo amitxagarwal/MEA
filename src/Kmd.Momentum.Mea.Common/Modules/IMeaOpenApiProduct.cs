@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Kmd.Momentum.Mea.Common.DatabaseStore
+namespace Kmd.Momentum.Mea.Common.Modules
 {
-    public interface ILogicOpenApiProduct
+    public interface IMeaOpenApiProduct
     {
         string OpenApiProductName { get; }
         Version OpenApiVersion { get; }

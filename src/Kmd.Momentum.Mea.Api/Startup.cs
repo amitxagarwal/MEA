@@ -1,11 +1,12 @@
-using Kmd.Momentum.Mea.Api.Citizen;
-using Kmd.Momentum.Mea.Api.Common;
+using Kmd.Momentum.Mea.Common.Authorization;
 using Kmd.Momentum.Mea.Common.DatabaseStore;
+using Kmd.Momentum.Mea.Common.Modules;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
@@ -16,12 +17,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Kmd.Momentum.Mea.Common.Authorization;
-using Kmd.Momentum.Mea.Citizen;
-using Kmd.Momentum.Mea.Common.HttpProvider;
 
 namespace Kmd.Momentum.Mea.Api
 {
@@ -37,19 +32,20 @@ namespace Kmd.Momentum.Mea.Api
         /// <summary>
         ///     The list of assemblies that contribute parts to this application, including controllers,
         ///     modules, initialisers, and so on. Where possible, use the resolved service of type
-        ///     <see cref="ILogicAssemblyDiscoverer" /> from the DI container, or the
+        ///     <see cref="IMeaAssemblyDiscoverer" /> from the DI container, or the
         /// </summary>
         private static
             IReadOnlyCollection<(Assembly assembly, string productPathName, string openApiProductName, Version
-                apiVersion)> LogicAssemblyParts
+                apiVersion)> MeaAssemblyParts
         { get; } =
             new List<(Assembly assembly, string productPathName, string openApiProductName, Version apiVersion)>
             {
-                (typeof(Kmd.Momentum.Mea.Common.DatabaseStore.LogicAssemblyPart).Assembly, productPathName: "Common", openApiProductName: "Common", new Version("0.0.1"))
+                (typeof(Kmd.Momentum.Mea.Common.Modules.MeaAssemblyPart).Assembly, productPathName: "Common", openApiProductName: "Common", new Version("0.0.1")),
+                (typeof(Kmd.Momentum.Mea.Modules.MeaAssemblyPart).Assembly, productPathName: "Mea", openApiProductName: "Mea", new Version("0.0.1"))
             };
 
-        public static LogicAssemblyDiscoverer LogicAssemblyDiscoverer { get; } =
-            new LogicAssemblyDiscoverer(LogicAssemblyParts);
+        public static MeaAssemblyDiscoverer MeaAssemblyDiscoverer { get; } =
+            new MeaAssemblyDiscoverer(MeaAssemblyParts);
 
 #pragma warning disable CA1822
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -62,17 +58,17 @@ namespace Kmd.Momentum.Mea.Api
                     a.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
-            services.AddDocumentStore(LogicAssemblyDiscoverer);
+            services.AddDocumentStore(MeaAssemblyDiscoverer);
             services.AddHttpClient();
-            services.AddScoped<ICitizenService, CitizenService>();
-            services.AddScoped<IHelperHttpClient, HelperHttpClient>();
             services.AddControllers();
-            //LogicAssemblyDiscoverer.ConfigureDiscoveredServices(services, Configuration);
+            services.AddSingleton<IMeaAssemblyDiscoverer>(MeaAssemblyDiscoverer);
 
-            //foreach (var (type, attr) in LogicAssemblyDiscoverer.DiscoverScopedDITypes())
-            //{
-            //    services.AddScoped(attr.AsInterface ?? type, type);
-            //}
+            MeaAssemblyDiscoverer.ConfigureDiscoveredServices(services, Configuration);
+
+            foreach (var (type, attr) in MeaAssemblyDiscoverer.DiscoverScopedDITypes())
+            {
+                services.AddScoped(attr.AsInterface ?? type, type);
+            }
 
             services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
                 .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
@@ -81,8 +77,6 @@ namespace Kmd.Momentum.Mea.Api
             {
                 options.AddPolicy(Resource.Access, policy => policy.Requirements.Add(new HasResourceRequirement(Resource.Access)));
             });
-
-            services.AddSingleton<IAuthorizationHandler, HasResourceHandler>();
 
             services.AddSwaggerGen(c =>
             {

@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Citizen\Model\CitizenDataUploadModel.cs" />
     <Compile Remove="Class1.cs" />
   </ItemGroup>
 

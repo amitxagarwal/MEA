@@ -41,7 +41,7 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             return response;
         }
 
-        public async Task<string[]> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
+        public async Task<ResultOrHttpError<string[], bool>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
         {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
@@ -50,11 +50,16 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
 
             var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return new ResultOrHttpError<string[], bool>(true, response.StatusCode);
+            }
+
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            Log.Information("The active citizen data from Momentum core are returned successfully");
+            Log.Information("The active citizen's CPRs returned successfully from Momentum core");            
 
-            return JsonConvert.DeserializeObject<string[]>(json);
+            return new ResultOrHttpError<string[], bool>(JsonConvert.DeserializeObject<string[]>(json));
         }
 
         public async Task<ResultOrHttpError<string,bool>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
@@ -73,7 +78,7 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
 
             var citizenData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            Log.Information("The citizen details by CPR or CitizenId from Momentum core are returned successfully");
+            Log.Information("The citizen details returned successfully from Momentum core");
             
             return new ResultOrHttpError<string,bool>(citizenData);
         }

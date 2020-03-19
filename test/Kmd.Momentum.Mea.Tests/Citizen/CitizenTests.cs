@@ -24,7 +24,8 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             _configurationRoot.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com");
 
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configurationRoot.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/withActiveClassification"))).Returns(Task.FromResult(cprArray));
+            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configurationRoot.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/withActiveClassification")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string[], bool>(cprArray)));
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configurationRoot.Object);
@@ -34,7 +35,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             //Asert
             result.Should().NotBeNull();
-            result.Should().BeEquivalentTo(cprArray);
+            result.Result.Should().BeEquivalentTo(cprArray);
         }
 
         [Fact]
@@ -49,7 +50,8 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCpr"))).Returns(Task.FromResult(new ResultOrHttpError<string, bool>(httpClientCitizenDataResponse)));
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCpr")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, bool>(httpClientCitizenDataResponse)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 
@@ -58,7 +60,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             //Asert
             result.Should().NotBeNull();
-            result.Should().BeEquivalentTo(citizenDataResponse);
+            result.Result.Should().BeEquivalentTo(citizenDataResponse);
         }
 
         [Fact]
@@ -73,7 +75,8 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCitizenId"))).Returns(Task.FromResult(new ResultOrHttpError<string, bool>(httpClientCitizenDataResponse)));
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCitizenId")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, bool>(httpClientCitizenDataResponse)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 
@@ -82,8 +85,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             //Asert
             result.Should().NotBeNull();
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
-            result.Should().BeEquivalentTo(citizenDataResponse);
+            result.Result.Should().BeEquivalentTo(citizenDataResponse);
         }
     }
 }

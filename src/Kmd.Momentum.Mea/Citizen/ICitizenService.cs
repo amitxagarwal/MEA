@@ -1,11 +1,13 @@
-﻿using Kmd.Momentum.Mea.Citizen.Model;
+﻿using Kmd.Momentum.Mea.Api;
+using Kmd.Momentum.Mea.Citizen.Model;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Citizen
 {
     public interface ICitizenService
     {
-        Task<string[]> GetAllActiveCitizensAsync();
+        Task<IReadOnlyList<CitizenListResponse>> GetAllActiveCitizensAsync();
 
         Task<CitizenDataResponseModel> GetCitizenByCprAsync(string cpr);
 

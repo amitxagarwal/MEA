@@ -4,7 +4,10 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using Kmd.Momentum.Mea;
+using Kmd.Momentum.Mea.Api;
 
 namespace Kmd.Momentum.Mea.Common.HttpProvider
 {
@@ -21,7 +24,7 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             _config = config;
         }
 
-        private async Task<HttpResponseMessage> ReturnAuthorizationTokenAsync()
+        private async Task<HttpResponseMessage> GetAuthorizationTokenAsync()
         {
 #pragma warning disable CA2000 // Dispose objects before losing scope
             var content = new FormUrlEncodedContent(new[]
@@ -39,22 +42,53 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             return response;
         }
 
-        public async Task<string[]> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
+        public async Task<IReadOnlyList<CitizenListResponse>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
         {
-            var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
+            var authResponse = await GetAuthorizationTokenAsync().ConfigureAwait(false);
 
             var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
+            var sort = new Sort
+            {
+                FieldName = "cpr",
+                Ascending = true
+            };
 
-            var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+            var paging = new Paging
+            {
+                PageNumber = -1,
+                pageSize = 100
+            };
 
-            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<string[]>(json);
+            var req = new Request
+            {
+                Term = "25",
+                Paging = paging,
+                Sort = sort
+            };
+
+            bool hasMore = true;
+
+            List<CitizenListResponse> totalRecords = new List<CitizenListResponse>();
+            while (hasMore)
+            {
+                req.Paging.PageNumber += 1;
+#pragma warning disable CA2000 // Dispose objects before losing scope
+                var response = await _httpClient.PostAsync(url, new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json")).ConfigureAwait(false);
+#pragma warning restore CA2000 // Dispose objects before losing scope
+                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var citizenDataObj = JsonConvert.DeserializeObject<CitizenSearchData>(json);
+                var records = citizenDataObj.Data;
+
+                totalRecords.AddRange(records);
+                hasMore = citizenDataObj.HasMore;
+            }
+            return totalRecords;
         }
 
         public async Task<string> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
         {
-            var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
+            var authResponse = await GetAuthorizationTokenAsync().ConfigureAwait(false);
 
             var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");

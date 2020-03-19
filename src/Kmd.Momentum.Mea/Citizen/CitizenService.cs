@@ -1,18 +1,18 @@
-﻿using Kmd.Momentum.Mea.Api.Common;
+﻿using Kmd.Momentum.Mea.Common.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Threading.Tasks;
 
-namespace Kmd.Momentum.Mea.Api.Citizen
+namespace Kmd.Momentum.Mea.Citizen
 {
     public class CitizenService : ICitizenService
     {
-        private readonly IHelperHttpClient _citizenHttpClient;
+        private readonly IHttpClientHelper _citizenHttpClient;
         private readonly IConfiguration _config;
 
-        public CitizenService(IHelperHttpClient citizenHttpClient, IConfiguration config)
+        public CitizenService(IHttpClientHelper citizenHttpClient, IConfiguration config)
         {
             _citizenHttpClient = citizenHttpClient;
             _config = config;

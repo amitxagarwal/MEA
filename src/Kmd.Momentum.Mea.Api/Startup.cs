@@ -1,5 +1,3 @@
-using Kmd.Momentum.Mea.Api.Citizen;
-using Kmd.Momentum.Mea.Api.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +10,12 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Kmd.Momentum.Mea.Common.Authorization;
+using Kmd.Momentum.Mea.Citizen;
+using Kmd.Momentum.Mea.Common.HttpProvider;
 
 namespace Kmd.Momentum.Mea.Api
 {
@@ -36,11 +40,21 @@ namespace Kmd.Momentum.Mea.Api
                 });
 
             services.AddScoped<ICitizenService, CitizenService>();
-            services.AddScoped<IHelperHttpClient, HelperHttpClient>();
+            services.AddScoped<IHttpClientHelper, HttpClientHelper>();
 
             services.AddHttpClient();
 
             services.AddControllers();
+
+            services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
+                .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Resource.Access, policy => policy.Requirements.Add(new HasResourceRequirement(Resource.Access)));
+            });
+
+            services.AddSingleton<IAuthorizationHandler, HasResourceHandler>();
 
             services.AddSwaggerGen(c =>
             {

@@ -1,6 +1,6 @@
-﻿namespace Kmd.Momentum.Mea.Api.Citizen
+﻿namespace Kmd.Momentum.Mea.Citizen.Model
 {
-    public class CitizenDataResponse
+    public class CitizenDataResponseModel
     {
         public string CitizenId { get; }
         public string DisplayName { get; }
@@ -12,7 +12,7 @@
         public string CaseworkerIdentifier { get; }
         public string Description { get; }
 
-        public CitizenDataResponse(string citizenId, string displayName, string givenName, string middleName, string initials, string email, string phone,
+        public CitizenDataResponseModel(string citizenId, string displayName, string givenName, string middleName, string initials, string email, string phone,
             string caseworkerIdentifier, string description)
         {
             CitizenId = citizenId;

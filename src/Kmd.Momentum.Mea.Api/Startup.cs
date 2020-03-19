@@ -16,6 +16,12 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Kmd.Momentum.Mea.Common.Authorization;
+using Kmd.Momentum.Mea.Citizen;
+using Kmd.Momentum.Mea.Common.HttpProvider;
 
 namespace Kmd.Momentum.Mea.Api
 {
@@ -67,6 +73,16 @@ namespace Kmd.Momentum.Mea.Api
             //{
             //    services.AddScoped(attr.AsInterface ?? type, type);
             //}
+
+            services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
+                .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Resource.Access, policy => policy.Requirements.Add(new HasResourceRequirement(Resource.Access)));
+            });
+
+            services.AddSingleton<IAuthorizationHandler, HasResourceHandler>();
 
             services.AddSwaggerGen(c =>
             {

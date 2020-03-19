@@ -3,7 +3,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Kmd.Momentum.Mea.Api.Controllers
+namespace Kmd.Momentum.Mea.Api.Controllers.Health
 {
     [Route("[controller]/[action]")]
     //[Authorize]

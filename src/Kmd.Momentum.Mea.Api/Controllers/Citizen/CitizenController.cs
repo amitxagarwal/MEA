@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Kmd.Momentum.Mea.Citizen;
+using Kmd.Momentum.Mea.Citizen.Model;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-namespace Kmd.Momentum.Mea.Api.Citizen
+namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
 {
     [ApiController]
     [Route("citizens")]
@@ -47,7 +49,7 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [ProducesResponseType(404)]
         [Route("cpr/{cprNumber}")]
         [SwaggerOperation(OperationId = "GetCitizenByCpr")]
-        public async Task<CitizenDataResponse> GetCitizenByCpr([Required] [FromRoute] string cprNumber)
+        public async Task<CitizenDataResponseModel> GetCitizenByCpr([Required] [FromRoute] string cprNumber)
         {
             return await _citizenService.GetCitizenByCprAsync(cprNumber).ConfigureAwait(false);
         }
@@ -64,7 +66,7 @@ namespace Kmd.Momentum.Mea.Api.Citizen
         [ProducesResponseType(404)]
         [Route("kss/{citizenId}")]
         [SwaggerOperation(OperationId = "GetCitizenById")]
-        public async Task<CitizenDataResponse> GetCitizenById([Required] [FromRoute] string citizenId)
+        public async Task<CitizenDataResponseModel> GetCitizenById([Required] [FromRoute] string citizenId)
         {
             var response = await _citizenService.GetCitizenByIdAsync(citizenId).ConfigureAwait(false);
             return response;

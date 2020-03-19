@@ -9,16 +9,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace Kmd.Momentum.Mea.Api.Common
+namespace Kmd.Momentum.Mea.Common.HttpProvider
 {
 #pragma warning disable CA1001 // Types that own disposable fields should be disposable
-    public class HelperHttpClient : IHelperHttpClient
+    public class HttpClientHelper : IHttpClientHelper
 #pragma warning restore CA1001 // Types that own disposable fields should be disposable
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _config;
 
-        public HelperHttpClient(IConfiguration config)
+        public HttpClientHelper(IConfiguration config)
         {
             _httpClient = new HttpClient();
             _config = config;

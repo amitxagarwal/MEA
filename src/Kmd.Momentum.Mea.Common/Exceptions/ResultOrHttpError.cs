@@ -31,26 +31,6 @@ namespace Kmd.Momentum.Mea.Common.Exceptions
         public TResult Result { get; }
         public TError Error { get; }
         public bool IsError { get; }
-        public HttpStatusCode? StatusCode { get; }
-
-        public void Match(Action<TResult> onSuccess, Action<TError> onError)
-        {
-            if (this.IsError)
-            {
-                onError(this.Error);
-            }
-            else
-            {
-                onSuccess(this.Result);
-            }
-        }
-
-        public T Match<T>(Func<TResult, T> resultFunc, Func<TError, T> errorFunc) => this.IsError
-            ? errorFunc(this.Error)
-            : resultFunc(this.Result);
-
-        public T Match<T>(Func<TResult, T> resultFunc, Func<TError, HttpStatusCode?, T> errorFunc) => this.IsError
-            ? errorFunc(this.Error, this.StatusCode)
-            : resultFunc(this.Result);
+        public HttpStatusCode? StatusCode { get; }       
     }
 }

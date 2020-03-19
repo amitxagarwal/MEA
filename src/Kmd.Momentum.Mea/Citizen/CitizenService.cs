@@ -1,4 +1,5 @@
-﻿using Kmd.Momentum.Mea.Common.Http;
+﻿using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.HttpProvider;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Serilog;
@@ -24,7 +25,7 @@ namespace Kmd.Momentum.Mea.Citizen
             return response;
         }
 
-        public async Task<CitizenDataResponse> GetCitizenByCprAsync(string cpr)
+        public async Task<CitizenDataResponseModel> GetCitizenByCprAsync(string cpr)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")).ConfigureAwait(false);
             var json = JObject.Parse(response);
@@ -44,7 +45,7 @@ namespace Kmd.Momentum.Mea.Citizen
                 GetVal(json, "description"));
         }
 
-        public async Task<CitizenDataResponse> GetCitizenByIdAsync(string citizenId)
+        public async Task<CitizenDataResponseModel> GetCitizenByIdAsync(string citizenId)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")).ConfigureAwait(false);
             var json = JObject.Parse(response);

@@ -12,11 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Kmd.Momentum.Mea.Common\Kmd.Momentum.Mea.Common.csproj" />
-    <ProjectReference Include="..\..\Kmd.Momentum.Mea\Kmd.Momentum.Mea.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureADB2C.UI" Version="3.1.2" />
@@ -35,6 +30,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.0.0" />
     <PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kmd.Momentum.Mea.Common\Kmd.Momentum.Mea.Common.csproj" />
+    <ProjectReference Include="..\Kmd.Momentum.Mea\Kmd.Momentum.Mea.csproj" />
   </ItemGroup>
 
 </Project>

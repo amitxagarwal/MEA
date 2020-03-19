@@ -1,10 +1,12 @@
 ﻿using FluentAssertions;
 using Kmd.Momentum.Mea.Citizen;
 using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.Common.HttpProvider;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -47,7 +49,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCpr"))).Returns(Task.FromResult(httpClientCitizenDataResponse));
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCpr"))).Returns(Task.FromResult(new ResultOrHttpError<string, bool>(httpClientCitizenDataResponse)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 
@@ -60,7 +62,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         }
 
         [Fact]
-        public async Task GetCitizenByIdSuccess()
+        public async Task GetCitizenByCitizenIdSuccess()
         {
             //Arrange
             var helperHttpClientMoq = new Mock<IHttpClientHelper>();
@@ -71,7 +73,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCitizenId"))).Returns(Task.FromResult(httpClientCitizenDataResponse));
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCitizenId"))).Returns(Task.FromResult(new ResultOrHttpError<string, bool>(httpClientCitizenDataResponse)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 
@@ -80,6 +82,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             //Asert
             result.Should().NotBeNull();
+            result.StatusCode.Should().Be(HttpStatusCode.OK);
             result.Should().BeEquivalentTo(citizenDataResponse);
         }
     }

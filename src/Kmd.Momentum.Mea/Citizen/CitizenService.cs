@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Threading.Tasks;
+using Kmd.Momentum.Mea.Common.Exceptions;
 
 namespace Kmd.Momentum.Mea.Citizen
 {
@@ -25,15 +26,23 @@ namespace Kmd.Momentum.Mea.Citizen
             return response;
         }
 
-        public async Task<CitizenDataResponseModel> GetCitizenByCprAsync(string cpr)
+        public async Task<ResultOrHttpError<CitizenDataResponseModel, string>> GetCitizenByCprAsync(string cpr)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")).ConfigureAwait(false);
-            var json = JObject.Parse(response);
+            
+            if (response.IsError)
+            {
+                Log.ForContext("CPR", cpr)
+                .Error("An Error Occured while retriving citizen data by cpr");
+                return new ResultOrHttpError<CitizenDataResponseModel, string>("An Error Occured while retriving citizen data by cpr", System.Net.HttpStatusCode.NotFound);
+            }
+            
+            var json = JObject.Parse(response.Result);
 
             Log.ForContext("CPR", cpr)
-                .Information("The citizen details by CPR number is returned successfully"); 
+                .Information("The citizen details by CPR number is returned successfully", response.StatusCode); 
 
-            return new CitizenDataResponse(
+            return new ResultOrHttpError<CitizenDataResponseModel, string>(new CitizenDataResponseModel(
                 GetVal(json, "id"),
                 GetVal(json, "displayName"),
                 GetVal(json, "givenName"),
@@ -42,18 +51,25 @@ namespace Kmd.Momentum.Mea.Citizen
                 GetVal(json, "contactInformation.email.address"),
                 GetVal(json, "contactInformation.phone.number"),
                 GetVal(json, "caseworkerIdentifier"),
-                GetVal(json, "description"));
+                GetVal(json, "description")));
         }
 
-        public async Task<CitizenDataResponseModel> GetCitizenByIdAsync(string citizenId)
+        public async Task<ResultOrHttpError<CitizenDataResponseModel, string>> GetCitizenByIdAsync(string citizenId)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")).ConfigureAwait(false);
-            var json = JObject.Parse(response);
+            if (response.IsError)
+            {
+                Log.ForContext("CitizenId", citizenId)
+                .Error("An Error Occured while retriving citizen data by citizenID");
+                return new ResultOrHttpError<CitizenDataResponseModel, string>("An Error Occured while retriving citizen data by citizenId", System.Net.HttpStatusCode.NotFound);
+            }
+
+            var json = JObject.Parse(response.Result);
 
             Log.ForContext("CitizenID", citizenId)
-                .Information("The citizen details by CitizenId has been returned successfully");
+                .Information("The citizen details by CitizenId has been returned successfully",response.StatusCode);
 
-            return new CitizenDataResponse(
+            return new ResultOrHttpError<CitizenDataResponseModel, string>( new CitizenDataResponseModel (
                 GetVal(json, "id"),
                 GetVal(json, "displayName"),
                 GetVal(json, "givenName"),
@@ -62,7 +78,7 @@ namespace Kmd.Momentum.Mea.Citizen
                 GetVal(json, "contactInformation.email.address"),
                 GetVal(json, "contactInformation.phone.number"),
                 GetVal(json, "caseworkerIdentifier"),
-                GetVal(json, "description"));
+                GetVal(json, "description")));
         }
 
         private string GetVal(JObject _json, string _key)

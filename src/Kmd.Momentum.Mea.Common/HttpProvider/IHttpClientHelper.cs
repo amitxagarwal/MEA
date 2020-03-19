@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kmd.Momentum.Mea.Common.Exceptions;
+using System;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Common.HttpProvider
@@ -7,6 +8,6 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
     {
         Task<string[]> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url);
 
-        Task<string> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url);        
+        Task<ResultOrHttpError<string, bool>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url);        
     }
 }

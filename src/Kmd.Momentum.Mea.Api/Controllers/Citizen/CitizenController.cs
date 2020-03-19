@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
@@ -48,9 +49,19 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         [ProducesResponseType(404)]
         [Route("cpr/{cprNumber}")]
         [SwaggerOperation(OperationId = "GetCitizenByCpr")]
-        public async Task<CitizenDataResponseModel> GetCitizenByCpr([Required] [FromRoute] string cprNumber)
+        public async Task<ActionResult<CitizenDataResponseModel>> GetCitizenByCpr([Required] [FromRoute] string cprNumber)
         {
-            return await _citizenService.GetCitizenByCprAsync(cprNumber).ConfigureAwait(false);
+            var result = await _citizenService.GetCitizenByCprAsync(cprNumber).ConfigureAwait(false);
+
+            if (result.IsError)
+            {
+                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error);
+            }
+            else 
+            {
+                return Ok(result.Result);
+            }
+            
         }
 
         ///<summary>
@@ -65,10 +76,18 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         [ProducesResponseType(404)]
         [Route("kss/{citizenId}")]
         [SwaggerOperation(OperationId = "GetCitizenById")]
-        public async Task<CitizenDataResponseModel> GetCitizenById([Required] [FromRoute] string citizenId)
+        public async Task<ActionResult<CitizenDataResponseModel>> GetCitizenById([Required] [FromRoute] string citizenId)
         {
-            var response = await _citizenService.GetCitizenByIdAsync(citizenId).ConfigureAwait(false);
-            return response;
+            var result = await _citizenService.GetCitizenByIdAsync(citizenId).ConfigureAwait(false);
+
+            if (result.IsError)
+            {
+                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error);
+            }
+            else
+            {
+                return Ok(result.Result);
+            }
         }
     }
 }

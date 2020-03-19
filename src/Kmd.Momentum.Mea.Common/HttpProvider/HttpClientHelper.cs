@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Kmd.Momentum.Mea.Common.Exceptions;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
@@ -56,7 +57,7 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             return JsonConvert.DeserializeObject<string[]>(json);
         }
 
-        public async Task<string> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
+        public async Task<ResultOrHttpError<string,bool>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
         {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
@@ -65,11 +66,16 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
 
             var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return new ResultOrHttpError<string, bool>(true,response.StatusCode);
+            }
+
             var citizenData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             Log.Information("The citizen details by CPR or CitizenId from Momentum core are returned successfully");
             
-            return citizenData;
+            return new ResultOrHttpError<string,bool>(citizenData);
         }
     }
 }

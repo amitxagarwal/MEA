@@ -1,4 +1,5 @@
 ﻿using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.Exceptions;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Citizen
@@ -7,8 +8,8 @@ namespace Kmd.Momentum.Mea.Citizen
     {
         Task<string[]> GetAllActiveCitizensAsync();
 
-        Task<CitizenDataResponseModel> GetCitizenByCprAsync(string cpr);
+        Task<ResultOrHttpError<CitizenDataResponseModel, string>> GetCitizenByCprAsync(string cpr);
 
-        Task<CitizenDataResponseModel> GetCitizenByIdAsync(string citizenId);
+        Task<ResultOrHttpError<CitizenDataResponseModel, string>> GetCitizenByIdAsync(string citizenId);
     }
 }

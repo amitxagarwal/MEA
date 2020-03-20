@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Kmd.Momentum.Mea;
-using Kmd.Momentum.Mea.Api;
 
 namespace Kmd.Momentum.Mea.Common.HttpProvider
 {
@@ -42,7 +40,7 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             return response;
         }
 
-        public async Task<IReadOnlyList<CitizenListResponse>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
+        public async Task<IReadOnlyList<string>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
         {
             _httpClient.DefaultRequestHeaders.Clear();
             var authResponse = await GetAuthorizationTokenAsync().ConfigureAwait(false);
@@ -69,9 +67,11 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             };
 
             bool hasMore = true;
-            List<CitizenListResponse> citizenResponseList = new List<CitizenListResponse>();
             List<Task<string>> taskList = new List<Task<string>>();
             List<JToken> totalRecords = new List<JToken>();
+
+            List<string> JsonStringList = new List<string>();
+
             while (hasMore)
             {
                 req.Paging.PageNumber += 1;
@@ -103,36 +103,50 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
                 {
                     if (JObject.Parse(result)["cpr"].ToString() == jarr["cpr"].ToString())
                     {
-                        string address = string.Empty;
-                        string number = string.Empty;
-
+                        string emailAddress = string.Empty;
+                        string phoneNumber = string.Empty;
+                        
                         if (!String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"].ToString()))
                         {
                             try
                             {
                                 if (!String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"]["email"].ToString()) &&
                                 !String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"]["email"]["address"].ToString()))
-                                    address = JObject.Parse(result)["contactInformation"]["email"]["address"].ToString();
+                                    emailAddress = JObject.Parse(result)["contactInformation"]["email"]["address"].ToString();
+                                jarr["address"] = emailAddress;
 
                                 if (!String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"]["phone"].ToString()) &&
                                 !String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"]["phone"]["number"].ToString()))
-                                    number = JObject.Parse(result)["contactInformation"]["phone"]["number"].ToString();
+                                    phoneNumber = JObject.Parse(result)["contactInformation"]["phone"]["number"].ToString();
+                                jarr["number"] = phoneNumber;
                             }
                             catch (Exception ex)
                             {
-
+                                throw ex;
                             }
                         }
 
-                        citizenResponseList.Add(new CitizenListResponse(jarr["citizenId"].ToString(),
-                            jarr["cpr"].ToString(),
-                            jarr["displayName"].ToString(),
-                            address,
-                            number));
+                        var jsonToReturn = JsonConvert.SerializeObject(new
+                        {
+                            citizenId = jarr["citizenId"],
+                            cpr = jarr["cpr"],
+                            displayName = jarr["displayName"],
+                            givenName = "",
+                            middleName = "",
+                            initials="",
+                            address = emailAddress,
+                            number = phoneNumber,
+                            caseworkerIdentifier = "",
+                            description="",
+                            isBookable=true,
+                            isActive=true
+                        }) ;
+
+                        JsonStringList.Add(jsonToReturn);
                     }
                 }
             }
-            return citizenResponseList;
+            return JsonStringList;
         }
 
         private async Task<string> GetFullDataMappingAsync(Uri url, JToken token)

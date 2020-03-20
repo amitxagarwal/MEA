@@ -5,6 +5,8 @@ using Kmd.Momentum.Mea.Citizen.Model;
 using Kmd.Momentum.Mea.Common.HttpProvider;
 using Microsoft.Extensions.Configuration;
 using Moq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,11 +27,11 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            var mockResponseData = new CitizenListResponse[2];
+            var mockResponseData = new List<string>();
 
-            mockResponseData[0] = new CitizenListResponse("testId1", "TestCPR1", "TestDisplay1","test@email.com","1234567891");
-            mockResponseData[1] = new CitizenListResponse("testId2", "TestCPR2", "TestDisplay2", "test@email.com", "1234567891");
-            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/citizensearch"))).Returns(Task.FromResult((IReadOnlyList<CitizenListResponse>)mockResponseData));
+            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestCPR1", "TestDisplay1","givenname","middlename","initials","test@email.com","1234567891","description")));
+            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestCPR2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "description")));
+            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/citizensearch"))).Returns(Task.FromResult((IReadOnlyList<string>)mockResponseData));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 

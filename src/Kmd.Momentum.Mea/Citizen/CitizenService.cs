@@ -1,10 +1,11 @@
-﻿using Kmd.Momentum.Mea.Api;
-using Kmd.Momentum.Mea.Citizen.Model;
+﻿using Kmd.Momentum.Mea.Citizen.Model;
 using Kmd.Momentum.Mea.Common.HttpProvider;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Citizen
@@ -20,11 +21,12 @@ namespace Kmd.Momentum.Mea.Citizen
             _config = config;
         }
 
-        public async Task<IReadOnlyList<CitizenListResponse>> GetAllActiveCitizensAsync()
+        public async Task<IReadOnlyList<CitizenDataResponseModel>> GetAllActiveCitizensAsync()
         {
             var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/citizensearch")).ConfigureAwait(false);
 
-            return response;
+            var test = response.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x));
+            return test.ToList();
         }
 
         public async Task<CitizenDataResponseModel> GetCitizenByCprAsync(string cpr)

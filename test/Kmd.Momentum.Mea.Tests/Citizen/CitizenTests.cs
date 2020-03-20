@@ -43,11 +43,17 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         {
             //Arrange
             var helperHttpClientMoq = new Mock<IHttpClientHelper>();
-            var httpClientCitizenDataResponse = "{\"cpr\":\"dummyCpr\",\"id\":\"test-test-test-test-test\",\"displayName\":\"test display name\",\"" +
-                "contactInformation\":{\"email\":{\"id\":\"testId-testId-testId-testId-testId\",\"address\":\"test@test.com\"},\"phone\":{\"id\":\"testId-testId-testId-testId-testId\",\"number\":\"+99999999\",\"isMobile\":true}}}";
-
-            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name", "", "", "", "test@test.com", "+99999999", "", "");
             var _configuration = new Mock<IConfiguration>();
+
+            var httpClientCitizenDataResponse = "{\"cpr\":\"dummyCpr\",\"id\":\"test-test-test-test-test\"," +
+                "\"displayName\":\"test display name\",\"" +
+                "contactInformation\":{\"email\":{\"id\":\"testId-testId-testId-testId-testId\"," +
+                "\"address\":\"test@test.com\"},\"phone\":{\"id\":\"testId-testId-testId-testId-testId\"," +
+                "\"number\":\"+99999999\",\"isMobile\":true}}}";
+
+            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name", 
+                "", "", "", "test@test.com", "+99999999", "", "");
+           
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
             helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCpr")))
@@ -68,11 +74,17 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         {
             //Arrange
             var helperHttpClientMoq = new Mock<IHttpClientHelper>();
-            var httpClientCitizenDataResponse = "{\"cpr\":\"dummyCpr\",\"id\":\"test-test-test-test-test\",\"displayName\":\"test display name\",\"" +
-                "contactInformation\":{\"email\":{\"id\":\"testId-testId-testId-testId-testId\",\"address\":\"test@test.com\"},\"phone\":{\"id\":\"testId-testId-testId-testId-testId\",\"number\":\"+99999999\",\"isMobile\":true}}}";
-
-            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name", "", "", "", "test@test.com", "+99999999", "", "");
             var _configuration = new Mock<IConfiguration>();
+
+            var httpClientCitizenDataResponse = "{\"cpr\":\"dummyCpr\",\"id\":\"test-test-test-test-test\"," +
+                "\"displayName\":\"test display name\",\"" +
+                "contactInformation\":{\"email\":{\"id\":\"testId-testId-testId-testId-testId\"," +
+                "\"address\":\"test@test.com\"},\"phone\":{\"id\":\"testId-testId-testId-testId-testId\"," +
+                "\"number\":\"+99999999\",\"isMobile\":true}}}";
+
+            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name",
+                "", "", "", "test@test.com", "+99999999", "", "");
+            
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
             helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCitizenId")))

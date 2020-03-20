@@ -70,7 +70,7 @@ namespace Kmd.Momentum.Mea.Citizen
             {
                 Log.ForContext("CitizenId", citizenId)
                 .Error("An Error Occured while retriving citizen data by citizenID");
-                return new ResultOrHttpError<CitizenDataResponseModel, string>("An Error Occured while retriving citizen data by citizenId", System.Net.HttpStatusCode.NotFound);
+                return new ResultOrHttpError<CitizenDataResponseModel, string>("An Error Occured while retriving citizen data by citizenId", HttpStatusCode.NotFound);
             }
 
             var json = JObject.Parse(response.Result);

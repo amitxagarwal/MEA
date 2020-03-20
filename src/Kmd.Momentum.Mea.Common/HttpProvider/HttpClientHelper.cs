@@ -18,8 +18,7 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _config;
 
-        public HttpClientHelper(IConfiguration config)
-        {
+        public HttpClientHelper(IConfiguration config)        {
             _httpClient = new HttpClient();
             _config = config;
         }
@@ -44,6 +43,7 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
 
         public async Task<IReadOnlyList<CitizenListResponse>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
         {
+            _httpClient.DefaultRequestHeaders.Clear();
             var authResponse = await GetAuthorizationTokenAsync().ConfigureAwait(false);
 
             var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
@@ -68,36 +68,75 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             };
 
             bool hasMore = true;
-
-            List<CitizenListResponse> totalRecords = new List<CitizenListResponse>();
+            List<CitizenListResponse> citizenResponseList = new List<CitizenListResponse>();
+            List<Task<string>> taskList = new List<Task<string>>();
+            List<JToken> totalRecords = new List<JToken>();
             while (hasMore)
             {
                 req.Paging.PageNumber += 1;
 #pragma warning disable CA2000 // Dispose objects before losing scope
                 var response = await _httpClient.PostAsync(url, new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json")).ConfigureAwait(false);
 #pragma warning restore CA2000 // Dispose objects before losing scope
-                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var citizenDataObj = JsonConvert.DeserializeObject<CitizenSearchData>(json);
-                var records = citizenDataObj.Data;
+                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var jsonArray = JArray.Parse(JObject.Parse(content)["data"].ToString());                
 
-                totalRecords.AddRange(records);
-                hasMore = citizenDataObj.HasMore;
+                foreach(var record in jsonArray)
+                {
+                    var cpr = record["cpr"];
+                    
+                    var task = GetFullDataMappingAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}"), record);
+                    taskList.Add(task);
+                }
+                hasMore = (bool)JProperty.Parse(content)["hasMore"];
+
+                totalRecords.AddRange(jsonArray.Children());
             }
-            return totalRecords;
+
+            await Task.WhenAll(taskList);
+          
+
+            foreach( var task in taskList)
+            {
+                var result = task.Result;
+                foreach (var jarr in totalRecords)
+                {
+                    if(JObject.Parse(result)["cpr"].ToString() == jarr["cpr"].ToString())
+                    {
+                        citizenResponseList.Add(new CitizenListResponse(jarr["citizenId"].ToString(), 
+                            jarr["cpr"].ToString(), 
+                            jarr["displayName"].ToString()));
+                    }
+                }
+            }
+            return citizenResponseList;
+        }
+
+        private async Task<string> GetFullDataMappingAsync(Uri url, JToken token)
+        {
+            var response = await GetDataAsync(url).ConfigureAwait(false);
+            return response;
         }
 
         public async Task<string> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
         {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
             var authResponse = await GetAuthorizationTokenAsync().ConfigureAwait(false);
 
             var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
+            
+            return await GetDataAsync(url).ConfigureAwait(false);
 
+        }
+
+        private async Task<string> GetDataAsync(Uri url)
+        {
             var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
             var citizenData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return citizenData;
         }
+
     }
 }
 

@@ -70,6 +70,31 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         }
 
         [Fact]
+        public async Task GetCitizenDataByCprFails()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<IHttpClientHelper>();
+            var _configuration = new Mock<IConfiguration>();
+
+            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name",
+                "", "", "", "test@test.com", "+99999999", "", "");
+
+            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
+
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCpr")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, bool>(true, HttpStatusCode.NotFound)));
+
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
+
+            //Act
+            var result = await citizenService.GetCitizenByCprAsync("dummyCpr").ConfigureAwait(false);
+
+            //Asert
+            result.IsError.Should().BeTrue();
+            result.Error.Should().Be("An Error Occured while retriving citizen data by cpr");
+        }
+
+        [Fact]
         public async Task GetCitizenByCitizenIdSuccess()
         {
             //Arrange
@@ -98,6 +123,32 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             //Asert
             result.Should().NotBeNull();
             result.Result.Should().BeEquivalentTo(citizenDataResponse);
+        }
+
+
+        [Fact]
+        public async Task GetCitizenByCitizenIdFails()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<IHttpClientHelper>();
+            var _configuration = new Mock<IConfiguration>();
+
+            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name",
+                "", "", "", "test@test.com", "+99999999", "", "");
+
+            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
+
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCitizenId")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, bool>(true, HttpStatusCode.NotFound)));
+
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
+
+            //Act
+            var result = await citizenService.GetCitizenByIdAsync("dummyCitizenId").ConfigureAwait(false);
+
+            //Asert
+            result.IsError.Should().BeTrue();
+            result.Error.Should().Be("An Error Occured while retriving citizen data by citizenId");
         }
     }
 }

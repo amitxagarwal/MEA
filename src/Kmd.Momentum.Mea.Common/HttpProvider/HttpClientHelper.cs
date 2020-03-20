@@ -67,9 +67,9 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             };
 
             bool hasMore = true;
+
             List<Task<string>> taskList = new List<Task<string>>();
             List<JToken> totalRecords = new List<JToken>();
-
             List<string> JsonStringList = new List<string>();
 
             while (hasMore)
@@ -83,9 +83,7 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
 
                 foreach (var record in jsonArray)
                 {
-                    var cpr = record["cpr"];
-
-                    var task = GetDataAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}"));
+                    var task = GetDataAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{record["cpr"]}"));
                     taskList.Add(task);
                 }
                 hasMore = (bool)JProperty.Parse(content)["hasMore"];

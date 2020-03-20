@@ -38,11 +38,20 @@ namespace Kmd.Momentum.Mea.Api
         [JsonProperty("displayName")]
         public string DisplayName { get; }
 
-        public CitizenListResponse(string citizenId, string cpr, string displayName)
+        [JsonProperty("address")]
+        public string EmailAddress { get; }
+
+        [JsonProperty("number")]
+        public string PhoneNumber { get; }
+
+
+        public CitizenListResponse(string citizenId, string cpr, string displayName, string address, string number)
         {
             CitizenId = citizenId;
             Cpr = cpr;
             DisplayName = displayName;
+            EmailAddress = address;
+            PhoneNumber = number;
         }
     }
 }

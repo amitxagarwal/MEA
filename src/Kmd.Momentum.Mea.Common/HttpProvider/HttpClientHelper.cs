@@ -18,7 +18,8 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _config;
 
-        public HttpClientHelper(IConfiguration config)        {
+        public HttpClientHelper(IConfiguration config)
+        {
             _httpClient = new HttpClient();
             _config = config;
         }
@@ -78,12 +79,12 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
                 var response = await _httpClient.PostAsync(url, new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json")).ConfigureAwait(false);
 #pragma warning restore CA2000 // Dispose objects before losing scope
                 var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var jsonArray = JArray.Parse(JObject.Parse(content)["data"].ToString());                
+                var jsonArray = JArray.Parse(JObject.Parse(content)["data"].ToString());
 
-                foreach(var record in jsonArray)
+                foreach (var record in jsonArray)
                 {
                     var cpr = record["cpr"];
-                    
+
                     var task = GetFullDataMappingAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}"), record);
                     taskList.Add(task);
                 }
@@ -93,18 +94,41 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             }
 
             await Task.WhenAll(taskList);
-          
 
-            foreach( var task in taskList)
+
+            foreach (var task in taskList)
             {
                 var result = task.Result;
                 foreach (var jarr in totalRecords)
                 {
-                    if(JObject.Parse(result)["cpr"].ToString() == jarr["cpr"].ToString())
+                    if (JObject.Parse(result)["cpr"].ToString() == jarr["cpr"].ToString())
                     {
-                        citizenResponseList.Add(new CitizenListResponse(jarr["citizenId"].ToString(), 
-                            jarr["cpr"].ToString(), 
-                            jarr["displayName"].ToString()));
+                        string address = string.Empty;
+                        string number = string.Empty;
+
+                        if (!String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"].ToString()))
+                        {
+                            try
+                            {
+                                if (!String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"]["email"].ToString()) &&
+                                !String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"]["email"]["address"].ToString()))
+                                    address = JObject.Parse(result)["contactInformation"]["email"]["address"].ToString();
+
+                                if (!String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"]["phone"].ToString()) &&
+                                !String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"]["phone"]["number"].ToString()))
+                                    number = JObject.Parse(result)["contactInformation"]["phone"]["number"].ToString();
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
+                        }
+
+                        citizenResponseList.Add(new CitizenListResponse(jarr["citizenId"].ToString(),
+                            jarr["cpr"].ToString(),
+                            jarr["displayName"].ToString(),
+                            address,
+                            number));
                     }
                 }
             }
@@ -124,7 +148,7 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
 
             var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
-            
+
             return await GetDataAsync(url).ConfigureAwait(false);
 
         }

@@ -27,8 +27,8 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             var mockResponseData = new CitizenListResponse[2];
 
-            mockResponseData[0] = new CitizenListResponse("testId1", "TestCPR1", "TestDisplay1");
-            mockResponseData[1] = new CitizenListResponse("testId2", "TestCPR2", "TestDisplay2");
+            mockResponseData[0] = new CitizenListResponse("testId1", "TestCPR1", "TestDisplay1","test@email.com","1234567891");
+            mockResponseData[1] = new CitizenListResponse("testId2", "TestCPR2", "TestDisplay2", "test@email.com", "1234567891");
             helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/citizensearch"))).Returns(Task.FromResult((IReadOnlyList<CitizenListResponse>)mockResponseData));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);

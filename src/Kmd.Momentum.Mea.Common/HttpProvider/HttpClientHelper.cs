@@ -85,7 +85,7 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
                 {
                     var cpr = record["cpr"];
 
-                    var task = GetFullDataMappingAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}"), record);
+                    var task = GetDataAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}"));
                     taskList.Add(task);
                 }
                 hasMore = (bool)JProperty.Parse(content)["hasMore"];
@@ -147,12 +147,6 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
                 }
             }
             return JsonStringList;
-        }
-
-        private async Task<string> GetFullDataMappingAsync(Uri url, JToken token)
-        {
-            var response = await GetDataAsync(url).ConfigureAwait(false);
-            return response;
         }
 
         public async Task<string> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)

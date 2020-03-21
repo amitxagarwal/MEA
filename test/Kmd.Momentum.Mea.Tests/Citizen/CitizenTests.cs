@@ -8,6 +8,7 @@ using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
@@ -34,13 +35,15 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/citizensearch"))).Returns(Task.FromResult((IReadOnlyList<string>)mockResponseData));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
+            var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
 
             //Act
             var result = await citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
-
+            
+            
             //Asert
             result.Should().NotBeNull();
-            result.Should().BeEquivalentTo(mockResponseData);
+            result.Should().BeEquivalentTo(responseData);
         }
 
         [Fact]

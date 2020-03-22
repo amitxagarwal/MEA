@@ -1,3 +1,12 @@
+using CorrelationId;
+using Kmd.Momentum.Mea.Citizen;
+using Kmd.Momentum.Mea.Common.Authorization;
+using Kmd.Momentum.Mea.Common.Framework;
+using Kmd.Momentum.Mea.Common.Framework.PollyOptions;
+using Kmd.Momentum.Mea.Common.MeaHttpClient;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,28 +19,20 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Kmd.Momentum.Mea.Common.Authorization;
-using Kmd.Momentum.Mea.Citizen;
-using Kmd.Momentum.Mea.Common.HttpProvider;
-using Kmd.Momentum.Mea.Common.Framework;
+
 namespace Kmd.Momentum.Mea.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        private readonly IConfiguration configuration;
 
-        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration configuration) => this.configuration = configuration;
 
 #pragma warning disable CA1822
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCorrelationId();
             services.AddMvc()
                 .AddJsonOptions(a =>
                 {
@@ -39,16 +40,16 @@ namespace Kmd.Momentum.Mea.Api
                     a.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
-            services.AddScoped<ICitizenService, CitizenService>();
-            services.AddProviderHttpClient<IHttpClientHelper, HttpClientHelper>();
+            services
+                .AddPolicies(configuration)
+                .AddHttpClient<IMeaClient, MeaClient, MeaClientOptions>(
+                    configuration,
+                    nameof(ApplicationOptions.MeaClient));
 
-            services.AddHttpClient();
-            services.AddPolicies();
-            services.AddPolicyRegistry();
             services.AddControllers();
 
             services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
-                .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
+                .AddAzureADB2CBearer(options => configuration.Bind("AzureAdB2C", options));
 
             services.AddAuthorization(options =>
             {
@@ -99,6 +100,7 @@ namespace Kmd.Momentum.Mea.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCorrelationId();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

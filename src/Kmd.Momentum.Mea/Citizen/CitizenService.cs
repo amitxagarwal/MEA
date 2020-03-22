@@ -1,5 +1,5 @@
 ﻿using Kmd.Momentum.Mea.Citizen.Model;
-using Kmd.Momentum.Mea.Common.HttpProvider;
+using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System;

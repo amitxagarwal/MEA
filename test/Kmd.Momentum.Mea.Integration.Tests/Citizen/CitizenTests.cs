@@ -33,12 +33,9 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizen
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
             var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            //var actual = Encoding.UTF32.GetString(result);
             
-            var actualResponse = JsonConvert.DeserializeObject(result);
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            actualResponse.Should().NotBeNull();
         }
 
         [Fact]

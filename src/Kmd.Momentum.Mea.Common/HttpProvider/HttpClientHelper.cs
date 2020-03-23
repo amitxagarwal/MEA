@@ -37,10 +37,8 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
             var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"), content).ConfigureAwait(false);
-            //var authResponse = await GetAuthorizationTokenAsync().ConfigureAwait(false);
             var accessToken = JObject.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
-            //return response;
         }
 
         public async Task<IReadOnlyList<string>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
@@ -127,7 +125,6 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
                         var jsonToReturn = JsonConvert.SerializeObject(new
                         {
                             citizenId = jarr["citizenId"],
-                            cpr = jarr["cpr"],
                             displayName = jarr["displayName"],
                             givenName = "",
                             middleName = "",

@@ -7,9 +7,6 @@ namespace Kmd.Momentum.Mea.Citizen.Model
         [JsonProperty("citizenId")]
         public string CitizenId { get; }
 
-        [JsonProperty("cpr")]
-        public string Cpr { get; }
-
         [JsonProperty("displayName")]
         public string DisplayName { get; }
 
@@ -40,12 +37,11 @@ namespace Kmd.Momentum.Mea.Citizen.Model
         [JsonProperty("isActive")]
         public bool IsActive { get; }
 
-        public CitizenDataResponseModel(string citizenId,string cpr, string displayName, string givenName, string middleName, string initials, string email, string phone,
+        public CitizenDataResponseModel(string citizenId, string displayName, string givenName, string middleName, string initials, string email, string phone,
             string caseworkerIdentifier, string description,
             bool isActive= true, bool isBookable = true)
         {
             CitizenId = citizenId;
-            Cpr = cpr;
             DisplayName = displayName;
             GivenName = givenName;
             MiddleName = middleName;

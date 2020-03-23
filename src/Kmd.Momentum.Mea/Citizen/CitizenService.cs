@@ -36,6 +36,7 @@ namespace Kmd.Momentum.Mea.Citizen
 
             return new CitizenDataResponseModel(
                 GetVal(json, "id"),
+                GetVal(json, "cpr"),
                 GetVal(json, "displayName"),
                 GetVal(json, "givenName"),
                 GetVal(json, "middleName"),
@@ -53,6 +54,7 @@ namespace Kmd.Momentum.Mea.Citizen
 
             return new CitizenDataResponseModel(
                 GetVal(json, "id"),
+                GetVal(json, "cpr"),
                 GetVal(json, "displayName"),
                 GetVal(json, "givenName"),
                 GetVal(json, "middleName"),

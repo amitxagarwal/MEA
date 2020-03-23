@@ -240,7 +240,7 @@
               "value": "[parameters('dbName')]"
             },
             {
-              "name": "DbConnection",
+              "name": "KMD_MOMENTUM_MEA_ConnectionStrings:MeaDatabase",
               "value": "[parameters('dbConnection')]"
             }
           ]
@@ -332,7 +332,7 @@
               "value": "[parameters('dbName')]"
             },
             {
-              "name": "DbConnection",
+              "name": "KMD_MOMENTUM_MEA_ConnectionStrings:MeaDatabase",
               "value": "[parameters('dbConnection')]"
             }
           ]

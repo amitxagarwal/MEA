@@ -8,6 +8,30 @@
         "description": "Base Uri for calling MCA API"
       }
     },
+    "dbServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for database server"
+      }
+    },
+    "dbLoginId": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for database login"
+      }
+    },
+    "dbLoginPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "Password for database login"
+      }
+    },
+    "dbName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for database"
+      }
+    },
     "clientId": {
       "type": "string",
       "metadata": {
@@ -129,8 +153,10 @@
       "type": "Microsoft.Insights/components",
       "apiVersion": "2015-05-01",
       "location": "[parameters('location')]",
-      "tags": {},
-      "properties": {}
+      "tags": {
+      },
+      "properties": {
+      }
     },
     {
       "type": "Microsoft.Web/serverfarms",
@@ -190,6 +216,22 @@
             {
               "name": "KMD_MOMENTUM_MEA_McaApiUri",
               "value": "[parameters('mcaApiUri')]"
+            },
+            {
+              "name": "DbServerName",
+              "value": "[parameters('dbServerName')]"
+            },
+            {
+              "name": "DbLoginId",
+              "value": "[parameters('dbLoginId')]"
+            },
+            {
+              "name": "DbLoginPassword",
+              "value": "[parameters('dbLoginPassword')]"
+            },
+            {
+              "name": "DbName",
+              "value": "[parameters('dbName')]"
             }
           ]
         }
@@ -206,7 +248,9 @@
             "displayName": "slotConfigNames"
           },
           "properties": {
-            "appSettingNames": [ "SlotName" ]
+            "appSettingNames": [
+              "SlotName"
+            ]
           }
         }
       ]
@@ -260,10 +304,48 @@
             {
               "name": "KMD_MOMENTUM_MEA_McaApiUri",
               "value": "[parameters('mcaApiUri')]"
+            },
+            {
+              "name": "DbServerName",
+              "value": "[parameters('dbServerName')]"
+            },
+            {
+              "name": "DbLoginId",
+              "value": "[parameters('dbLoginId')]"
+            },
+            {
+              "name": "DbLoginPassword",
+              "value": "[parameters('dbLoginPassword')]"
+            },
+            {
+              "name": "DbName",
+              "value": "[parameters('dbName')]"
             }
           ]
         }
       }
+    },
+    {
+      "apiVersion": "2017-12-01-preview",
+      "kind": "",
+      "location": "[parameters('location')]",
+      "name": "[parameters('dbServerName')]",
+      "properties": {
+        "administratorLogin": "[parameters('dbLoginId')]",
+        "administratorLoginPassword": "[parameters('dbLoginPassword')]"
+      },
+      "type": "Microsoft.DBforPostgreSQL/servers",
+      "resources": [
+        {
+          "apiVersion": "2017-12-01-preview",
+          "name": "[parameters('dbName')]",
+          "type": "databases",
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('dbServerName'))]"
+          ]
+        }
+      ]
     }
   ]
 }

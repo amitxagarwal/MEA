@@ -32,6 +32,12 @@
         "description": "Name for database"
       }
     },
+    "dbConnection": {
+      "type": "string",
+      "metadata": {
+        "description": "Database Connection String"
+      }
+    },
     "clientId": {
       "type": "string",
       "metadata": {
@@ -232,6 +238,10 @@
             {
               "name": "DbName",
               "value": "[parameters('dbName')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ConnectionStrings:MeaDatabase",
+              "value": "[parameters('dbConnection')]"
             }
           ]
         }
@@ -320,6 +330,10 @@
             {
               "name": "DbName",
               "value": "[parameters('dbName')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ConnectionStrings:MeaDatabase",
+              "value": "[parameters('dbConnection')]"
             }
           ]
         }

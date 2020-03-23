@@ -16,9 +16,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
         public HttpClientHelper(IMeaClient meaClient)
         {
             _meaClient = meaClient;
-        }
-
-        
+        }        
 
         public async Task<string[]> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
         {

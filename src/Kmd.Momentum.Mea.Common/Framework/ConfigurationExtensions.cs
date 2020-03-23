@@ -1,8 +1,5 @@
 ﻿using Kmd.Momentum.Mea.Common.Exceptions;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kmd.Momentum.Mea.Common.Framework
 {

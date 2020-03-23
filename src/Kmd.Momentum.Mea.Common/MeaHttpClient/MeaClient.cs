@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Common.MeaHttpClient

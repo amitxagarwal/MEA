@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kmd.Momentum.Mea.Common.Framework
+﻿namespace Kmd.Momentum.Mea.Common.Framework
 {
     public static class PolicyName
     {

@@ -22,7 +22,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizen
         }
 
         [Fact]
-        public async Task GetActiveCitizens()
+        public async Task GetActiveCitizensSuccess()
         {
             //Arrange
             var client = _factory.CreateClient();
@@ -40,7 +40,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizen
         }
 
         [Fact]
-        public async Task GetCitizenByCpr()
+        public async Task GetCitizenByCprSuccess()
         {
             //Arrange
             var client = _factory.CreateClient();
@@ -58,7 +58,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizen
         }
 
         [Fact]
-        public async Task GetCitizenByCitizenId()
+        public async Task GetCitizenByCitizenIdSuccess()
         {
             //Arrange
             var client = _factory.CreateClient();

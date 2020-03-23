@@ -102,7 +102,7 @@ $ResourceGroupName = "$ResourceNamePrefix-rg"
 $ApplicationInsightsName="$ResourceNamePrefix-ai";
 $DbServerName="$ResourceNamePrefix-dbsvr";
 $DbName="$ResourceNamePrefix-db";
-$DbConnection="Server=($DbServerName).postgres.database.azure.com;Database=($DbName);Port=5432;User Id=$env:DbLoginId@($DbServerName);Password=($env:DbLoginPassword);Ssl Mode=Require;"
+$DbConnection="Server=($DbServerName).postgres.database.azure.com;Database=($DbName);Port=5432;User Id=($env:DbLoginId)@($DbServerName);Password=($env:DbLoginPassword);Ssl Mode=Require;"
 # Set ARM template parameter values
 $TemplateParameters = @{
   instanceId = $InstanceId;

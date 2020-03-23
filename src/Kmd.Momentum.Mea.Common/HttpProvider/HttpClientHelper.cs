@@ -22,7 +22,7 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             _config = config;
         }
 
-        private async Task<HttpResponseMessage> GetAuthorizationTokenAsync()
+        private async Task GetAuthorizationTokenAsync()
         {
 #pragma warning disable CA2000 // Dispose objects before losing scope
             var content = new FormUrlEncodedContent(new[]
@@ -37,16 +37,17 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
             var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"), content).ConfigureAwait(false);
-            return response;
+            //var authResponse = await GetAuthorizationTokenAsync().ConfigureAwait(false);
+            var accessToken = JObject.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
+            //return response;
         }
 
         public async Task<IReadOnlyList<string>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
         {
             _httpClient.DefaultRequestHeaders.Clear();
-            var authResponse = await GetAuthorizationTokenAsync().ConfigureAwait(false);
+            await GetAuthorizationTokenAsync().ConfigureAwait(false);
 
-            var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
             var sort = new Sort
             {
                 FieldName = "cpr",
@@ -93,7 +94,6 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
 
             await Task.WhenAll(taskList);
 
-
             foreach (var task in taskList)
             {
                 var result = task.Result;
@@ -103,7 +103,7 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
                     {
                         string emailAddress = string.Empty;
                         string phoneNumber = string.Empty;
-                        
+
                         if (!String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"].ToString()))
                         {
                             try
@@ -131,14 +131,14 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
                             displayName = jarr["displayName"],
                             givenName = "",
                             middleName = "",
-                            initials="",
+                            initials = "",
                             address = emailAddress,
                             number = phoneNumber,
                             caseworkerIdentifier = "",
-                            description="",
-                            isBookable=true,
-                            isActive=true
-                        }) ;
+                            description = "",
+                            isBookable = true,
+                            isActive = true
+                        });
 
                         JsonStringList.Add(jsonToReturn);
                     }
@@ -150,13 +150,9 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
         public async Task<string> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
         {
             _httpClient.DefaultRequestHeaders.Authorization = null;
-            var authResponse = await GetAuthorizationTokenAsync().ConfigureAwait(false);
-
-            var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
+            await GetAuthorizationTokenAsync().ConfigureAwait(false);
 
             return await GetDataAsync(url).ConfigureAwait(false);
-
         }
 
         private async Task<string> GetDataAsync(Uri url)
@@ -166,7 +162,6 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             var citizenData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return citizenData;
         }
-
     }
 }
 

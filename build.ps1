@@ -60,7 +60,7 @@ Param(
     # The build ID e.g. 12345, defaults to $env:BUILD_BUILDID from Azure DevOps
     [Parameter(Mandatory=$false, Position=5)]
     [string]
-    $BuildId = $env:BUILD_BUILDID
+    $BuildId = $env:BUILD_BUILDID,
 
      # A prefix combined with $BuildId to generate the PostgreSQL database name.
     [Parameter(Mandatory = $false, Position = 5)]

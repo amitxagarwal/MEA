@@ -155,4 +155,7 @@ else {
   }
 }
 
+dotnet $($artifactFileName)/Kmd.Momentum.Mea.DbAdmin.dll migrate -s $($DbServerName).postgres.database.azure.com -w $($env:DbLoginPassword) -d $($DbName) -u $($env:DbLoginId)@$($DbServerName) -p $($env:DbLoginPassword)  -f $(Pipeline.Workspace)/MigrationScripts
+
+
 Pop-Location

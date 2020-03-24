@@ -90,6 +90,7 @@ if ($VerbosePreference) {
 }
 
 Push-Location $PSScriptRoot
+
 try {
     Write-Host "build: Starting in folder '$PSScriptRoot'"
     
@@ -135,6 +136,7 @@ try {
     $Env:KMD_MOMENTUM_MEA_ConnectionStrings:MeaDatabase = $connString
 
     $BuildDatabases = $BuildDatabaseName
+}
 
     # Ensure the database name is passed to cleanupdatabase.ps1
 if($BuildDatabases)

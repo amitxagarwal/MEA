@@ -4,7 +4,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Common.HttpProvider
@@ -19,6 +18,7 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
         public HttpClientHelper(IConfiguration config)
         {
             _httpClient = new HttpClient();
+            _httpClient.Timeout = new TimeSpan(0, 10, 10);
             _config = config;
         }
 
@@ -46,99 +46,66 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             _httpClient.DefaultRequestHeaders.Clear();
             await GetAuthorizationTokenAsync().ConfigureAwait(false);
 
-            var sort = new Sort
-            {
-                FieldName = "cpr",
-                Ascending = true
-            };
-
-            var paging = new Paging
-            {
-                PageNumber = -1,
-                pageSize = 100
-            };
-
-            var req = new Request
-            {
-                Term = "25",
-                Paging = paging,
-                Sort = sort
-            };
-
-            bool hasMore = true;
-
             List<Task<string>> taskList = new List<Task<string>>();
             List<JToken> totalRecords = new List<JToken>();
             List<string> JsonStringList = new List<string>();
 
-            while (hasMore)
+            var size = 15;
+            var skip = 0;
+            var totalNoOfRecords = 0;
+            var remainingRecords = 0;
+
+            do
             {
-                req.Paging.PageNumber += 1;
+                var queryStringParams = $"term=Citizen&size={size}&skip={skip}&isActive=true";
+
 #pragma warning disable CA2000 // Dispose objects before losing scope
-                var response = await _httpClient.PostAsync(url, new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json")).ConfigureAwait(false);
+                var response = await _httpClient.GetAsync(url + "?" + queryStringParams).ConfigureAwait(false);
 #pragma warning restore CA2000 // Dispose objects before losing scope
                 var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var jsonArray = JArray.Parse(JObject.Parse(content)["data"].ToString());
+                var jsonArray = JArray.Parse(JObject.Parse(content)["results"].ToString());
 
-                foreach (var record in jsonArray)
+                totalNoOfRecords = (int)JProperty.Parse(content)["totalCount"];
+
+                Parallel.ForEach(jsonArray, item =>
                 {
-                    var task = GetDataAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{record["cpr"]}"));
+                    var task = GetDataAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{item["id"]}"));
                     taskList.Add(task);
-                }
-                hasMore = (bool)JProperty.Parse(content)["hasMore"];
+                });
+
+                skip += size;
+
+                remainingRecords = totalNoOfRecords - skip;
 
                 totalRecords.AddRange(jsonArray.Children());
-            }
+            } while (remainingRecords > 0);
 
             await Task.WhenAll(taskList);
 
-            foreach (var task in taskList)
+            for (int i = 0; i < taskList.Count; i++)
             {
-                var result = task.Result;
-                foreach (var jarr in totalRecords)
+                var result = taskList[i].Result;
+                var json = JObject.Parse(result);
+
+                var jarr = totalRecords.Find(x => x["id"].ToString() == json["id"].ToString());
+
+                if (jarr != null)
                 {
-                    if (JObject.Parse(result)["cpr"].ToString() == jarr["cpr"].ToString())
+                    var jsonToReturn = JsonConvert.SerializeObject(new
                     {
-                        string emailAddress = string.Empty;
-                        string phoneNumber = string.Empty;
-
-                        if (!String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"].ToString()))
-                        {
-                            try
-                            {
-                                if (!String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"]["email"].ToString()) &&
-                                !String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"]["email"]["address"].ToString()))
-                                    emailAddress = JObject.Parse(result)["contactInformation"]["email"]["address"].ToString();
-                                jarr["address"] = emailAddress;
-
-                                if (!String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"]["phone"].ToString()) &&
-                                !String.IsNullOrEmpty(JObject.Parse(result)["contactInformation"]["phone"]["number"].ToString()))
-                                    phoneNumber = JObject.Parse(result)["contactInformation"]["phone"]["number"].ToString();
-                                jarr["number"] = phoneNumber;
-                            }
-                            catch (Exception ex)
-                            {
-                                throw ex;
-                            }
-                        }
-
-                        var jsonToReturn = JsonConvert.SerializeObject(new
-                        {
-                            citizenId = jarr["citizenId"],
-                            displayName = jarr["displayName"],
-                            givenName = "",
-                            middleName = "",
-                            initials = "",
-                            address = emailAddress,
-                            number = phoneNumber,
-                            caseworkerIdentifier = "",
-                            description = "",
-                            isBookable = true,
-                            isActive = true
-                        });
-
-                        JsonStringList.Add(jsonToReturn);
-                    }
+                        citizenId = jarr["id"],
+                        displayName = jarr["name"],
+                        givenName = "",
+                        middleName = "",
+                        initials = "",
+                        address = GetVal(json, "contactInformation.email.address"),
+                        number = GetVal(json, "contactInformation.phone.number"),
+                        caseworkerIdentifier = "",
+                        description = jarr["description"],
+                        isBookable = true,
+                        isActive = true
+                    });
+                    JsonStringList.Add(jsonToReturn);
                 }
             }
             return JsonStringList;
@@ -149,7 +116,23 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             _httpClient.DefaultRequestHeaders.Authorization = null;
             await GetAuthorizationTokenAsync().ConfigureAwait(false);
 
-            return await GetDataAsync(url).ConfigureAwait(false);
+            var response = await GetDataAsync(url).ConfigureAwait(false);
+            var json = JObject.Parse(response);
+
+            return JsonConvert.SerializeObject(new
+            {
+                citizenId = GetVal(json, "id"),
+                displayName = GetVal(json, "displayName"),
+                givenName = GetVal(json, "givenName"),
+                middleName = GetVal(json, "middleName"),
+                initials = GetVal(json, "initials"),
+                address = GetVal(json, "contactInformation.email.address"),
+                number = GetVal(json, "contactInformation.phone.number"),
+                caseworkerIdentifier = GetVal(json, "caseworkerIdentifier"),
+                description = GetVal(json, "description"),
+                isBookable = true,
+                isActive = true
+            });
         }
 
         private async Task<string> GetDataAsync(Uri url)
@@ -159,6 +142,21 @@ namespace Kmd.Momentum.Mea.Common.HttpProvider
             var citizenData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return citizenData;
         }
+
+        private string GetVal(JObject _json, string _key)
+        {
+            string[] _keyArr = _key.Split('.');
+            var _subJson = _json[_keyArr[0]];
+
+            if (_subJson == null || String.IsNullOrEmpty(_subJson.ToString()))
+                return String.Empty;
+
+            if (_keyArr.Length > 1)
+            {
+                _key = _key.Replace(_keyArr[0] + ".", string.Empty, System.StringComparison.CurrentCulture);
+                return GetVal((JObject)_subJson, _key);
+            }
+            return _subJson.ToString();
+        }
     }
 }
-

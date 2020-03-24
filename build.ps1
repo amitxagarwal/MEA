@@ -65,7 +65,7 @@ Param(
      # A prefix combined with $BuildId to generate the PostgreSQL database name.
     [Parameter(Mandatory = $false, Position = 5)]
     [string]
-    $BuildDatabasePrefix = $NULL,
+    $BuildDatabasePrefix = $NULL
 )
 
 function Compress-Directory {

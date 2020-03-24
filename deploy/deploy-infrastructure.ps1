@@ -152,10 +152,25 @@ else {
                                       -ErrorVariable ErrorMessages
   if ($ErrorMessages) {
       Write-Output '', 'Template deployment returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
+    }
+
+    else {
+        $PostgresHostName = "$ResourceNamePrefix-db"
+
+        if (-not ([string]::IsNullOrEmpty($env:resourceId))) # resourceId is set from VSTS for phoenix-ci
+        {
+           $PostgresHostName = (Get-AzResource -ResourceGroupName $ResourceGroupName -ResourceType "Microsoft.DBforPostgreSQL/servers").Name
+        }
+
+        $DbAdmin = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($PSScriptRoot,"Kmd.Momentum.Mea.DbAdmin.dll"))
+        $ScriptPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($PSScriptRoot,"MigrationScripts"))
+
+        Write-Host "Creating database $DbName on $PostgresHostName"
+        & dotnet $DbAdmin create -s $PostgresHostName -d $DbName -u $env:DbLoginId  -p $env:DbLoginPassword
+
+        Write-Host "Migrating database $DbName on $PostgresHostName"
+        & dotnet $DbAdmin migrate -s $PostgresHostName -d $DbName -u $env:DbLoginId -p $env:DbLoginPassword  -f $ScriptPath
   }
 }
-
-dotnet $($artifactFileName)/Kmd.Momentum.Mea.DbAdmin.dll migrate -s $($DbServerName).postgres.database.azure.com -w $($env:DbLoginPassword) -d $($DbName) -u $($env:DbLoginId)@$($DbServerName) -p $($env:DbLoginPassword)  -f $(Pipeline.Workspace)/MigrationScripts
-
 
 Pop-Location

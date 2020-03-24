@@ -13,6 +13,8 @@
   The source branch name e.g. "local" or "3123-issue", usually $env:BUILD_SOURCEBRANCHNAME from Azure DevOps.
 .PARAMETER $BuildId
   The build ID e.g. 12345, defaults to $env:BUILD_BUILDID from Azure DevOps.
+.PARAMETER $BuildDatabasePrefix
+  Create and tear down a PostgreSQL database when running the tests. The prefix is combined with $BuildId to generate the actual database name.
 .INPUTS
   none
 .OUTPUTS
@@ -59,6 +61,11 @@ Param(
     [Parameter(Mandatory=$false, Position=5)]
     [string]
     $BuildId = $env:BUILD_BUILDID
+
+     # A prefix combined with $BuildId to generate the PostgreSQL database name.
+    [Parameter(Mandatory = $false, Position = 5)]
+    [string]
+    $BuildDatabasePrefix = $NULL,
 )
 
 function Compress-Directory {
@@ -99,11 +106,46 @@ try {
     $suffix = @{ $true = ""; $false = "$($branch.Substring(0, [math]::Min(10,$branch.Length)))-$revision"}[$branch -eq "master" -and $revision -ne "lo"]
     $commitHash = $(git rev-parse --short HEAD)
     $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
+    $BuildDatabases = ""
 
     Write-Host "build: Package version suffix is $suffix"
     Write-Host "build: Build version suffix is $buildSuffix"
 
+    if ($BuildDatabasePrefix) {
+    $now = Get-Date
+    $nowStr = $now.ToUniversalTime().ToString("yyyyMMddHHmmss")
+
+    $BuildDatabaseName = "$nowStr-$BuildDatabasePrefix-$buildSuffix"
+  
+    Write-Host "build: Managed database $BuildDatabaseName"
+    Push-Location -Path "../PostgreSqlDb/Kmd.Momentum.Mea.DbAdmin"
+
+    & dotnet run -- create -s kmd-momentum-api-build-db -d $BuildDatabaseName -u $BuildDatabaseName -p oQTX2jPgOWwe
+    if($LASTEXITCODE -ne 0) { exit 1 }
+
+    # Running database migrations
+    & dotnet run -- migrate -s kmd-momentum-api-build-db -d $BuildDatabaseName -u $BuildDatabaseName -p oQTX2jPgOWwe -f ../MigrationScripts
+    if($LASTEXITCODE -ne 0) { exit 1 }
+
+    Pop-Location
+
+    # Set the environment variable used by the tests to access the database
+    $connString = "Server=kmd-momentum-api-build-db.postgres.database.azure.com;Database=$BuildDatabaseName;Port=5432;User Id=$BuildDatabaseName@kmd-momentum-api-build-db;Password=oQTX2jPgOWwe;Ssl Mode=Require;"
+    
+    $Env:KMD_MOMENTUM_MEA_ConnectionStrings:MeaDatabase = $connString
+
+    $BuildDatabases = $BuildDatabaseName
+
+    # Ensure the database name is passed to cleanupdatabase.ps1
+if($BuildDatabases)
+{
+    Write-Host "##vso[task.setvariable variable=BUILD_DATABASE_NAME;]$BuildDatabases"
+}
+
     & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
+
+    & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
+
     if($LASTEXITCODE -ne 0) { exit 3 }
 
     $PublishedApplications = $(
@@ -159,6 +201,17 @@ try {
       $resolvedArtifactsOutputPath = Resolve-Path -Path "$artifactsOutputPath"
       Copy-Item "$deployScriptSourcePath/*" -Destination $resolvedArtifactsOutputPath -Recurse
       Write-Host "##vso[artifact.upload containerfolder=deploy;artifactname=deploy;]$resolvedArtifactsOutputPath"
+
+      Push-Location "$PSScriptRoot/../PostgreSqlDb/Kmd.Momentum.Mea.DbAdmin"
+    Write-Host "build: Packaging project in 'Kmd.Momentum.Mea.DbAdmin'"
+    & dotnet publish -c Release --verbosity="$BuildVerbosity" --output "$resolvedArtifactsOutputPath"
+    if($LASTEXITCODE -ne 0) { exit 1 }
+
+    Write-Host "build: Copy Mea Migration scripts"
+    Copy-Item  "$PSScriptRoot/MigrationScripts" -Destination "$resolvedArtifactsOutputPath/MigrationScripts" -Recurse  
+    
+    Write-Host "build: publishing file '$resolvedArtifactsOutputPath'"
+    Write-Host "##vso[artifact.upload containerfolder=deploy;artifactname=deploy;]$resolvedArtifactsOutputPath"
     }
 }
 finally {

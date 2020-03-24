@@ -146,7 +146,7 @@ if($BuildDatabases)
 
     & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
 
-    & dotnet build "../PostgreSqlDb/Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
+    & dotnet build "..src/PostgreSqlDb/Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
 
     if($LASTEXITCODE -ne 0) { exit 3 }
 

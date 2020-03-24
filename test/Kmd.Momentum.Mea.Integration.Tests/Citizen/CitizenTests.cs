@@ -45,7 +45,6 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizen
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            actualResponse.Should().NotBeNull();
         }
 
         [Fact]

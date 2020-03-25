@@ -99,7 +99,7 @@ try{
 
      & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
 
-     Get-ChildItem
+     Get-ChildItem "./src"
 
      exit 3;
 

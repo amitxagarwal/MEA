@@ -102,15 +102,20 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
 
      & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
 
-    $PublishedApplications = $(
-        "Kmd.Momentum.Mea.DbAdmin"
-    )
+    
 
-    foreach ($srcProjectName in $PublishedApplications) {
-    Write-Host "-----project---- '$srcProjectName'"
-    }
+      # Push-Location "$PSScriptRoot/src/PostgreSqlDb"  "./src/$srcProjectName"
 
-     Get-ChildItem "./src/PostgreSqlDb/Kmd.Momentum.Mea.DbAdmin/"
+      Push-Location "./src/PostgreSqlDb/Kmd.Momentum.Mea.DbAdmin"
+
+     if ($suffix) {
+                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName" --version-suffix "$suffix"
+     }
+     else {
+                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName"
+     }
+
+     Pop-Location
 
      exit 3;
 

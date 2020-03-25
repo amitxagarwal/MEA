@@ -86,7 +86,7 @@ if ($VerbosePreference) {
 
 try{
 
-Push-Location "'$PSScriptRoot'/src/PostgreSqlDb"
+Push-Location "$PSScriptRoot/src/PostgreSqlDb"
 
     Write-Host "build: Starting in folder '$PSScriptRoot'"
     

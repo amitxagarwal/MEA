@@ -107,7 +107,7 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
     Write-Host "-----------1-----"
       # Push-Location "$PSScriptRoot/src/PostgreSqlDb"  "./src/$srcProjectName"
 
-     Push-Location "./src/PostgreSqlDb/Kmd.Momentum.Mea.DbAdmin"
+     Push-Location "./Kmd.Momentum.Mea.DbAdmin"
 
      Write-Host "----------2------"
 

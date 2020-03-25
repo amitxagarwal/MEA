@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Kmd.Momentum.Mea.Citizen;
 using Kmd.Momentum.Mea.Citizen.Model;
-using Kmd.Momentum.Mea.Common.HttpProvider;
+using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Newtonsoft.Json;

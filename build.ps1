@@ -99,10 +99,14 @@ try{
 
      & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
 
+     Get-ChildItem
+
+     exit 3;
+
 }
 catch{
 
-if($LASTEXITCODE -ne 0) { exit 3 }
+ exit 3 
 
 }
 

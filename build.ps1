@@ -83,6 +83,24 @@ if ($VerbosePreference) {
 }
 
 Push-Location $PSScriptRoot
+
+try{
+    Write-Host "build: Starting in folder '$PSScriptRoot'"
+    
+    if(Test-Path ./artifacts) {
+        Write-Host "build: Cleaning ./artifacts"
+        Remove-Item ./artifacts -Force -Recurse
+    }
+
+    $branch = @{ $true = $SrcBranchName; $false = $(git symbolic-ref --short -q HEAD) }[$SrcBranchName -ne $NULL];    
+    $suffix = @{ $true = ""; $false = "$($branch.Substring(0, [math]::Min(10,$branch.Length)))-$revision"}[$branch -eq "master" -and $revision -ne "lo"]
+    $commitHash = $(git rev-parse --short HEAD)
+    $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
+
+     & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
+
+}
+
 try {
     Write-Host "build: Starting in folder '$PSScriptRoot'"
     

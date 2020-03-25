@@ -100,6 +100,11 @@ try{
      & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
 
 }
+catch{
+
+if($LASTEXITCODE -ne 0) { exit 3 }
+
+}
 
 try {
     Write-Host "build: Starting in folder '$PSScriptRoot'"

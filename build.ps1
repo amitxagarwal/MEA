@@ -105,7 +105,7 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
     Write-Host "----------------"
     pwd
     Write-Host "-----------1-----"
-      # Push-Location "$PSScriptRoot/src/PostgreSqlDb"  "./src/$srcProjectName"
+    
 
      Push-Location "./Kmd.Momentum.Mea.DbAdmin"
 
@@ -119,9 +119,21 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
      }
 
      Write-Host "---------3-------"
+      if($LASTEXITCODE -ne 0) { exit 3 }
+
+      Write-Host "---------4-------"
+
+      Get-ChildItem
+     
+     Write-Host "---------5-------"
+
+      if ($PublishArtifactsToAzureDevOps) {
+      Write-Host "##vso[artifact.upload artifactname=DB;]*"
+      }
+
      Pop-Location
 
-     exit 3;
+     
 
 }
 catch{

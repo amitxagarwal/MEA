@@ -82,9 +82,12 @@ if ($VerbosePreference) {
     & dotnet --info
 }
 
-Push-Location $PSScriptRoot
+
 
 try{
+
+Push-Location "'$PSScriptRoot'/src/PostgreSqlDb"
+
     Write-Host "build: Starting in folder '$PSScriptRoot'"
     
     if(Test-Path ./artifacts) {
@@ -117,6 +120,8 @@ catch{
  exit 3 
 
 }
+
+Push-Location $PSScriptRoot
 
 try {
     Write-Host "build: Starting in folder '$PSScriptRoot'"

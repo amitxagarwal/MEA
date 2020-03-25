@@ -102,11 +102,14 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
 
      & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
 
-    
-
+    Write-Host "----------------"
+    pwd
+    Write-Host "-----------1-----"
       # Push-Location "$PSScriptRoot/src/PostgreSqlDb"  "./src/$srcProjectName"
 
-      Push-Location "./src/PostgreSqlDb/Kmd.Momentum.Mea.DbAdmin"
+     Push-Location "./src/PostgreSqlDb/Kmd.Momentum.Mea.DbAdmin"
+
+     Write-Host "----------2------"
 
      if ($suffix) {
                 & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName" --version-suffix "$suffix"
@@ -115,6 +118,7 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
                 & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName"
      }
 
+     Write-Host "---------3-------"
      Pop-Location
 
      exit 3;

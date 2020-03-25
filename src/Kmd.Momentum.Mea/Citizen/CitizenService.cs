@@ -25,8 +25,8 @@ namespace Kmd.Momentum.Mea.Citizen
         {
             var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/search")).ConfigureAwait(false);
 
-            var test = response.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x));
-            return test.ToList();
+            var content = response.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x));
+            return content.ToList();
         }
 
         public async Task<CitizenDataResponseModel> GetCitizenByCprAsync(string cpr)

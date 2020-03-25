@@ -99,7 +99,15 @@ try{
 
      & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
 
-     Get-ChildItem "./src"
+    $PublishedApplications = $(
+        "Kmd.Momentum.Mea.DbAdmin"
+    )
+
+    foreach ($srcProjectName in $PublishedApplications) {
+    Write-Host "-----project---- '$srcProjectName'"
+    }
+
+     Get-ChildItem "./src/PostgreSqlDb/Kmd.Momentum.Mea.DbAdmin/"
 
      exit 3;
 

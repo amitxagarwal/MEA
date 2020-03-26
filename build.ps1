@@ -111,12 +111,12 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
 
      Write-Host "----------2------"
 
-     if ($suffix) {
-                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/dbAdmin" --version-suffix "$suffix"
-     }
-     else {
-                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/dbAdmin"
-     }
+   #  if ($suffix) {
+    #            & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/dbAdmin" --version-suffix "$suffix"
+     #}
+    # else {
+     #           & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/dbAdmin"
+     #}
 
      Write-Host "---------3-------"
       if($LASTEXITCODE -ne 0) { exit 3 }
@@ -131,7 +131,7 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
 
       Write-Host "---------6-------"
 
-      New-Item -ItemType Directory -Force -Path "$PSScriptRoot/db"
+      New-Item -ItemType Directory -Force -Path "$PSScriptRoot/dbApp"
 
       Write-Host "---------7-------"
 
@@ -139,11 +139,11 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
 
       Write-Host "---------8-------"
 
-      Copy-Item  "./obj/*" -Destination "$PSScriptRoot/db" -Recurse
+      Copy-Item  "./bin/*/*" -Destination "$PSScriptRoot/dbApp" -Recurse
 
       Write-Host "---------9-------"
 
-      foreach ($item in Get-ChildItem "$PSScriptRoot/db") {
+      foreach ($item in Get-ChildItem "$PSScriptRoot/dbApp") {
 
       Write-Host "##vso[artifact.upload artifactname=DB;]$item"
    }

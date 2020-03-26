@@ -133,6 +133,20 @@ try{
 
     Write-Host "--------------7-------------"
 
+
+    $connString = "Server=kmd-momentum-api-build-db.postgres.database.azure.com;Database=$BuildDatabaseName;Port=5432;User Id=$BuildDatabaseName@kmd-logic-api-build-db;Password=RtAhL8j9946W;Ssl Mode=Require;"
+    
+    $Env:KMD_LOGIC_API_ConnectionStrings:MeaDatabase = $connString   
+
+    $expiryMinutes = 120;
+    
+    Write-Host "cleanup: database '$BuildDatabaseName'"
+    Write-Host "Also looking for any databases with a timestamp <=" $expiryMinutes "minutes ago"
+    
+    & dotnet run -- delete -s kmd-momentum-api-build-db -d $BuildDatabaseName -r "^\\d{14}\\-" -e $expiryMinutes -f "yyyyMMddHHmmss-"
+
+    if($LASTEXITCODE -ne 0) { exit 1 }
+
      if ($PublishArtifactsToAzureDevOps) {
 
       # Push-Location "./Kmd.Momentum.Mea.DbAdmin"

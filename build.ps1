@@ -86,7 +86,7 @@ if ($VerbosePreference) {
 
 try{
 
-Push-Location "$PSScriptRoot/src/PostgreSqlDb"
+    Push-Location "$PSScriptRoot/src/PostgreSqlDb"
 
     Write-Host "build: Starting in folder '$PSScriptRoot'"
     
@@ -101,53 +101,42 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
     $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
 
      & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
-
-    Write-Host "----------------"
-    pwd
-    Write-Host "-----------1-----"
-    
+  
+     if($LASTEXITCODE -ne 0) { exit 3 }
 
      Push-Location "./Kmd.Momentum.Mea.DbAdmin"
 
-     Write-Host "----------2------"
-
-   #  if ($suffix) {
-    #            & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/dbAdmin" --version-suffix "$suffix"
-     #}
-    # else {
-     #           & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/dbAdmin"
-     #}
-
      Write-Host "---------3-------"
-      if($LASTEXITCODE -ne 0) { exit 3 }
-
-      Write-Host "---------4-------"
-
-      Get-ChildItem
      
-     Write-Host "---------5-------"
+     if($LASTEXITCODE -ne 0) { exit 3 }
 
-      if ($PublishArtifactsToAzureDevOps) {
+     Write-Host "---------4-------"
 
-      Write-Host "---------6-------"
+     if ($PublishArtifactsToAzureDevOps) {
 
-      New-Item -ItemType Directory -Force -Path "$PSScriptRoot/dbApp"
+     Write-Host "---------6-------"
 
-      Write-Host "---------7-------"
+     #New-Item -ItemType Directory -Force -Path "$PSScriptRoot/dbApp"
 
-      Get-ChildItem $PSPath
-
+     
       Write-Host "---------8-------"
 
-      Copy-Item  "./bin/*/*" -Destination "$PSScriptRoot/dbApp" -Recurse
+#      Copy-Item  "./bin/*/*" -Destination "$PSScriptRoot/dbApp" -Recurse
 
       Write-Host "---------9-------"
 
-      foreach ($item in Get-ChildItem "$PSScriptRoot/dbApp") {
+      foreach ($item in Get-ChildItem "./bin/*/*") {
 
-      Write-Host "##vso[artifact.upload artifactname=DB;]$item"
-   }
+      Write-Host "##vso[artifact.upload artifactname=dbApp;]$item"
+      
       }
+
+     foreach ($item in Get-ChildItem "$PSScriptRoot/MigrationScripts") {     
+
+      Write-Host "##vso[artifact.upload artifactname=migrationScripts;]$item"
+      
+      }
+    }
 
      Pop-Location
 

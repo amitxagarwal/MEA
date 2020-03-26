@@ -104,22 +104,6 @@ try{
   
      if($LASTEXITCODE -ne 0) { exit 3 }
 
-     if ($PublishArtifactsToAzureDevOps) {
-
-      Push-Location "./Kmd.Momentum.Mea.DbAdmin"
-
-      foreach ($item in Get-ChildItem "./bin/*/*") {
-     
-       Write-Host "##vso[artifact.upload artifactname=dbApp;]$item"
-      
-      }
-
-      foreach ($item in Get-ChildItem "$PSScriptRoot/MigrationScripts") {     
-     
-       Write-Host "##vso[artifact.upload artifactname=migrationScripts;]$item"
-     
-      }
-
       Write-Host "--------------1-------------"
 
     $now = Get-Date
@@ -128,7 +112,7 @@ try{
 
     Write-Host "--------------2-------------"
 
-    Push-Location "./bin/*/"
+    Push-Location "./Kmd.Momentum.Mea.DbAdmin"
 
     Write-Host "--------------3-------------"
 
@@ -148,6 +132,24 @@ try{
     if($LASTEXITCODE -ne 0) { exit 1 }
 
     Write-Host "--------------7-------------"
+
+     if ($PublishArtifactsToAzureDevOps) {
+
+      Push-Location "./Kmd.Momentum.Mea.DbAdmin"
+
+      foreach ($item in Get-ChildItem "./bin/*/*") {
+     
+       Write-Host "##vso[artifact.upload artifactname=dbApp;]$item"
+      
+      }
+
+      foreach ($item in Get-ChildItem "$PSScriptRoot/MigrationScripts") {     
+     
+       Write-Host "##vso[artifact.upload artifactname=migrationScripts;]$item"
+     
+      }
+
+
 
     }
 

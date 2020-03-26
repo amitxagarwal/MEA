@@ -88,7 +88,7 @@ try{
 
     Push-Location "$PSScriptRoot/src/PostgreSqlDb"
 
-    Write-Host "build: Starting in folder '$PSScriptRoot'"
+    Write-Host "build: Starting in folder Kmd.Momentum.Mea.DbAdmin"
     
     if(Test-Path ./artifacts) {
         Write-Host "build: Cleaning ./artifacts"
@@ -100,44 +100,31 @@ try{
     $commitHash = $(git rev-parse --short HEAD)
     $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
 
-     & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
+    & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
   
-     if($LASTEXITCODE -ne 0) { exit 3 }
-
-      Write-Host "--------------1-------------"
+    if($LASTEXITCODE -ne 0) { exit 3 }
 
     $now = Get-Date
     $nowStr = $now.ToUniversalTime().ToString("yyyyMMddHHmmss")
     $BuildDatabaseName = "$nowStr-testDb-$buildSuffix"
-
-    Write-Host "--------------2-------------"
-
+    $DbServer = "kmd-momentum-api-build-db"
+    
     Push-Location "./Kmd.Momentum.Mea.DbAdmin"
 
-    Write-Host "--------------3-------------"
+    Write-Host "Creating Database '$BuildDatabaseName'"
 
-    & dotnet run -- create -s kmd-momentum-api-build-db -d $BuildDatabaseName -u $BuildDatabaseName -p RtAhL8j9946W
-
-    Write-Host "--------------4-------------"
-
-    if($LASTEXITCODE -ne 0) { exit 1 }
-
-    Write-Host "--------------5-------------"
-
-    # Running database migrations
-    & dotnet run -- migrate -s kmd-momentum-api-build-db -d $BuildDatabaseName -u $BuildDatabaseName -p RtAhL8j9946W -f "$PSScriptRoot/MigrationScripts"
-
-    Write-Host "--------------6-------------"
-
-    if($LASTEXITCODE -ne 0) { exit 1 }
-
-    Write-Host "--------------7-------------"
-
-
-    $connString = "Server=kmd-momentum-api-build-db.postgres.database.azure.com;Database=$BuildDatabaseName;Port=5432;User Id=$BuildDatabaseName@kmd-logic-api-build-db;Password=RtAhL8j9946W;Ssl Mode=Require;"
+    & dotnet run -- create -s $DbServer -d $BuildDatabaseName -u $BuildDatabaseName -p RtAhL8j9946W
     
-    $Env:KMD_LOGIC_API_ConnectionStrings:MeaDatabase = $connString   
+    if($LASTEXITCODE -ne 0) { exit 1 }
 
+    Write-Host "Migrate Database '$BuildDatabaseName' with MigrationScripts"
+
+    & dotnet run -- migrate -s $DbServer -d $BuildDatabaseName -u $BuildDatabaseName -p RtAhL8j9946W -f "$PSScriptRoot/MigrationScripts"
+    
+    if($LASTEXITCODE -ne 0) { exit 1 }    
+
+    $connString = "Server=$DbServer.postgres.database.azure.com;Database=$BuildDatabaseName;Port=5432;User Id=$BuildDatabaseName@$DbServer;Password=RtAhL8j9946W;Ssl Mode=Require;"    
+    $Env:KMD_LOGIC_API_ConnectionStrings:MeaDatabase = $connString   
     $expiryMinutes = 120;
     
     Write-Host "cleanup: database '$BuildDatabaseName'"
@@ -146,37 +133,23 @@ try{
     & dotnet run -- delete -s kmd-momentum-api-build-db -d $BuildDatabaseName -r "^\\d{14}\\-" -e $expiryMinutes -f "yyyyMMddHHmmss-"
 
     if($LASTEXITCODE -ne 0) { exit 1 }
-
-     if ($PublishArtifactsToAzureDevOps) {
-
-      # Push-Location "./Kmd.Momentum.Mea.DbAdmin"
-
-      foreach ($item in Get-ChildItem "./bin/*/*") {
+    
+    if ($PublishArtifactsToAzureDevOps) {
      
-       Write-Host "##vso[artifact.upload artifactname=dbApp;]$item"
-      
-      }
-
-      foreach ($item in Get-ChildItem "$PSScriptRoot/MigrationScripts") {     
+        foreach ($item in Get-ChildItem "./bin/*/*") {
      
-       Write-Host "##vso[artifact.upload artifactname=migrationScripts;]$item"
-     
-      }
-
-
-
+            Write-Host "##vso[artifact.upload artifactname=dbApp;]$item"
+        }
+        
+        foreach ($item in Get-ChildItem "$PSScriptRoot/MigrationScripts") {
+        
+            Write-Host "##vso[artifact.upload artifactname=migrationScripts;]$item"
+         }
     }
-
-
-     Pop-Location
-
-     
-
+    Pop-Location
 }
 catch{
-
- exit 3 
-
+    exit 1
 }
 
 Push-Location $PSScriptRoot

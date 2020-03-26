@@ -135,7 +135,7 @@ try{
 
      if ($PublishArtifactsToAzureDevOps) {
 
-      Push-Location "./Kmd.Momentum.Mea.DbAdmin"
+      # Push-Location "./Kmd.Momentum.Mea.DbAdmin"
 
       foreach ($item in Get-ChildItem "./bin/*/*") {
      

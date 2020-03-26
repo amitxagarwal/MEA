@@ -139,7 +139,7 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
 
       Write-Host "---------8-------"
 
-      Copy-Item  "./bin/*" -Destination "$PSScriptRoot/db" -Recurse
+      Copy-Item  "./obj/*" -Destination "$PSScriptRoot/db" -Recurse
 
       Write-Host "---------9-------"
 
@@ -160,3 +160,86 @@ catch{
 
 }
 
+Push-Location $PSScriptRoot
+
+try {
+    Write-Host "build: Starting in folder '$PSScriptRoot'"
+    
+    if(Test-Path ./artifacts) {
+        Write-Host "build: Cleaning ./artifacts"
+        Remove-Item ./artifacts -Force -Recurse
+    }
+
+    $ArtifactsStagingPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($ArtifactsStagingPath)
+    Write-Host "build: staging artifacts to '$ArtifactsStagingPath'"
+    
+    $branch = @{ $true = $SrcBranchName; $false = $(git symbolic-ref --short -q HEAD) }[$SrcBranchName -ne $NULL];
+    $revision = @{ $true = "{0:00000}" -f [convert]::ToInt32("0" + $BuildId, 10); $false = "lo" }[$BuildId -ne $NULL];
+    $suffix = @{ $true = ""; $false = "$($branch.Substring(0, [math]::Min(10,$branch.Length)))-$revision"}[$branch -eq "master" -and $revision -ne "lo"]
+    $commitHash = $(git rev-parse --short HEAD)
+    $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
+
+    Write-Host "build: Package version suffix is $suffix"
+    Write-Host "build: Build version suffix is $buildSuffix"
+
+    & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
+    if($LASTEXITCODE -ne 0) { exit 3 }
+
+    $PublishedApplications = $(
+        "Kmd.Momentum.Mea.Api"
+    )
+
+    foreach ($srcProjectName in $PublishedApplications) {
+        Push-Location "./src/$srcProjectName"
+        try {
+            Write-Host "build: publishing output of '$srcProjectName' into '$ArtifactsStagingPath/$srcProjectName'"
+
+            if ($suffix) {
+                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName" --version-suffix "$suffix"
+            }
+            else {
+                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName"
+            }
+            if($LASTEXITCODE -ne 0) { exit 3 }
+
+            $compressedArtifactFileName = Compress-Directory "$ArtifactsStagingPath/$srcProjectName"
+            if ($PublishArtifactsToAzureDevOps) {
+                Write-Host "##vso[artifact.upload artifactname=Applications;]$compressedArtifactFileName"
+            }
+        }
+        finally {
+            Pop-Location
+        }
+    }
+
+    foreach ($testFolder in Get-ChildItem "./test/*.Tests") {
+        Push-Location "$testFolder"
+        try {
+            Write-Host "build: Testing project in '$testFolder'"
+
+            & dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
+            if($LASTEXITCODE -ne 0) { exit 3 }
+        }
+        finally {
+            Pop-Location
+        }
+    }
+
+    if($PublishArtifactsToAzureDevOps) {
+      $deployScriptSourcePath = "$PSScriptRoot/deploy"
+      $artifactsOutputPath = "$ArtifactsStagingPath/deploy"
+      Write-Host "build: publishing files from '$deployScriptSourcePath' to '$artifactsOutputPath'"
+
+      If(!(test-path $artifactsOutputPath)) {
+        Write-Host "build: creating folder '$artifactsOutputPath'"
+        New-Item -ItemType Directory -Force -Path $artifactsOutputPath
+      }
+
+      $resolvedArtifactsOutputPath = Resolve-Path -Path "$artifactsOutputPath"
+      Copy-Item "$deployScriptSourcePath/*" -Destination $resolvedArtifactsOutputPath -Recurse
+      Write-Host "##vso[artifact.upload containerfolder=deploy;artifactname=deploy;]$resolvedArtifactsOutputPath"
+    }
+}
+finally {
+    Pop-Location
+}

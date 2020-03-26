@@ -112,10 +112,10 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
      Write-Host "----------2------"
 
      if ($suffix) {
-                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName" --version-suffix "$suffix"
+                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/dbAdmin" --version-suffix "$suffix"
      }
      else {
-                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName"
+                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/dbAdmin"
      }
 
      Write-Host "---------3-------"

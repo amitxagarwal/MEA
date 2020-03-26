@@ -129,10 +129,19 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
 
       if ($PublishArtifactsToAzureDevOps) {
 
+      Write-Host "---------6-------"
+
       New-Item -ItemType Directory -Force -Path "$PSScriptRoot/db"
+
+      Write-Host "---------7-------"
+
+      Get-ChildItem $PSPath
+
+      Write-Host "---------8-------"
 
       Copy-Item  "$PSPath/*" -Destination "$PSScriptRoot/db"
 
+      Write-Host "---------9-------"
 
    #   Write-Host "##vso[artifact.upload artifactname=DB;]/"
       }

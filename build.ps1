@@ -128,7 +128,7 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
      Write-Host "---------5-------"
 
       if ($PublishArtifactsToAzureDevOps) {
-      Write-Host "##vso[artifact.upload artifactname=DB;]*"
+      Write-Host "##vso[artifact.upload artifactname=DB;]/"
       }
 
      Pop-Location

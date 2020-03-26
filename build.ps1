@@ -139,7 +139,7 @@ Push-Location "$PSScriptRoot/src/PostgreSqlDb"
 
       Write-Host "---------8-------"
 
-      Copy-Item  "$PSPath/*" -Destination "$PSScriptRoot/db"
+      Copy-Item  "./bin/*" -Destination "$PSScriptRoot/db" -Recurse
 
       Write-Host "---------9-------"
 

@@ -11,15 +11,19 @@ namespace Kmd.Momentum.Mea.Common.Authorization
         public readonly List<string> Tenant = new List<string> { "159","189" };
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, AudienceClaimRequirement requirement)
         {
-            // If user does not have the scope claim, get out of here
+            // If user does not have the audience claim, get out of here
             if (!context.User.HasClaim(c => c.Type == Audience.AudienceClaimTypeName))
                 return Task.CompletedTask;
 
-            // Split the scopes string into an array
+            // If user does not have the tenant claim, get out of here
+            if (!context.User.HasClaim(c => c.Type == Audience.TenantClaimTypeName))
+                return Task.CompletedTask;
+
+            // Split the audience and tenants string into an array
             var audience = context.User.FindFirst(c => c.Type == Audience.AudienceClaimTypeName).Value.Split(' ');
             var tenant = context.User.FindFirst(c => c.Type == Audience.TenantClaimTypeName).Value.Split(' ');
 
-            // Succeed if the scope array contains the required scope
+            // Succeed if the audience and tenant array contains the required audience and tenants
             if (audience.Any(s => s == Aud) && Tenant.Any(x=>tenant.Contains(x)))
                 context.Succeed(requirement);
 

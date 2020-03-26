@@ -116,7 +116,7 @@ try{
 
     Write-Host "--------------3-------------"
 
-    & dotnet run -- create -s kmd-momentum-api-build-db -d $BuildDatabaseName -u $BuildDatabaseName -p oQTX2jPgOWwe
+    & dotnet run -- create -s kmd-momentum-api-build-db -d $BuildDatabaseName -u $BuildDatabaseName -p RtAhL8j9946W
 
     Write-Host "--------------4-------------"
 
@@ -125,7 +125,7 @@ try{
     Write-Host "--------------5-------------"
 
     # Running database migrations
-    & dotnet run -- migrate -s kmd-momentum-api-build-db -d $BuildDatabaseName -u $BuildDatabaseName -p oQTX2jPgOWwe -f "$PSScriptRoot/MigrationScripts"
+    & dotnet run -- migrate -s kmd-momentum-api-build-db -d $BuildDatabaseName -u $BuildDatabaseName -p RtAhL8j9946W -f "$PSScriptRoot/MigrationScripts"
 
     Write-Host "--------------6-------------"
 

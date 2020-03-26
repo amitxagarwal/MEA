@@ -38,8 +38,14 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             var clientMoq = mockedFactory.CreateClient();
 
+            var mockResponseData = new List<string>();
+
+            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
+            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
+
+
             httpClientHelperMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri("https://kmd-rct-momentum-159-api.azurewebsites.net/api/citizens/withActiveClassification")))
-                .Returns(Task.FromResult());
+                .Returns(Task.FromResult(mockResponseData));
 
             //Act
             var response = await clientMoq.GetAsync($"/citizens").ConfigureAwait(false);
@@ -59,10 +65,9 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             var cprNumber = "0208682105";
             var requestUri = $"/citizens/cpr/{cprNumber}";
             var httpClientHelperMoq = new Mock<IHttpClientHelper>();
-            var httpClientCitizenDataResponse = "{\"cpr\":\"0208682105\",\"id\":\"test-test-test-test-test\",\"displayName\":\"test display name\",\"" +
-               "contactInformation\":{\"email\":{\"id\":\"testId-testId-testId-testId-testId\",\"address\":\"test@test.com\"},\"phone\":{\"id\":\"testId-testId-testId-testId-testId\",\"number\":\"+99999999\",\"isMobile\":true}}}";
 
-            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name", "", "", "", "test@test.com", "+99999999", "", "");
+            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true));
+            var citizenDataResponse = new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true);
 
             var mockedFactory = _factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
             {
@@ -93,10 +98,9 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             var requestUri = $"/citizens/kss/{citizenId}";
 
             var httpClientHelperMoq = new Mock<IHttpClientHelper>();
-            var httpClientCitizenDataResponse = "{\"cpr\":\"0208682105\",\"id\":\"70375a2b-14d2-4774-a9a2-ab123ebd2ff6\",\"displayName\":\"test display name\",\"" +
-               "contactInformation\":{\"email\":{\"id\":\"testId-testId-testId-testId-testId\",\"address\":\"test@test.com\"},\"phone\":{\"id\":\"testId-testId-testId-testId-testId\",\"number\":\"+99999999\",\"isMobile\":true}}}";
 
-            var citizenDataResponse = new CitizenDataResponseModel("70375a2b-14d2-4774-a9a2-ab123ebd2ff6", "test display name", "", "", "", "test@test.com", "+99999999", "", "");
+            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true));
+            var citizenDataResponse = new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true);
 
             var mockedFactory = _factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
             {

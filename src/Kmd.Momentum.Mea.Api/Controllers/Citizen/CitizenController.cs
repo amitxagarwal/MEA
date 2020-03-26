@@ -34,7 +34,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [SwaggerOperation(OperationId = "GetAllActiveCitizens")]
-        [Authorize(Audience.AudienceClaimTypeName)]
+        [Authorize(MeaCustomClaimAttributes.AudienceClaimTypeName)]
         public async Task<IReadOnlyList<CitizenDataResponseModel>> GetAllActiveCitizens()
         {
             return await _citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);

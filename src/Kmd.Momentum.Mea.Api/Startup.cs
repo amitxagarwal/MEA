@@ -80,10 +80,10 @@ namespace Kmd.Momentum.Mea.Api
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(Audience.AudienceClaimTypeName, policy => policy.Requirements.Add(new AudienceClaimRequirement(Audience.AudienceClaimTypeName, Audience.TenantClaimTypeName)));
+                options.AddPolicy(MeaCustomClaimAttributes.AudienceClaimTypeName, policy => policy.Requirements.Add(new MeaCustomClaimRequirement(MeaCustomClaimAttributes.AudienceClaimTypeName, MeaCustomClaimAttributes.TenantClaimTypeName)));
             });
 
-            services.AddSingleton<IAuthorizationHandler, AudienceClaimHandler>();
+            services.AddSingleton<IAuthorizationHandler, MeaCustomClaimHandler>();
 
             services.AddSwaggerGen(c =>
             {

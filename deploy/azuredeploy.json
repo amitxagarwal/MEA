@@ -361,7 +361,8 @@
         },
         {
           "name": "defaultRule",
-          "type": "Microsoft.DBforPostgreSQL/servers/firewallRules",
+          "type": "firewallrules",
+          "location": "[parameters('location')]",
           "apiVersion": "2017-12-01-preview",
           "properties": {
             "startIpAddress": "0.0.0.0",

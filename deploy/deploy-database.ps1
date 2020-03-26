@@ -45,6 +45,6 @@ $ResourceNamePrefix = "kmd-momentum-mea-$InstanceId"
 $DbServerName="$ResourceNamePrefix-dbsvr";
 $DbName="$ResourceNamePrefix-db";
 
-& dotnet Kmd.Momentum.Mea.DbAdmin.dll -- migrate -s $DbServerName -d $DbName -u $env:DbLoginId -p $env:DbLoginPassword -f "$ArtifactPath/migrationScripts"
+& dotnet Kmd.Momentum.Mea.DbAdmin.dll migrate -s $DbServerName -d $DbName -u $env:DbLoginId -p $env:DbLoginPassword -f "$ArtifactPath/migrationScripts"
 
 if($LASTEXITCODE -ne 0) { exit 1 } 

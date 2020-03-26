@@ -29,7 +29,7 @@ Param
 (
   [Parameter(Mandatory=$true)]
   [string]
-  $InstanceId,
+  $InstanceId
 )
 
 Push-Location "$PSScriptRoot/src/PostgreSqlDb/Kmd.Momentum.Mea.DbAdmin"
@@ -43,4 +43,4 @@ Write-Host "Migrate Database '$DbName' with MigrationScripts"
 
 & dotnet run -- migrate -s $DbServerName -d $DbName -u $env:DbLoginId -p $env:DbLoginPassword -f "$PSScriptRoot/MigrationScripts"
 
-if($LASTEXITCODE -ne 0) { exit 1 }
+if($LASTEXITCODE -ne 0) { exit 1 } 

@@ -10,9 +10,7 @@ using Moq;
 using Kmd.Momentum.Mea.Common.HttpProvider;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http;
 using System;
-using Microsoft.Extensions.Configuration;
 
 namespace Kmd.Momentum.Mea.Integration.Tests.Citizen
 {

@@ -75,20 +75,15 @@ namespace Kmd.Momentum.Mea.Api
 
             ConfigureAsymmetricSigningKey(tokenValidationParamteres, azureAdB2C, azureAd).Wait();
 
-            services.AddAuthentication(
-                JwtBearerDefaults.AuthenticationScheme
-            )
-                .AddJwtBearer(x =>
-            {
-                x.TokenValidationParameters = tokenValidationParamteres;
-            });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(x => {x.TokenValidationParameters = tokenValidationParamteres;});
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(Resource.Access, policy => policy.Requirements.Add(new HasResourceRequirement(Resource.Access)));
+                options.AddPolicy(Audience.AudienceClaimTypeName, policy => policy.Requirements.Add(new AudienceClaimRequirement(Audience.AudienceClaimTypeName, Audience.TenantClaimTypeName)));
             });
 
-            services.AddSingleton<IAuthorizationHandler, HasResourceHandler>();
+            services.AddSingleton<IAuthorizationHandler, AudienceClaimHandler>();
 
             services.AddSwaggerGen(c =>
             {

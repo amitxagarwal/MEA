@@ -1,5 +1,6 @@
 ﻿using Kmd.Momentum.Mea.Citizen;
 using Kmd.Momentum.Mea.Citizen.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -15,7 +16,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
     public class CitizenController : ControllerBase
     {
         private readonly ICitizenService _citizenService;
-
+        
         public CitizenController(ICitizenService citizenService)
         {
             _citizenService = citizenService ?? throw new ArgumentNullException(nameof(citizenService));
@@ -32,6 +33,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [SwaggerOperation(OperationId = "GetAllActiveCitizens")]
+        [Authorize]
         public async Task<IReadOnlyList<CitizenDataResponseModel>> GetAllActiveCitizens()
         {
             return await _citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);

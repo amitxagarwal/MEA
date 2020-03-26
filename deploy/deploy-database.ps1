@@ -29,18 +29,22 @@ Param
 (
   [Parameter(Mandatory=$true)]
   [string]
-  $InstanceId
+  $InstanceId,
+
+  [Parameter(Mandatory=$true)]
+  [string]
+  $ArtifactPath
 )
 
-Push-Location "$PSScriptRoot/src/PostgreSqlDb/Kmd.Momentum.Mea.DbAdmin"
+Write-Host "Migrate Database '$DbName' with MigrationScripts"
+
+Push-Location "$ArtifactPath/dbApp"
 
 $ResourceNamePrefix = "kmd-momentum-mea-$InstanceId"
 
 $DbServerName="$ResourceNamePrefix-dbsvr";
 $DbName="$ResourceNamePrefix-db";
 
-Write-Host "Migrate Database '$DbName' with MigrationScripts"
-
-& dotnet run -- migrate -s $DbServerName -d $DbName -u $env:DbLoginId -p $env:DbLoginPassword -f "$PSScriptRoot/MigrationScripts"
+& dotnet Kmd.Momentum.Mea.DbAdmin.dll -- migrate -s $DbServerName -d $DbName -u $env:DbLoginId -p $env:DbLoginPassword -f "$ArtifactPath/migrationScripts"
 
 if($LASTEXITCODE -ne 0) { exit 1 } 

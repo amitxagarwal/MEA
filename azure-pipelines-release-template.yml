@@ -50,7 +50,7 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'
                 ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-database.ps1'
-                ScriptArguments: -InstanceId '$(InstanceId)'
+                ScriptArguments: -InstanceId '$(InstanceId)' -ArtifactPath '$(Pipeline.Workspace)'
                 azurePowerShellVersion: 'LatestVersion'
                 pwsh: true
 

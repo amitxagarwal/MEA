@@ -107,7 +107,7 @@ try{
     $now = Get-Date
     $nowStr = $now.ToUniversalTime().ToString("yyyyMMddHHmmss")
     $BuildDatabaseName = "$nowStr-testDb-$buildSuffix"
-    $DbServer = "kmd-momentum-api-build-db"
+    $DbServer = "kmd-momentum-api-build-dbsvr"
     
     Push-Location "./Kmd.Momentum.Mea.DbAdmin"
 

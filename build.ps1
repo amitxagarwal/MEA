@@ -104,39 +104,53 @@ try{
   
      if($LASTEXITCODE -ne 0) { exit 3 }
 
-     Push-Location "./Kmd.Momentum.Mea.DbAdmin"
-
-     Write-Host "---------3-------"
-     
-     if($LASTEXITCODE -ne 0) { exit 3 }
-
-     Write-Host "---------4-------"
-
      if ($PublishArtifactsToAzureDevOps) {
 
-     Write-Host "---------6-------"
-
-     #New-Item -ItemType Directory -Force -Path "$PSScriptRoot/dbApp"
-
-     
-      Write-Host "---------8-------"
-
-#      Copy-Item  "./bin/*/*" -Destination "$PSScriptRoot/dbApp" -Recurse
-
-      Write-Host "---------9-------"
+      Push-Location "./Kmd.Momentum.Mea.DbAdmin"
 
       foreach ($item in Get-ChildItem "./bin/*/*") {
-
-      Write-Host "##vso[artifact.upload artifactname=dbApp;]$item"
+     
+       Write-Host "##vso[artifact.upload artifactname=dbApp;]$item"
       
       }
 
-     foreach ($item in Get-ChildItem "$PSScriptRoot/MigrationScripts") {     
-
-      Write-Host "##vso[artifact.upload artifactname=migrationScripts;]$item"
-      
+      foreach ($item in Get-ChildItem "$PSScriptRoot/MigrationScripts") {     
+     
+       Write-Host "##vso[artifact.upload artifactname=migrationScripts;]$item"
+     
       }
+
+      Write-Host "--------------1-------------"
+
+    $now = Get-Date
+    $nowStr = $now.ToUniversalTime().ToString("yyyyMMddHHmmss")
+    $BuildDatabaseName = "$nowStr-testDb-$buildSuffix"
+
+    Write-Host "--------------2-------------"
+
+    Push-Location "./bin/*/"
+
+    Write-Host "--------------3-------------"
+
+    & dotnet run -- create -s kmd-momentum-api-build-db -d $BuildDatabaseName -u $BuildDatabaseName -p oQTX2jPgOWwe
+
+    Write-Host "--------------4-------------"
+
+    if($LASTEXITCODE -ne 0) { exit 1 }
+
+    Write-Host "--------------5-------------"
+
+    # Running database migrations
+    & dotnet run -- migrate -s kmd-momentum-api-build-db -d $BuildDatabaseName -u $BuildDatabaseName -p oQTX2jPgOWwe -f "$PSScriptRoot/MigrationScripts"
+
+    Write-Host "--------------6-------------"
+
+    if($LASTEXITCODE -ne 0) { exit 1 }
+
+    Write-Host "--------------7-------------"
+
     }
+
 
      Pop-Location
 

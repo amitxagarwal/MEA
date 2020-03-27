@@ -1,13 +1,9 @@
 using CorrelationId;
 using Kmd.Momentum.Mea.Common.Authorization;
-using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.Common.Framework;
 using Kmd.Momentum.Mea.Common.Framework.PollyOptions;
 using Kmd.Momentum.Mea.Common.MeaHttpClient;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -73,7 +69,7 @@ namespace Kmd.Momentum.Mea.Api
                 }
             };
 
-            ConfigureAsymmetricSigningKey(tokenValidationParamteres, azureAdB2C, azureAd).Wait();
+            SettingTokenValidationParameters(tokenValidationParamteres, azureAdB2C, azureAd).Wait();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(x => {x.TokenValidationParameters = tokenValidationParamteres;});
@@ -125,7 +121,7 @@ namespace Kmd.Momentum.Mea.Api
             });
         }
 
-        private static async Task ConfigureAsymmetricSigningKey(TokenValidationParameters tokenValidationParamteres,
+        private static async Task SettingTokenValidationParameters(TokenValidationParameters tokenValidationParamteres,
             IConfiguration azureAdB2C, IConfiguration azureAd)
         {
             var tenant = azureAdB2C.GetValue<string>("Tenant");

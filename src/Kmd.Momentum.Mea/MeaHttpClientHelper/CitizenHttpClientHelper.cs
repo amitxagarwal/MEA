@@ -48,12 +48,12 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                     {
                         citizenId = item["id"],
                         displayName = item["name"],
-                        givenName = "",
-                        middleName = "",
-                        initials = "",
-                        address = "",
-                        number = "",
-                        caseworkerIdentifier = "",
+                        givenName = (string)null,
+                        middleName = (string)null,
+                        initials = (string)null,
+                        address = (string)null,
+                        number = (string)null,
+                        caseworkerIdentifier = (string)null,
                         description = item["description"],
                         isBookable = true,
                         isActive = true

@@ -14,6 +14,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
     [ApiController]
     [Route("citizens")]
     [Produces("application/json", "text/json")]
+    [Authorize(MeaCustomClaimAttributes.AudienceClaimTypeName)]
     public class CitizenController : ControllerBase
     {
         private readonly ICitizenService _citizenService;
@@ -34,7 +35,6 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [SwaggerOperation(OperationId = "GetAllActiveCitizens")]
-        [Authorize(MeaCustomClaimAttributes.AudienceClaimTypeName)]
         public async Task<IReadOnlyList<CitizenDataResponseModel>> GetAllActiveCitizens()
         {
             return await _citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);

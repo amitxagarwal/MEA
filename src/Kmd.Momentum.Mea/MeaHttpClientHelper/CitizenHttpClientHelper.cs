@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 {
-    public class HttpClientHelper : IHttpClientHelper
+    public class CitizenHttpClientHelper : ICitizenHttpClientHelper
     {
         private readonly IMeaClient _meaClient;
 
-        public HttpClientHelper(IMeaClient meaClient)
+        public CitizenHttpClientHelper(IMeaClient meaClient)
         {
             _meaClient = meaClient;
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kmd.Momentum.Mea.Common.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 {
     public interface IMeaClient
     {
-        Task<string> GetAsync(Uri uri);
+        Task<ResultOrHttpError<string, bool>> GetAsync(Uri uri);
         Task<string> PostAsync(Uri uri, StringContent stringContent);
     }
 }

@@ -7,7 +7,7 @@ namespace Kmd.Momentum.Mea.Citizen
 {
     public interface ICitizenService
     {
-        Task<IReadOnlyList<CitizenDataResponseModel>> GetAllActiveCitizensAsync();
+        Task<ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, bool>> GetAllActiveCitizensAsync();
 
         Task<ResultOrHttpError<CitizenDataResponseModel, string>> GetCitizenByCprAsync(string cpr);
 

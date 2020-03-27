@@ -21,7 +21,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             _config = config;
             _httpClient = httpClient;
         }
-        public async Task<string> GetAsync(Uri url)
+        public async Task<ResultOrHttpError<string, bool>> GetAsync(Uri url)
         {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
@@ -31,7 +31,12 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
-            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return new ResultOrHttpError<string, bool>(true, response.StatusCode);
+            }
+
+            return new ResultOrHttpError<string, bool>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
         public Task<string> PostAsync(Uri uri, StringContent stringContent)

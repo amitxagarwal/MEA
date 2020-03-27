@@ -3,8 +3,10 @@ using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.MeaHttpClientHelper
@@ -18,7 +20,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             _meaClient = meaClient;
         }
 
-        public async Task<IReadOnlyList<string>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
+        public async Task<ResultOrHttpError<IReadOnlyList<string>, bool>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
         {
             List<JToken> totalRecords = new List<JToken>();
             List<string> JsonStringList = new List<string>();
@@ -39,6 +41,12 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 skip += size;
 
                 remainingRecords = totalNoOfRecords - skip;
+
+                if (remainingRecords == 0)
+                {
+                    return new ResultOrHttpError<IReadOnlyList<string>, bool>(true, HttpStatusCode.NotFound);
+                }
+
                 totalRecords.AddRange(jsonArray.Children());
 
             } while (remainingRecords > 0);
@@ -62,7 +70,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 JsonStringList.Add(jsonToReturn);
 
             }
-            return JsonStringList;
+            return new ResultOrHttpError<IReadOnlyList<string>, bool>(JsonStringList);
         }
 
         public async Task<ResultOrHttpError<string, bool>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)

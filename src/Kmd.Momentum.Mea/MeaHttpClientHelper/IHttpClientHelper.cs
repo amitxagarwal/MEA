@@ -7,7 +7,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 {
     public interface IHttpClientHelper
     {
-        Task<IReadOnlyList<string>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url);
+        Task<ResultOrHttpError<IReadOnlyList<string>, bool>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url);
 
         Task<ResultOrHttpError<string, bool>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url);        
     }

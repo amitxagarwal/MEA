@@ -6,13 +6,14 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 {
-    public class MeaClient:IMeaClient
+    public class MeaClient : IMeaClient
     {
-        private readonly HttpClient _httpClient;
+        private static HttpClient _httpClient;
         private readonly IConfiguration _config;
 
         public MeaClient(IConfiguration config, HttpClient httpClient)
@@ -25,11 +26,12 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
             var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("bearer " + accessToken);
 
             var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
-            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);            
+            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
         public Task<string> PostAsync(Uri uri, StringContent stringContent)

@@ -1,9 +1,12 @@
 ﻿using Kmd.Momentum.Mea.Citizen.Model;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Kmd.Momentum.Mea.Common.Exceptions;
 using System.Net;
@@ -51,16 +54,7 @@ namespace Kmd.Momentum.Mea.Citizen
             Log.ForContext("CPR", cpr)
                 .Information("The citizen details by CPR number is returned successfully", response.StatusCode);
 
-            return new ResultOrHttpError<CitizenDataResponseModel, string>(new CitizenDataResponseModel(
-                GetVal(json, "id"),
-                GetVal(json, "displayName"),
-                GetVal(json, "givenName"),
-                GetVal(json, "middleName"),
-                GetVal(json, "initials"),
-                GetVal(json, "contactInformation.email.address"),
-                GetVal(json, "contactInformation.phone.number"),
-                GetVal(json, "caseworkerIdentifier"),
-                GetVal(json, "description")));
+            return JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString());
         }
 
         public async Task<ResultOrHttpError<CitizenDataResponseModel, string>> GetCitizenByIdAsync(string citizenId)
@@ -78,32 +72,7 @@ namespace Kmd.Momentum.Mea.Citizen
             Log.ForContext("CitizenID", citizenId)
                 .Information("The citizen details by CitizenId has been returned successfully", response.StatusCode);
 
-            return new ResultOrHttpError<CitizenDataResponseModel, string>(new CitizenDataResponseModel(
-                GetVal(json, "id"),
-                GetVal(json, "displayName"),
-                GetVal(json, "givenName"),
-                GetVal(json, "middleName"),
-                GetVal(json, "initials"),
-                GetVal(json, "contactInformation.email.address"),
-                GetVal(json, "contactInformation.phone.number"),
-                GetVal(json, "caseworkerIdentifier"),
-                GetVal(json, "description")));
-        }
-
-        private string GetVal(JObject _json, string _key)
-        {
-            string[] _keyArr = _key.Split('.');
-            var _subJson = _json[_keyArr[0]];
-
-            if (_subJson == null || String.IsNullOrEmpty(_subJson.ToString()))
-                return String.Empty;
-
-            if (_keyArr.Length > 1)
-            {
-                _key = _key.Replace(_keyArr[0] + ".", string.Empty, System.StringComparison.CurrentCulture);
-                return GetVal((JObject)_subJson, _key);
-            }
-            return _subJson.ToString();
+            return JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString());
         }
     }
 }

@@ -1,12 +1,12 @@
 ﻿using Kmd.Momentum.Mea.Citizen.Model;
-using Kmd.Momentum.Mea.Common.Exceptions;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Citizen
 {
     public interface ICitizenService
     {
-        Task<ResultOrHttpError<string[], bool>> GetAllActiveCitizensAsync();
+        Task<IReadOnlyList<CitizenDataResponseModel>> GetAllActiveCitizensAsync();
 
         Task<ResultOrHttpError<CitizenDataResponseModel, string>> GetCitizenByCprAsync(string cpr);
 

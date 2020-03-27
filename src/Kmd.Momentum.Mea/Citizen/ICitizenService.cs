@@ -1,4 +1,5 @@
 ﻿using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.Exceptions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

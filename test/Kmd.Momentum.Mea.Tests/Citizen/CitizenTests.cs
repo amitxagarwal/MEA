@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -28,7 +29,8 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1","givenname","middlename","initials","test@email.com","1234567891","","description",true,true)));
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
-            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search"))).Returns(Task.FromResult((IReadOnlyList<string>)mockResponseData));
+            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, bool>(mockResponseData)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
             var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
@@ -39,7 +41,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             
             //Asert
             result.Should().NotBeNull();
-            result.Result.Should().BeEquivalentTo(cprArray);
+            result.Result.Should().BeEquivalentTo(responseData);
         }
 
         [Fact]

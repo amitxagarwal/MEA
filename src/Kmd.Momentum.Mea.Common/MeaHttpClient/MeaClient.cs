@@ -69,12 +69,12 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            Log.Information("The active citizen's CPRs returned successfully from Momentum core");            
+            Log.Information("The active citizen's CPRs returned successfully from Momentum core");
 
             return new ResultOrHttpError<string[], bool>(JsonConvert.DeserializeObject<string[]>(json));
         }
 
-        public async Task<ResultOrHttpError<string,bool>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
+        public async Task<ResultOrHttpError<string, bool>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
         {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
@@ -85,14 +85,14 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
-                return new ResultOrHttpError<string, bool>(true,response.StatusCode);
+                return new ResultOrHttpError<string, bool>(true, response.StatusCode);
             }
 
             var citizenData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             Log.Information("The citizen details returned successfully from Momentum core");
-            
-            return new ResultOrHttpError<string,bool>(citizenData);
+
+            return new ResultOrHttpError<string, bool>(citizenData);
         }
     }
 }

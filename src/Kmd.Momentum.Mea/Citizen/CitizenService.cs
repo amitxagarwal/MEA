@@ -24,17 +24,13 @@ namespace Kmd.Momentum.Mea.Citizen
             _config = config;
         }
 
-        public async Task<ResultOrHttpError<string[], bool>> GetAllActiveCitizensAsync()
+        public async Task<IReadOnlyList<CitizenDataResponseModel>> GetAllActiveCitizensAsync()
         {
-            var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/withActiveClassification")).ConfigureAwait(false);
+            var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCoreAsync
+                (new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/search")).ConfigureAwait(false);
 
-            if (response.IsError)
-            {
-                Log.Error("An Error Occured while retriving active citizens");
-                return new ResultOrHttpError<string[], bool>(true, HttpStatusCode.NotFound);
-            }
-
-            return response;
+            var content = response.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x));
+            return content.ToList();
         }
 
         public async Task<ResultOrHttpError<CitizenDataResponseModel, string>> GetCitizenByCprAsync(string cpr)
@@ -54,7 +50,7 @@ namespace Kmd.Momentum.Mea.Citizen
             Log.ForContext("CPR", cpr)
                 .Information("The citizen details by CPR number is returned successfully", response.StatusCode);
 
-            return JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString());
+            return new ResultOrHttpError<CitizenDataResponseModel, string> (JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString()));
         }
 
         public async Task<ResultOrHttpError<CitizenDataResponseModel, string>> GetCitizenByIdAsync(string citizenId)
@@ -72,7 +68,7 @@ namespace Kmd.Momentum.Mea.Citizen
             Log.ForContext("CitizenID", citizenId)
                 .Information("The citizen details by CitizenId has been returned successfully", response.StatusCode);
 
-            return JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString());
+            return new ResultOrHttpError<CitizenDataResponseModel, string>(JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString()));
         }
     }
 }

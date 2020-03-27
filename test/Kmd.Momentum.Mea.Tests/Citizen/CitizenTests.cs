@@ -29,8 +29,9 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1","givenname","middlename","initials","test@email.com","1234567891","","description",true,true)));
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
+
             helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search")))
-                .Returns(Task.FromResult(new ResultOrHttpError<string, bool>(mockResponseData)));
+                .Returns(Task.FromResult((IReadOnlyList<string>)mockResponseData));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
             var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
@@ -41,7 +42,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             
             //Asert
             result.Should().NotBeNull();
-            result.Result.Should().BeEquivalentTo(responseData);
+            result.Should().BeEquivalentTo(responseData);
         }
 
         [Fact]
@@ -51,28 +52,23 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var helperHttpClientMoq = new Mock<IHttpClientHelper>();
             var _configuration = new Mock<IConfiguration>();
 
-            var httpClientCitizenDataResponse = "{\"cpr\":\"dummyCpr\",\"id\":\"test-test-test-test-test\"," +
-                "\"displayName\":\"test display name\",\"" +
-                "contactInformation\":{\"email\":{\"id\":\"testId-testId-testId-testId-testId\"," +
-                "\"address\":\"test@test.com\"},\"phone\":{\"id\":\"testId-testId-testId-testId-testId\"," +
-                "\"number\":\"+99999999\",\"isMobile\":true}}}";
-
-            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name", 
-                "", "", "", "test@test.com", "+99999999", "", "");
-           
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCpr")))
+            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", 
+                "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true));
+
+
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/testId1")))
                 .Returns(Task.FromResult(new ResultOrHttpError<string, bool>(httpClientCitizenDataResponse)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 
             //Act
-            var result = await citizenService.GetCitizenByCprAsync("dummyCpr").ConfigureAwait(false);
+            var result = await citizenService.GetCitizenByCprAsync("testId1").ConfigureAwait(false);
 
             //Asert
             result.Should().NotBeNull();
-            result.Should().BeEquivalentTo(citizenDataResponse);
+            result.Result.Should().BeEquivalentTo(JsonConvert.DeserializeObject<CitizenDataResponseModel>(httpClientCitizenDataResponse));
         }
 
         [Fact]
@@ -107,18 +103,12 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var helperHttpClientMoq = new Mock<IHttpClientHelper>();
             var _configuration = new Mock<IConfiguration>();
 
-            var httpClientCitizenDataResponse = "{\"cpr\":\"dummyCpr\",\"id\":\"test-test-test-test-test\"," +
-                "\"displayName\":\"test display name\",\"" +
-                "contactInformation\":{\"email\":{\"id\":\"testId-testId-testId-testId-testId\"," +
-                "\"address\":\"test@test.com\"},\"phone\":{\"id\":\"testId-testId-testId-testId-testId\"," +
-                "\"number\":\"+99999999\",\"isMobile\":true}}}";
-
-            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name",
-                "", "", "", "test@test.com", "+99999999", "", "");
-            
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCitizenId")))
+            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname",
+                "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true));
+
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/testId1")))
                 .Returns(Task.FromResult(new ResultOrHttpError<string, bool>(httpClientCitizenDataResponse)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
@@ -128,7 +118,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             //Asert
             result.Should().NotBeNull();
-            result.Result.Should().BeEquivalentTo(citizenDataResponse);
+            result.Result.Should().BeEquivalentTo(JsonConvert.DeserializeObject<CitizenDataResponseModel>(httpClientCitizenDataResponse));
         }
 
 

@@ -1,4 +1,5 @@
-﻿using Kmd.Momentum.Mea.Common.MeaHttpClient;
+﻿using Kmd.Momentum.Mea.Common.Exceptions;
+using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -44,29 +45,29 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             foreach (var item in totalRecords)
             {
-                    var jsonToReturn = JsonConvert.SerializeObject(new
-                    {
-                        citizenId = item["id"],
-                        displayName = item["name"],
-                        givenName = "",
-                        middleName = "",
-                        initials = "",
-                        address = "",
-                        number = "",
-                        caseworkerIdentifier = "",
-                        description = item["description"],
-                        isBookable = true,
-                        isActive = true
-                    });
-                    JsonStringList.Add(jsonToReturn);
-                
+                var jsonToReturn = JsonConvert.SerializeObject(new
+                {
+                    citizenId = item["id"],
+                    displayName = item["name"],
+                    givenName = "",
+                    middleName = "",
+                    initials = "",
+                    address = "",
+                    number = "",
+                    caseworkerIdentifier = "",
+                    description = item["description"],
+                    isBookable = true,
+                    isActive = true
+                });
+                JsonStringList.Add(jsonToReturn);
+
             }
             return JsonStringList;
         }
 
-        public async Task<string> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
+        public async Task<ResultOrHttpError<string, bool>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
         {
-            return await _meaClient.GetAsync(url).ConfigureAwait(false);
+            return  new ResultOrHttpError<string, bool>(await _meaClient.GetAsync(url).ConfigureAwait(false));
         }
 
         private string GetVal(JObject _json, string _key)

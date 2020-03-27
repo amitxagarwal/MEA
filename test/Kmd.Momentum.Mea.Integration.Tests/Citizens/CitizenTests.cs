@@ -5,6 +5,7 @@ using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;
@@ -16,11 +17,11 @@ using Xunit;
 
 namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 {
-    public class CitizenTests : IClassFixture<WebApplicationFactory<Startup>>
+    public class CitizenTests : IClassFixture<TestApplicationFactory>
     {
-        private readonly WebApplicationFactory<Startup> _factory;
-
-        public CitizenTests(WebApplicationFactory<Startup> factory)
+        private readonly TestApplicationFactory _factory;
+        
+        public CitizenTests(TestApplicationFactory factory)
         {
             _factory = factory;
         }

@@ -138,7 +138,7 @@ try {
         try {
             Write-Host "build: Testing project in '$testFolder'"
 
-            & dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore -- KMD_MOMENTUM_MEA_McaApiUri="https://kmd-rct-momentum-159-api.azurewebsites.net/api/"
+            & dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             if($LASTEXITCODE -ne 0) { exit 3 }
         }
         finally {

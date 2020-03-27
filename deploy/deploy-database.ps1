@@ -30,14 +30,14 @@ Param
   $ArtifactPath
 )
 
-Write-Host "Migrate Database '$DbName' with MigrationScripts"
-
-Push-Location "$ArtifactPath/dbApp"
-
 $ResourceNamePrefix = "kmd-momentum-mea-$InstanceId"
 
 $DbServerName="$ResourceNamePrefix-dbsvr";
 $DbName="$ResourceNamePrefix-db";
+
+Write-Host "Migrate Database '$DbName' with MigrationScripts"
+
+Push-Location "$ArtifactPath/dbApp"
 
 & dotnet Kmd.Momentum.Mea.DbAdmin.dll migrate -s $DbServerName -d $DbName -u $env:DbLoginId -p $env:DbLoginPassword -f "$ArtifactPath/migrationScripts"
 

@@ -42,6 +42,12 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             var mockResponseData = new List<string>();
 
+            List<CitizenDataResponseModel> lst = new List<CitizenDataResponseModel>()
+            {
+                new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true),
+                new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)
+            };
+
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
             
@@ -51,12 +57,12 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             //Act
             var response = await clientMoq.GetAsync($"/citizens").ConfigureAwait(false);
             var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<string[]>(result);
+            var actualResponse = JsonConvert.DeserializeObject<List<CitizenDataResponseModel>>(result);
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             actualResponse.Should().NotBeNullOrEmpty();
-            actualResponse.Should().BeEquivalentTo(mockResponseData);
+            actualResponse.Should().BeEquivalentTo(lst);
         }
 
         [Fact]

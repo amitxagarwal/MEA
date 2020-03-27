@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Integration.Tests
 {
-    public class TestApplicationFactory : WebApplicationFactory<Startup>
+    public class IntegrationTestApplicationFactory : WebApplicationFactory<Startup>
     {
         public const string EnvironmentVariableConfigPrefix = "KMD_LOGIC_API_";
 

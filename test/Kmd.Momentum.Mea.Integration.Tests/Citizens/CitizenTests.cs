@@ -17,11 +17,11 @@ using Xunit;
 
 namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 {
-    public class CitizenTests : IClassFixture<TestApplicationFactory>
+    public class CitizenTests : IClassFixture<IntegrationTestApplicationFactory>
     {
-        private readonly TestApplicationFactory _factory;
+        private readonly IntegrationTestApplicationFactory _factory;
         
-        public CitizenTests(TestApplicationFactory factory)
+        public CitizenTests(IntegrationTestApplicationFactory factory)
         {
             _factory = factory;
         }

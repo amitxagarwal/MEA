@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Kmd.Momentum.Mea.Api;
 using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -28,12 +29,13 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         public async Task GetActiveCitizensSuccess()
         {
             //Arrange
-            var listOfCpr = new string[] { "12345", "67890" };
             var httpClientHelperMoq = new Mock<IHttpClientHelper>();
+            var meaHttpClientMoq = new Mock<MeaClient>();
 
             var mockedFactory = _factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
             {
                 services.AddScoped(_ => httpClientHelperMoq.Object);
+                services.AddScoped(_ => meaHttpClientMoq.Object);
             }));
 
             var clientMoq = mockedFactory.CreateClient();
@@ -42,10 +44,9 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
-
-
-            httpClientHelperMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri("https://kmd-rct-momentum-159-api.azurewebsites.net/api/citizens/withActiveClassification")))
-                .Returns(Task.FromResult(mockResponseData));
+            
+            httpClientHelperMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri("https://kmd-rct-momentum-159-api.azurewebsites.net/api//search")))
+                .Returns(Task.FromResult( (IReadOnlyList<string>)mockResponseData));
 
             //Act
             var response = await clientMoq.GetAsync($"/citizens").ConfigureAwait(false);
@@ -55,7 +56,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             actualResponse.Should().NotBeNullOrEmpty();
-            actualResponse.Should().BeEquivalentTo(listOfCpr);
+            actualResponse.Should().BeEquivalentTo(mockResponseData);
         }
 
         [Fact]

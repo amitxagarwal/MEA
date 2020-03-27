@@ -2,7 +2,7 @@
 using Kmd.Momentum.Mea.Citizen;
 using Kmd.Momentum.Mea.Citizen.Model;
 using Kmd.Momentum.Mea.Common.Exceptions;
-using Kmd.Momentum.Mea.Common.HttpProvider;
+using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using System;

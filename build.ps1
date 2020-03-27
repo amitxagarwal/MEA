@@ -58,7 +58,13 @@ Param(
     # The build ID e.g. 12345, defaults to $env:BUILD_BUILDID from Azure DevOps
     [Parameter(Mandatory=$false, Position=5)]
     [string]
-    $BuildId = $env:BUILD_BUILDID
+    $BuildId = $env:BUILD_BUILDID,
+
+    # Image name e.g. ubuntu-18.04, macos-10.14 defaults is windows-2019
+    [Parameter(Mandatory=$false, Position=5)]
+    [string]
+    $ImageName = "windows-2019"
+    
 )
 
 function Compress-Directory {
@@ -106,7 +112,7 @@ try{
 
     $now = Get-Date
     $nowStr = $now.ToUniversalTime().ToString("yyyyMMddHHmmss")
-    $BuildDatabaseName = "$nowStr-testDb-$buildSuffix"
+    $BuildDatabaseName = "$nowStr-$ImageName-$buildSuffix"
     $DbServer = "kmd-momentum-api-build-dbsvr"
     
     Push-Location "./Kmd.Momentum.Mea.DbAdmin"

@@ -58,7 +58,15 @@ Param(
     # The build ID e.g. 12345, defaults to $env:BUILD_BUILDID from Azure DevOps
     [Parameter(Mandatory=$false, Position=5)]
     [string]
-    $BuildId = $env:BUILD_BUILDID
+    $BuildId = $env:BUILD_BUILDID,
+
+    $ClientId,
+
+    $ClientSecret,
+
+    $McaAppUri,
+
+    $Scope
 )
 
 function Compress-Directory {
@@ -140,10 +148,10 @@ try {
             $test = $env:McaApiUri
             Write-Host "build: McaApiUri is '$test'"
 
-            ($env:KMD_MOMENTUM_MEA_ClientSecret = $env:McaClientSecret); 
-            ($env:KMD_MOMENTUM_MEA_ClientId = $env:McaClientId); 
-            ($env:KMD_MOMENTUM_MEA_McaApiUri = $env:McaApiUri); 
-            ($env:Scope = $env:McaScope);
+            ($env:KMD_MOMENTUM_MEA_ClientSecret = $ClientSecret); 
+            ($env:KMD_MOMENTUM_MEA_ClientId = $ClientId); 
+            ($env:KMD_MOMENTUM_MEA_McaApiUri = $McaAppUri); 
+            ($env:Scope = $Scope);
             ($env:ASPNETCORE_ENVIRONMENT=$env:ENVIRONMENT) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             if($LASTEXITCODE -ne 0) { exit 3 }
         }

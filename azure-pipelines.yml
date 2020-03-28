@@ -14,13 +14,14 @@ stages:
       maxParallel: 3
     pool:
       vmImage: $(imageName)
+    
     steps:
     - task: UseDotNet@2
       inputs:
         packageType: 'sdk'
         useGlobalJson: true
     - task: NuGetAuthenticate@0
-    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)"
+    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -ClientId "$(McaClientId)" -ClientSecret "$(McaClientSecret)" -McaAppUri "$(McaApiUri)" -Scope "$(McaScope)"
       displayName: run build.ps1
       failOnStderr: true
       env:

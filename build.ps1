@@ -137,8 +137,8 @@ try {
         Push-Location "$testFolder"
         try {
             Write-Host "build: Testing project in '$testFolder'"
-
-            Write-Host "build: McaApiUri is '$env:McaApiUri'"
+            $test=$env:McaApiUri
+            Write-Host "build: McaApiUri is '$test'"
 
             ($env:KMD_MOMENTUM_MEA_ClientSecret=$env:McaClientSecret); 
             ($env:KMD_MOMENTUM_MEA_ClientId=$env:McaClientId); 

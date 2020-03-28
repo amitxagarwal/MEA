@@ -138,6 +138,8 @@ try {
         try {
             Write-Host "build: Testing project in '$testFolder'"
 
+            Write-Host "build: McaApiUri is '$env:McaApiUri'"
+
             ($env:KMD_MOMENTUM_MEA_ClientSecret=$env:McaClientSecret); 
             ($env:KMD_MOMENTUM_MEA_ClientId=$env:McaClientId); 
             ($env:KMD_MOMENTUM_MEA_McaApiUri=$env:McaApiUri); 

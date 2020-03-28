@@ -60,14 +60,24 @@ Param(
     [string]
     $BuildId = $env:BUILD_BUILDID,
 
+    # The client id for integration tests to run
+    [Parameter(Mandatory=$true)]
     $ClientId,
 
+    # The client secret for integration tests to run
+    [Parameter(Mandatory=$true)]
     $ClientSecret,
 
+    # The MCA Api Uri for integration tests to run
+    [Parameter(Mandatory=$true)]
     $McaAppUri,
 
+    # The scope for integration tests to run
+    [Parameter(Mandatory=$true)]
     $Scope,
 
+    # The environment for integration tests to run only in phoenix environment
+    [Parameter(Mandatory=$true)]
     $Environment
 )
 
@@ -147,9 +157,7 @@ try {
         Push-Location "$testFolder"
         try {
             Write-Host "build: Testing project in '$testFolder'"
-            $test = $env:McaApiUri
-            Write-Host "build: McaApiUri is '$test'"
-
+            
             ($env:KMD_MOMENTUM_MEA_ClientSecret = $ClientSecret); 
             ($env:KMD_MOMENTUM_MEA_ClientId = $ClientId); 
             ($env:KMD_MOMENTUM_MEA_McaApiUri = $McaAppUri); 

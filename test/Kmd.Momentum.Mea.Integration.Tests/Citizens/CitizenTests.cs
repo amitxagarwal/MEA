@@ -26,8 +26,8 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             _factory = factory;
         }
 
-        
-        [Fact]
+        [SkipLocalFact]
+        //[Fact]
         public async Task GetActiveCitizensSuccess()
         {
             //Arrange

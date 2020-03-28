@@ -136,11 +136,13 @@ try {
     foreach ($testFolder in Get-ChildItem "./test/*.Tests") {
         Push-Location "$testFolder"
         try {
+            Write-Host "build: Testing project in '$testFolder'"
+
             ($env:KMD_MOMENTUM_MEA_ClientSecret=$env:McaClientSecret); 
             ($env:KMD_MOMENTUM_MEA_ClientId=$env:McaClientId); 
             ($env:KMD_MOMENTUM_MEA_McaApiUri=$env:McaApiUri); 
             ($env:Scope=$env:McaScope);
-            ($env:ASPNETCORE_ENVIRONMENT=$env:ENVIRONMENT) | Write-Host "build: Testing project in '$testFolder'" & dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
+            ($env:ASPNETCORE_ENVIRONMENT=$env:ENVIRONMENT) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             if($LASTEXITCODE -ne 0) { exit 3 }
         }
         finally {

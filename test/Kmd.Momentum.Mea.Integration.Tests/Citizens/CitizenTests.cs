@@ -26,68 +26,34 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             _factory = factory;
         }
 
-        [Fact]
+        [SkipLocalFact]
+        //[Fact]
         public async Task GetActiveCitizensSuccess()
         {
             //Arrange
-            var httpClientHelperMoq = new Mock<IHttpClientHelper>();
-            var meaHttpClientMoq = new Mock<MeaClient>();
-
-            var mockedFactory = _factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
-            {
-                services.AddScoped(_ => httpClientHelperMoq.Object);
-                services.AddScoped(_ => meaHttpClientMoq.Object);
-            }));
-
-            var clientMoq = mockedFactory.CreateClient();
-
-            var mockResponseData = new List<string>();
-
-            List<CitizenDataResponseModel> lst = new List<CitizenDataResponseModel>()
-            {
-                new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", 
-                "test@email.com", "1234567891", "", "description"),
-                new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", 
-                "test@email.com", "1234567891", "", "description")
-            };
-
-            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
-            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
-            
-            httpClientHelperMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri("https://kmd-rct-momentum-159-api.azurewebsites.net/api//search")))
-                .Returns(Task.FromResult((IReadOnlyList<string>)mockResponseData));
+            var clientMoq = _factory.CreateClient();
+            var requestUri = $"/citizens";
 
             //Act
-            var response = await clientMoq.GetAsync($"/citizens").ConfigureAwait(false);
+            var response = await clientMoq.GetAsync(requestUri).ConfigureAwait(false);
             var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var actualResponse = JsonConvert.DeserializeObject<List<CitizenDataResponseModel>>(result);
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             actualResponse.Should().NotBeNullOrEmpty();
-            actualResponse.Should().BeEquivalentTo(lst);
+            actualResponse.Should().HaveCountGreaterThan(0);
         }
 
-        [Fact]
+        [SkipLocalFact]
+        //[Fact]
         public async Task GetCitizenByCprNoSuccess()
         {
             //Arrange
             var cprNumber = "0208682105";
-            var requestUri = $"/citizens/cpr/{cprNumber}";
-            var httpClientHelperMoq = new Mock<IHttpClientHelper>();
-
-            var citizenDataResponse = new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description");
-            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(citizenDataResponse);
-            
-            var mockedFactory = _factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
-            {
-                services.AddScoped(_ => httpClientHelperMoq.Object);
-            }));
-            var client = mockedFactory.CreateClient();
-
-            httpClientHelperMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri("https://kmd-rct-momentum-159-api.azurewebsites.net/api/citizens/0208682105"))).Returns(Task.FromResult(httpClientCitizenDataResponse));
-
-
+            var requestUri = $"/citizens/cpr/{cprNumber}";            
+            var client = _factory.CreateClient();
+           
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
             var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -96,31 +62,18 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             actualResponse.Should().NotBeNull();
-            actualResponse.Should().BeEquivalentTo(citizenDataResponse);
+            actualResponse.CitizenId.Should().NotBeNullOrEmpty();
         }
 
-
-        [Fact]
+        [SkipLocalFact]
+        //[Fact]
         public async Task GetCitizenByCitizenIdSuccess()
         {
             //Arrange
             var citizenId = "70375a2b-14d2-4774-a9a2-ab123ebd2ff6";
-            var requestUri = $"/citizens/kss/{citizenId}";
-
-            var httpClientHelperMoq = new Mock<IHttpClientHelper>();
-
-            var citizenDataResponse = new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description");
-            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(citizenDataResponse);
-
-            var mockedFactory = _factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
-            {
-                services.AddScoped(_ => httpClientHelperMoq.Object);
-            }));
-
-            var client = mockedFactory.CreateClient();
-
-            httpClientHelperMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri("https://kmd-rct-momentum-159-api.azurewebsites.net/api/citizens/70375a2b-14d2-4774-a9a2-ab123ebd2ff6"))).Returns(Task.FromResult(httpClientCitizenDataResponse));
-
+            var requestUri = $"/citizens/kss/{citizenId}";            
+            var client = _factory.CreateClient();
+           
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
             var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -129,7 +82,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             actualResponse.Should().NotBeNull();
-            actualResponse.Should().BeEquivalentTo(citizenDataResponse);
+            actualResponse.CitizenId.Should().BeEquivalentTo(citizenId);
         }
     }
 }

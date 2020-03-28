@@ -11,21 +11,19 @@ namespace Kmd.Momentum.Mea.Integration.Tests
 {
     public class IntegrationTestApplicationFactory : WebApplicationFactory<Startup>
     {
-        public const string EnvironmentVariableConfigPrefix = "KMD_LOGIC_API_";
-
         public static string GetEnvironmentName() =>
-            Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+            Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";        
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             var env = GetEnvironmentName();
 
             builder.ConfigureAppConfiguration(config =>
-            {
+            {                
                 var integrationConfig = new ConfigurationBuilder()
                     .AddJsonFile("appsettings.json")
                     .AddJsonFile($"appsettings.{env}.json", optional: true)
-                    .AddEnvironmentVariables(prefix: EnvironmentVariableConfigPrefix)
+                    .AddEnvironmentVariables()
                     .Build();
 
                 config.AddConfiguration(integrationConfig);

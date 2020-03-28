@@ -66,7 +66,9 @@ Param(
 
     $McaAppUri,
 
-    $Scope
+    $Scope,
+
+    $Environment
 )
 
 function Compress-Directory {
@@ -152,7 +154,7 @@ try {
             ($env:KMD_MOMENTUM_MEA_ClientId = $ClientId); 
             ($env:KMD_MOMENTUM_MEA_McaApiUri = $McaAppUri); 
             ($env:Scope = $Scope);
-            ($env:ASPNETCORE_ENVIRONMENT=$env:ENVIRONMENT) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
+            ($env:ASPNETCORE_ENVIRONMENT = $Environment) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             if($LASTEXITCODE -ne 0) { exit 3 }
         }
         finally {

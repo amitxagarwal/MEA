@@ -21,7 +21,7 @@ stages:
         packageType: 'sdk'
         useGlobalJson: true
     - task: NuGetAuthenticate@0
-    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -ClientId "$(McaClientId)" -ClientSecret "$(McaClientSecret)" -McaAppUri "$(McaApiUri)" -Scope "$(McaScope)"
+    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -ClientId "$(McaClientId)" -ClientSecret "$(McaClientSecret)" -McaAppUri "$(McaApiUri)" -Scope "$(McaScope)" -Environment "$(ENVIRONMENT)"
       displayName: run build.ps1
       failOnStderr: true
       env:

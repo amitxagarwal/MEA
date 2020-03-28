@@ -140,11 +140,11 @@ try {
             $test=$env:McaApiUri
             Write-Host "build: McaApiUri is '$test'"
 
-            ($env:KMD_MOMENTUM_MEA_ClientSecret=$env:McaClientSecret); 
-            ($env:KMD_MOMENTUM_MEA_ClientId=$env:McaClientId); 
-            ($env:KMD_MOMENTUM_MEA_McaApiUri=$env:McaApiUri); 
-            ($env:Scope=$env:McaScope);
-            ($env:ASPNETCORE_ENVIRONMENT=$env:ENVIRONMENT) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
+            ($Env:KMD_MOMENTUM_MEA_ClientSecret=$Env:McaClientSecret); 
+            ($Env:KMD_MOMENTUM_MEA_ClientId=$Env:McaClientId); 
+            ($Env:KMD_MOMENTUM_MEA_McaApiUri=$Env:McaApiUri); 
+            ($Env:Scope=$Env:McaScope);
+            ($Env:ASPNETCORE_ENVIRONMENT=$Env:ENVIRONMENT) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             if($LASTEXITCODE -ne 0) { exit 3 }
         }
         finally {

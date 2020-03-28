@@ -8,6 +8,7 @@
     <Compile Remove="Citizen\Model\CitizenDataUploadModel.cs" />
     <Compile Remove="Class1.cs" />
     <Compile Remove="MeaServiceCollectionExtensions.cs" />
+    <Compile Remove="RemoveModel.cs" />
   </ItemGroup>
 
   <ItemGroup>

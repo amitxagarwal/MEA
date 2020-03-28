@@ -18,19 +18,6 @@ namespace Kmd.Momentum.Mea.Common.Modules
             _openApiProducts = meaParts.ToList();
         }
 
-        public IReadOnlyCollection<IMeaOpenApiProduct> DiscoverOpenApiProducts()
-        {
-            return _openApiProducts
-                .Select(t => new { t.productPathName, t.openApiProductName, t.apiVersion, t.assembly })
-                .GroupBy(x => new { x.openApiProductName, x.productPathName })
-                .Select(g =>
-                {
-                    var assemblies = g.Select(x => x.assembly).ToArray();
-                    var apiVersion = g.Min(x => x.apiVersion);
-                    return new MeaOpenApiProduct(g.Key.productPathName, g.Key.openApiProductName, apiVersion, assemblies);
-                }).ToArray();
-        }
-
         public IReadOnlyCollection<(Type type, AutoScopedDIAttribute attr)> DiscoverScopedDITypes() => Assemblies
                .SelectMany(x => x.GetTypes())
                .Select(x => (type: x, attr: x.GetCustomAttribute<AutoScopedDIAttribute>()))

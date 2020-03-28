@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <Compile Remove="Class1.cs" />
+    <Compile Remove="Modules\IMeaOpenApiProduct.cs" />
+    <Compile Remove="Modules\MeaOpenApiProduct.cs" />
   </ItemGroup>
 
   <ItemGroup>

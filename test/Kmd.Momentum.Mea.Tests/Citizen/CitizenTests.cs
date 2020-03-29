@@ -18,7 +18,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         [Fact]
         public async Task GetAllActiveCitizensSuccess()
         {
-            var helperHttpClientMoq = new Mock<IHttpClientHelper>();
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
 
              var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
@@ -45,7 +45,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task GetCitizenByCprSuccess()
         {
             //Arrange
-            var helperHttpClientMoq = new Mock<IHttpClientHelper>();
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var httpClientCitizenDataResponse = JsonConvert.SerializeObject( new CitizenDataResponseModel("21effd90-0770-4976-8416-6f1230606eea", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true));
 
             var _configuration = new Mock<IConfiguration>();
@@ -67,7 +67,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task GetCitizenByIdSuccess()
         {
             //Arrange
-            var helperHttpClientMoq = new Mock<IHttpClientHelper>();
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var httpClientCitizenDataResponse = JsonConvert.SerializeObject(new CitizenDataResponseModel("21effd90-0770-4976-8416-6f1230606eea", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true));
 
             var _configuration = new Mock<IConfiguration>();

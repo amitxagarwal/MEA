@@ -8,7 +8,7 @@ namespace Kmd.Momentum.Mea
     {
         public static IServiceCollection AddMea(this IServiceCollection services)
         {
-            services.AddScoped<IHttpClientHelper, HttpClientHelper>();
+            services.AddScoped<ICitizenHttpClientHelper, CitizenHttpClientHelper>();
             services.AddScoped<ICitizenService, CitizenService>();
             return services;
         }

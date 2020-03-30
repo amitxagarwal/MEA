@@ -9,7 +9,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 {
     public interface IMeaClient
     {
-        Task<ResultOrHttpError<string, bool>> GetAsync(Uri uri);
+        Task<ResultOrHttpError<string, Error>> GetAsync(Uri uri);
         Task<string> PostAsync(Uri uri, StringContent stringContent);
     }
 }

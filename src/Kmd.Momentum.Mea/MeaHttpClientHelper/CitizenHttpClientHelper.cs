@@ -20,7 +20,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             _meaClient = meaClient;
         }
 
-        public async Task<ResultOrHttpError<IReadOnlyList<string>, bool>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
+        public async Task<ResultOrHttpError<IReadOnlyList<string>, Error>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
         {
             List<JToken> totalRecords = new List<JToken>();
             List<string> JsonStringList = new List<string>();
@@ -35,25 +35,19 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 var queryStringParams = $"term=Citizen&size={size}&skip={skip}&isActive=true";
                 var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
 
-                if(response.Error)
+                if(response.IsError)
                 {
-                    return  new ResultOrHttpError<IReadOnlyList<string>, bool>(true, HttpStatusCode.NotFound);
+                    return  new ResultOrHttpError<IReadOnlyList<string>, Error>(response.Error);
                 }
 
                 var content = response.Result;
-
                 var jsonArray = JArray.Parse(JObject.Parse(content)["results"].ToString());
 
                 var totalNoOfRecords = (int)JProperty.Parse(content)["totalCount"];
                 skip += size;
 
                 remainingRecords = totalNoOfRecords - skip;
-
-                if (remainingRecords == 0)
-                {
-                    return new ResultOrHttpError<IReadOnlyList<string>, bool>(true, HttpStatusCode.NotFound);
-                }
-
+                
                 totalRecords.AddRange(jsonArray.Children());
 
             } while (remainingRecords > 0);
@@ -77,20 +71,20 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 JsonStringList.Add(jsonToReturn);
 
             }
-            return new ResultOrHttpError<IReadOnlyList<string>, bool>(JsonStringList);
+            return new ResultOrHttpError<IReadOnlyList<string>, Error>(JsonStringList);
         }
 
-        public async Task<ResultOrHttpError<string, bool>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
+        public async Task<ResultOrHttpError<string, Error>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
         {
             var response = await _meaClient.GetAsync(url).ConfigureAwait(false);
 
-            if(response.Error)
+            if(response.IsError)
             {
-                return new ResultOrHttpError<string, bool>(true);
+                return new ResultOrHttpError<string, Error>(response.Error);
             }
 
             var content = response.Result;
-            return  new ResultOrHttpError<string, bool>(content);
+            return  new ResultOrHttpError<string, Error>(content);
         }
 
         private string GetVal(JObject _json, string _key)

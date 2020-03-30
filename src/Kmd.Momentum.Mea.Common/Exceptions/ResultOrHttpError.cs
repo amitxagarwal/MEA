@@ -19,7 +19,7 @@ namespace Kmd.Momentum.Mea.Common.Exceptions
         public ResultOrHttpError(TError error)
         {
             this.Error = error;
-            this.IsError = false;
+            this.IsError = true;
         }
         public ResultOrHttpError(TError error, HttpStatusCode status)
         {

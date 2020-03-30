@@ -18,6 +18,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
     public class CitizenTests
     {
         [Fact]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public async Task GetAllActiveCitizensSuccess()
         {
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
@@ -31,7 +32,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
 
             helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search")))
-                .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<string>, bool>(mockResponseData)));
+                .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<string>, Error>(mockResponseData)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
             var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
@@ -42,83 +43,93 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             
             //Asert
             result.Should().NotBeNull();
-            result.Should().BeEquivalentTo(responseData);
+            result.IsError.Should().BeFalse();
+            result.Result.Should().BeEquivalentTo(responseData);
         }
 
         [Fact]
         public async Task GetCitizenByCprSuccess()
         {
             //Arrange
-            var helperHttpClientMoq = new Mock<CitizenHttpClientHelper>();
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var _configuration = new Mock<IConfiguration>();
+            var cpr = "1234567890";
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", 
-                "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true));
+            var citizenData = new CitizenDataResponseModel("testId1", "TestDisplay1",
+                "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true);
+
+            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(citizenData);
 
 
-            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/testId1")))
-                .Returns(Task.FromResult(new ResultOrHttpError<string, bool>(httpClientCitizenDataResponse)));
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(httpClientCitizenDataResponse)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 
             //Act
-            var result = await citizenService.GetCitizenByCprAsync("testId1").ConfigureAwait(false);
+            var result = await citizenService.GetCitizenByCprAsync(cpr).ConfigureAwait(false);
 
             //Asert
             result.Should().NotBeNull();
-            result.Result.Should().BeEquivalentTo(JsonConvert.DeserializeObject<CitizenDataResponseModel>(httpClientCitizenDataResponse));
+            result.IsError.Should().BeFalse();
+            result.Result.Should().BeEquivalentTo(citizenData);
         }
 
         [Fact]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public async Task GetCitizenDataByCprFails()
         {
             //Arrange
-            var helperHttpClientMoq = new Mock<CitizenHttpClientHelper>();
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var _configuration = new Mock<IConfiguration>();
 
+            var cpr = "1234567890";
             var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name",
                 "", "", "", "test@test.com", "+99999999", "", "");
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
+            var error = new Error("Citizen with the supplied cpr no is not found", HttpStatusCode.NotFound);
 
-            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCpr")))
-                .Returns(Task.FromResult(new ResultOrHttpError<string, bool>(true, HttpStatusCode.NotFound)));
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 
             //Act
-            var result = await citizenService.GetCitizenByCprAsync("dummyCpr").ConfigureAwait(false);
+            var result = await citizenService.GetCitizenByCprAsync(cpr).ConfigureAwait(false);
 
             //Asert
             result.IsError.Should().BeTrue();
-            result.Error.Should().Be("An Error Occured while retriving citizen data by cpr");
+            result.Error.Message.Should().Be("Citizen with the supplied cpr no is not found");
         }
 
         [Fact]
         public async Task GetCitizenByCitizenIdSuccess()
         {
             //Arrange
-            var helperHttpClientMoq = new Mock<CitizenHttpClientHelper>();
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var _configuration = new Mock<IConfiguration>();
-
+            var citizenId = "1234567890";
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname",
-                "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true));
+            var citizenData = new CitizenDataResponseModel(citizenId, "TestDisplay1", "givenname",
+                "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true);
+            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(citizenData);
 
-            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/testId1")))
-                .Returns(Task.FromResult(new ResultOrHttpError<string, bool>(httpClientCitizenDataResponse)));
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(httpClientCitizenDataResponse)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 
             //Act
-            var result = await citizenService.GetCitizenByIdAsync("testId1").ConfigureAwait(false);
+            var result = await citizenService.GetCitizenByIdAsync(citizenId).ConfigureAwait(false);
 
             //Asert
             result.Should().NotBeNull();
-            result.Result.Should().BeEquivalentTo(JsonConvert.DeserializeObject<CitizenDataResponseModel>(httpClientCitizenDataResponse));
+            result.IsError.Should().BeFalse();
+            result.Result.Should().BeEquivalentTo(citizenData);
         }
 
 
@@ -126,25 +137,26 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task GetCitizenByCitizenIdFails()
         {
             //Arrange
-            var helperHttpClientMoq = new Mock<CitizenHttpClientHelper>();
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var _configuration = new Mock<IConfiguration>();
+            var citizenId = "1234567890";
 
-            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name",
+            var citizenDataResponse = new CitizenDataResponseModel(citizenId, "test display name",
                 "", "", "", "test@test.com", "+99999999", "", "");
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/dummyCitizenId")))
-                .Returns(Task.FromResult(new ResultOrHttpError<string, bool>(true, HttpStatusCode.NotFound)));
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(new Error("Citizen by citizen id not found", HttpStatusCode.NotFound))));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 
             //Act
-            var result = await citizenService.GetCitizenByIdAsync("dummyCitizenId").ConfigureAwait(false);
+            var result = await citizenService.GetCitizenByIdAsync(citizenId).ConfigureAwait(false);
 
             //Asert
             result.IsError.Should().BeTrue();
-            result.Error.Should().Be("An Error Occured while retriving citizen data by citizenId");
+            result.Error.Message.Should().Be("Citizen by citizen id not found");
         }
     }
 }

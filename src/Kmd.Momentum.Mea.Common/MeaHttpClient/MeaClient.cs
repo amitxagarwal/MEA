@@ -21,7 +21,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             _config = config;
             _httpClient = httpClient;
         }
-        public async Task<ResultOrHttpError<string, bool>> GetAsync(Uri url)
+        public async Task<ResultOrHttpError<string, Error>> GetAsync(Uri url)
         {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
@@ -33,10 +33,12 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
-                return new ResultOrHttpError<string, bool>(true, response.StatusCode);
+                var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return new ResultOrHttpError<string, Error>(new Error(error, response.StatusCode));
             }
 
-            return new ResultOrHttpError<string, bool>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+            
+            return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
         public Task<string> PostAsync(Uri uri, StringContent stringContent)
@@ -56,48 +58,6 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"), content).ConfigureAwait(false);
             return response;
-        }
-
-        public async Task<ResultOrHttpError<string[], bool>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
-        {
-            var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
-
-            var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
-
-            var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
-
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                return new ResultOrHttpError<string[], bool>(true, response.StatusCode);
-            }
-
-            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            Log.Information("The active citizen's CPRs returned successfully from Momentum core");
-
-            return new ResultOrHttpError<string[], bool>(JsonConvert.DeserializeObject<string[]>(json));
-        }
-
-        public async Task<ResultOrHttpError<string, bool>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
-        {
-            var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
-
-            var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {(string)accessToken}");
-
-            var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
-
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                return new ResultOrHttpError<string, bool>(true, response.StatusCode);
-            }
-
-            var citizenData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            Log.Information("The citizen details returned successfully from Momentum core");
-
-            return new ResultOrHttpError<string, bool>(citizenData);
         }
     }
 }

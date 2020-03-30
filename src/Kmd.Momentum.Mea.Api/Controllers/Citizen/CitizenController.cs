@@ -42,7 +42,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
             
             if (result.IsError)
             {
-                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error);
+                return StatusCode((int)(result.Error.StatusCode ?? HttpStatusCode.BadRequest), result.Error);
             }
             else
             {
@@ -68,7 +68,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
 
             if (result.IsError)
             {
-                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error);
+                return StatusCode((int)(result.Error.StatusCode ?? HttpStatusCode.BadRequest), result.Error);
             }
             else 
             {
@@ -94,7 +94,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
 
             if (result.IsError)
             {
-                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error);
+                return StatusCode((int)(result.Error.StatusCode ?? HttpStatusCode.BadRequest), result.Error);
             }
             else
             {

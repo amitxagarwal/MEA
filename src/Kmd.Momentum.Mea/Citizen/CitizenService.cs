@@ -24,23 +24,23 @@ namespace Kmd.Momentum.Mea.Citizen
             _config = config;
         }
 
-        public async Task<ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, bool>> GetAllActiveCitizensAsync()
+        public async Task<ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>> GetAllActiveCitizensAsync()
         {
             var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCoreAsync
                 (new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/search")).ConfigureAwait(false);
 
-            if(response.Error)
+            if(response.IsError)
             {
-                return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, bool>(true);
+                return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>(response.Error);
             }
 
             var result = response.Result;
-            var content = (IReadOnlyList<CitizenDataResponseModel>)result.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x));
+            var content = result.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x));
 
-            return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, bool>(content);
+            return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>(content.ToList());
         }
 
-        public async Task<ResultOrHttpError<CitizenDataResponseModel, string>> GetCitizenByCprAsync(string cpr)
+        public async Task<ResultOrHttpError<CitizenDataResponseModel, Error>> GetCitizenByCprAsync(string cpr)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync
                 (new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")).ConfigureAwait(false);
@@ -49,33 +49,34 @@ namespace Kmd.Momentum.Mea.Citizen
             {
                 Log.ForContext("CPR", cpr)
                 .Error("An Error Occured while retriving citizen data by cpr");
-                return new ResultOrHttpError<CitizenDataResponseModel, string>("An Error Occured while retriving citizen data by cpr", HttpStatusCode.NotFound);
+                return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error);
             }
 
             var json = JObject.Parse(response.Result);
+            var citizenData = JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString());
 
-            Log.ForContext("CPR", cpr)
-                .Information("The citizen details by CPR number is returned successfully", response.StatusCode);
+            Log.ForContext("Citizen Id", citizenData.CitizenId)
+                .Information("The citizen details by CPR number is returned successfully");
 
-            return new ResultOrHttpError<CitizenDataResponseModel, string> (JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString()));
+            return new ResultOrHttpError<CitizenDataResponseModel, Error> (citizenData);
         }
 
-        public async Task<ResultOrHttpError<CitizenDataResponseModel, string>> GetCitizenByIdAsync(string citizenId)
+        public async Task<ResultOrHttpError<CitizenDataResponseModel, Error>> GetCitizenByIdAsync(string citizenId)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")).ConfigureAwait(false);
             if (response.IsError)
             {
                 Log.ForContext("CitizenId", citizenId)
                 .Error("An Error Occured while retriving citizen data by citizenID");
-                return new ResultOrHttpError<CitizenDataResponseModel, string>("An Error Occured while retriving citizen data by citizenId", HttpStatusCode.NotFound);
+                return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error);
             }
 
             var json = JObject.Parse(response.Result);
 
             Log.ForContext("CitizenID", citizenId)
-                .Information("The citizen details by CitizenId has been returned successfully", response.StatusCode);
+                .Information("The citizen details by CitizenId has been returned successfully");
 
-            return new ResultOrHttpError<CitizenDataResponseModel, string>(JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString()));
+            return new ResultOrHttpError<CitizenDataResponseModel, Error>(JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString()));
         }
     }
 }

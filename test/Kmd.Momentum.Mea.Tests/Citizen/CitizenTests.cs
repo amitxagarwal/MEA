@@ -31,7 +31,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
 
             helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search")))
-                .Returns(Task.FromResult((IReadOnlyList<string>)mockResponseData));
+                .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<string>, bool>(mockResponseData)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
             var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
@@ -49,7 +49,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task GetCitizenByCprSuccess()
         {
             //Arrange
-            var helperHttpClientMoq = new Mock<IHttpClientHelper>();
+            var helperHttpClientMoq = new Mock<CitizenHttpClientHelper>();
             var _configuration = new Mock<IConfiguration>();
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
@@ -75,7 +75,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task GetCitizenDataByCprFails()
         {
             //Arrange
-            var helperHttpClientMoq = new Mock<IHttpClientHelper>();
+            var helperHttpClientMoq = new Mock<CitizenHttpClientHelper>();
             var _configuration = new Mock<IConfiguration>();
 
             var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name",
@@ -100,7 +100,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task GetCitizenByCitizenIdSuccess()
         {
             //Arrange
-            var helperHttpClientMoq = new Mock<IHttpClientHelper>();
+            var helperHttpClientMoq = new Mock<CitizenHttpClientHelper>();
             var _configuration = new Mock<IConfiguration>();
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
@@ -126,7 +126,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task GetCitizenByCitizenIdFails()
         {
             //Arrange
-            var helperHttpClientMoq = new Mock<IHttpClientHelper>();
+            var helperHttpClientMoq = new Mock<CitizenHttpClientHelper>();
             var _configuration = new Mock<IConfiguration>();
 
             var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name",

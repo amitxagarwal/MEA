@@ -33,7 +33,14 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             do
             {
                 var queryStringParams = $"term=Citizen&size={size}&skip={skip}&isActive=true";
-                var content = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
+                var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
+
+                if(response.Error)
+                {
+                    return  new ResultOrHttpError<IReadOnlyList<string>, bool>(true, HttpStatusCode.NotFound);
+                }
+
+                var content = response.Result;
 
                 var jsonArray = JArray.Parse(JObject.Parse(content)["results"].ToString());
 
@@ -75,7 +82,15 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
         public async Task<ResultOrHttpError<string, bool>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
         {
-            return  new ResultOrHttpError<string, bool>(await _meaClient.GetAsync(url).ConfigureAwait(false));
+            var response = await _meaClient.GetAsync(url).ConfigureAwait(false);
+
+            if(response.Error)
+            {
+                return new ResultOrHttpError<string, bool>(true);
+            }
+
+            var content = response.Result;
+            return  new ResultOrHttpError<string, bool>(content);
         }
 
         private string GetVal(JObject _json, string _key)

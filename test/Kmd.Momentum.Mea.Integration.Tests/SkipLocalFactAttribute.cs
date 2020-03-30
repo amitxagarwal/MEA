@@ -17,10 +17,10 @@ namespace Kmd.Momentum.Mea.Integration.Tests
             if (meaApiUrl == null)
                 throw new Exception($"Expected to find '{localApiUriKey}' in 'appsettings' for the current environment");
 
-            var logicApiUrlHostName = meaApiUrl?.Host;
-            var isLocalHost = localhost.Equals(logicApiUrlHostName, StringComparison.OrdinalIgnoreCase);
+            var meaApiUrlHostName = meaApiUrl?.Host;
+            var isLocalHost = localhost.Equals(meaApiUrlHostName, StringComparison.OrdinalIgnoreCase);
             if (isLocalHost)
-                Skip = $"'{localApiUriKey}' is '{meaApiUrl}' (Host='{logicApiUrlHostName}') "
+                Skip = $"'{localApiUriKey}' is '{meaApiUrl}' (Host='{meaApiUrlHostName}') "
                     + $"and this test only runs when the Host is NOT '{localhost}'.";
         }
     }

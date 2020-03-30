@@ -1,16 +1,24 @@
-﻿using System.Net;
+﻿using Newtonsoft.Json;
+using System.Net;
 
 namespace Kmd.Momentum.Mea.Common.Exceptions
 {
     public class Error
     {
-        public string Message { get; }
-        public HttpStatusCode? StatusCode { get;}
+        [JsonProperty("correlationId")]
+        public string CorrelationId { get; }
 
-        public Error(string message, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+        [JsonProperty("errors")]
+        public string[] Errors { get; }
+
+        [JsonProperty("sourceSystem")]
+        public string SourceSystem { get; }
+
+        public Error(string correlationId, string[] errors, string sourceSystem)
         {
-            Message = message;
-            StatusCode = statusCode;
+            CorrelationId = correlationId;
+            Errors = errors;
+            SourceSystem = sourceSystem;
         }
     }
 }

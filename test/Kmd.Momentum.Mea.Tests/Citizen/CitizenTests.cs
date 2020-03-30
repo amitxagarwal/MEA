@@ -65,7 +65,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
 
             helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search")))
-                .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<string>, Error>(error)));
+                .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<string>, Error>(error, HttpStatusCode.BadRequest)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
             var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
@@ -126,7 +126,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var error = new Error("123456", new string[] { "Citizen with the supplied cpr no is not found" }, "MCA");
 
             helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")))
-                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error)));
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 
@@ -182,7 +182,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var error = new Error("123456", new string[] { "Citizen with the supplied cpr no is not found" }, "MCA"); 
 
             helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")))
-                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error)));
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
 

@@ -22,7 +22,6 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         {
             //Arrange       
             var clientMoq = _factory.CreateClient();
-            var mockResponseData = new List<string>();
 
             //Act
             var response = await clientMoq.GetAsync($"/citizens").ConfigureAwait(false);

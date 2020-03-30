@@ -70,7 +70,7 @@ Param(
 
     # The MCA Api Uri for integration tests to run
     [Parameter(Mandatory=$true)]
-    $McaAppUri,
+    $McaApiUri,
 
     # The scope for integration tests to run
     [Parameter(Mandatory=$true)]
@@ -229,7 +229,7 @@ try {
             
             ($env:KMD_MOMENTUM_MEA_ClientSecret = $ClientSecret); 
             ($env:KMD_MOMENTUM_MEA_ClientId = $ClientId); 
-            ($env:KMD_MOMENTUM_MEA_McaApiUri = $McaAppUri); 
+            ($env:KMD_MOMENTUM_MEA_McaApiUri = $McaApiUri); 
             ($env:Scope = $Scope);
             ($env:ASPNETCORE_ENVIRONMENT = $Environment) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             if($LASTEXITCODE -ne 0) { exit 3 }

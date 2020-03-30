@@ -58,7 +58,27 @@ Param(
     # The build ID e.g. 12345, defaults to $env:BUILD_BUILDID from Azure DevOps
     [Parameter(Mandatory=$false, Position=5)]
     [string]
-    $BuildId = $env:BUILD_BUILDID
+    $BuildId = $env:BUILD_BUILDID,
+
+    # The client id for integration tests to run
+    [Parameter(Mandatory=$true)]
+    $ClientId,
+
+    # The client secret for integration tests to run
+    [Parameter(Mandatory=$true)]
+    $ClientSecret,
+
+    # The MCA Api Uri for integration tests to run
+    [Parameter(Mandatory=$true)]
+    $McaApiUri,
+
+    # The scope for integration tests to run
+    [Parameter(Mandatory=$true)]
+    $Scope,
+
+    # The environment for integration tests to run only in phoenix environment
+    [Parameter(Mandatory=$true)]
+    $Environment
 )
 
 function Compress-Directory {
@@ -82,7 +102,76 @@ if ($VerbosePreference) {
     & dotnet --info
 }
 
+
+
+try{
+
+    Push-Location "$PSScriptRoot/src/PostgreSqlDb"
+
+    Write-Host "build: Starting in folder Kmd.Momentum.Mea.DbAdmin"
+    
+    if(Test-Path ./artifacts) {
+        Write-Host "build: Cleaning ./artifacts"
+        Remove-Item ./artifacts -Force -Recurse
+    }
+
+    $branch = @{ $true = $SrcBranchName; $false = $(git symbolic-ref --short -q HEAD) }[$SrcBranchName -ne $NULL];    
+    $suffix = @{ $true = ""; $false = "$($branch.Substring(0, [math]::Min(10,$branch.Length)))-$revision"}[$branch -eq "master" -and $revision -ne "lo"]
+    $commitHash = $(git rev-parse --short HEAD)
+    $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
+
+    & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
+  
+    if($LASTEXITCODE -ne 0) { exit 3 }
+
+    $now = Get-Date
+    $nowStr = $now.ToUniversalTime().ToString("yyyyMMddHHmmss")
+    $BuildDatabaseName = "$nowStr-$ImageName-$buildSuffix"
+    $DbServer = "kmd-momentum-api-build-dbsvr"
+    
+    Push-Location "./Kmd.Momentum.Mea.DbAdmin"
+
+    Write-Host "Creating Database '$BuildDatabaseName'"
+
+    & dotnet run -- create -s $DbServer -d $BuildDatabaseName -u $BuildDatabaseName -p RtAhL8j9946W
+    
+    if($LASTEXITCODE -ne 0) { exit 1 }
+
+    Write-Host "Migrate Database '$BuildDatabaseName' with MigrationScripts"
+
+    & dotnet run -- migrate -s $DbServer -d $BuildDatabaseName -u $BuildDatabaseName -p RtAhL8j9946W -f "$PSScriptRoot/MigrationScripts"
+    
+    if($LASTEXITCODE -ne 0) { exit 1 }  
+       
+    $expiryMinutes = 120;
+    
+    Write-Host "cleanup: database '$BuildDatabaseName'"
+    Write-Host "Also looking for any databases with a timestamp <=" $expiryMinutes "minutes ago"
+    
+    & dotnet run -- delete -s $DbServer -d $BuildDatabaseName -r "^\\d{14}\\-" -e $expiryMinutes -f "yyyyMMddHHmmss-"
+
+    if($LASTEXITCODE -ne 0) { exit 1 }
+    
+    if ($PublishArtifactsToAzureDevOps) {
+     
+        foreach ($item in Get-ChildItem "./bin/*/*") {
+     
+            Write-Host "##vso[artifact.upload artifactname=dbApp;]$item"
+        }
+        
+        foreach ($item in Get-ChildItem "$PSScriptRoot/MigrationScripts") {
+        
+            Write-Host "##vso[artifact.upload artifactname=migrationScripts;]$item"
+         }
+    }
+    Pop-Location
+}
+catch{
+    exit 1
+}
+
 Push-Location $PSScriptRoot
+
 try {
     Write-Host "build: Starting in folder '$PSScriptRoot'"
     
@@ -137,8 +226,12 @@ try {
         Push-Location "$testFolder"
         try {
             Write-Host "build: Testing project in '$testFolder'"
-
-            & dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
+            
+            ($env:KMD_MOMENTUM_MEA_ClientSecret = $ClientSecret); 
+            ($env:KMD_MOMENTUM_MEA_ClientId = $ClientId); 
+            ($env:KMD_MOMENTUM_MEA_McaApiUri = $McaApiUri); 
+            ($env:Scope = $Scope);
+            ($env:ASPNETCORE_ENVIRONMENT = $Environment) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             if($LASTEXITCODE -ne 0) { exit 3 }
         }
         finally {

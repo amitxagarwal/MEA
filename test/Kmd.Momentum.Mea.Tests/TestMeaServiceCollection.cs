@@ -10,7 +10,6 @@ namespace Kmd.Momentum.Mea.Tests
         public TestMeaServiceCollection()
         {
             this.collection = new ServiceCollection();
-            this.collection.AddMea();
         }
 
         public TestMeaServiceCollection WithMock<TMockedService>(Mock<TMockedService> mock)

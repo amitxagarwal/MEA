@@ -2,10 +2,46 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "environment": {
+      "type": "string",
+      "metadata": {
+        "description": "Environment suffix to identify the environment"
+      }
+    },
     "mcaApiUri": {
       "type": "string",
       "metadata": {
         "description": "Base Uri for calling MCA API"
+      }
+    },
+    "dbServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for database server"
+      }
+    },
+    "dbLoginId": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for database login"
+      }
+    },
+    "dbLoginPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "Password for database login"
+      }
+    },
+    "dbName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for database"
+      }
+    },
+    "dbConnection": {
+      "type": "string",
+      "metadata": {
+        "description": "Database Connection String"
       }
     },
     "clientId": {
@@ -129,8 +165,10 @@
       "type": "Microsoft.Insights/components",
       "apiVersion": "2015-05-01",
       "location": "[parameters('location')]",
-      "tags": {},
-      "properties": {}
+      "tags": {
+      },
+      "properties": {
+      }
     },
     {
       "type": "Microsoft.Web/serverfarms",
@@ -164,6 +202,10 @@
               "value": "[parameters('instanceId')]"
             },
             {
+              "name": "ASPNETCORE_ENVIRONMENT",
+              "value": "[parameters('environment')]"
+            },
+            {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
               "value": "[reference(resourceId(resourceGroup().Name, 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
             },
@@ -190,6 +232,26 @@
             {
               "name": "KMD_MOMENTUM_MEA_McaApiUri",
               "value": "[parameters('mcaApiUri')]"
+            },
+            {
+              "name": "DbServerName",
+              "value": "[parameters('dbServerName')]"
+            },
+            {
+              "name": "DbLoginId",
+              "value": "[parameters('dbLoginId')]"
+            },
+            {
+              "name": "DbLoginPassword",
+              "value": "[parameters('dbLoginPassword')]"
+            },
+            {
+              "name": "DbName",
+              "value": "[parameters('dbName')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ConnectionStrings:MeaDatabase",
+              "value": "[parameters('dbConnection')]"
             }
           ]
         }
@@ -206,7 +268,9 @@
             "displayName": "slotConfigNames"
           },
           "properties": {
-            "appSettingNames": [ "SlotName" ]
+            "appSettingNames": [
+              "SlotName"
+            ]
           }
         }
       ]
@@ -234,6 +298,10 @@
               "value": "[parameters('instanceId')]"
             },
             {
+              "name": "ASPNETCORE_ENVIRONMENT",
+              "value": "[parameters('environment')]"
+            },
+            {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
               "value": "[reference(resourceId(resourceGroup().Name, 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
             },
@@ -260,10 +328,65 @@
             {
               "name": "KMD_MOMENTUM_MEA_McaApiUri",
               "value": "[parameters('mcaApiUri')]"
+            },
+            {
+              "name": "DbServerName",
+              "value": "[parameters('dbServerName')]"
+            },
+            {
+              "name": "DbLoginId",
+              "value": "[parameters('dbLoginId')]"
+            },
+            {
+              "name": "DbLoginPassword",
+              "value": "[parameters('dbLoginPassword')]"
+            },
+            {
+              "name": "DbName",
+              "value": "[parameters('dbName')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ConnectionStrings:MeaDatabase",
+              "value": "[parameters('dbConnection')]"
             }
           ]
         }
       }
+    },
+    {
+      "apiVersion": "2017-12-01-preview",
+      "kind": "",
+      "location": "[parameters('location')]",
+      "name": "[parameters('dbServerName')]",
+      "properties": {
+        "administratorLogin": "[parameters('dbLoginId')]",
+        "administratorLoginPassword": "[parameters('dbLoginPassword')]"
+      },
+      "type": "Microsoft.DBforPostgreSQL/servers",
+      "resources": [
+        {
+          "apiVersion": "2017-12-01-preview",
+          "name": "[parameters('dbName')]",
+          "type": "databases",
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('dbServerName'))]"
+          ]
+        },
+        {
+          "name": "defaultRule",
+          "type": "firewallrules",
+          "location": "[parameters('location')]",
+          "apiVersion": "2017-12-01-preview",
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "255.255.255.255"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('dbServerName'))]"
+          ]
+        }
+      ]
     }
   ]
 }

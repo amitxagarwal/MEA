@@ -1,5 +1,7 @@
 ﻿using Kmd.Momentum.Mea.Citizen;
 using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -13,10 +15,11 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
     [ApiController]
     [Route("citizens")]
     [Produces("application/json", "text/json")]
+    [Authorize(MeaCustomClaimAttributes.AudienceClaimTypeName)]
     public class CitizenController : ControllerBase
     {
         private readonly ICitizenService _citizenService;
-
+        
         public CitizenController(ICitizenService citizenService)
         {
             _citizenService = citizenService ?? throw new ArgumentNullException(nameof(citizenService));

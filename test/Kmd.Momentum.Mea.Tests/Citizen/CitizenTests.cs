@@ -20,7 +20,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         [Fact]
         public async Task GetAllActiveCitizensSuccess()
         {
-            var helperHttpClientMoq = new Mock<IHttpClientHelper>();
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
 
              var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");

@@ -3,8 +3,7 @@ using Kmd.Momentum.Mea.Common.Authorization;
 using Kmd.Momentum.Mea.Common.Framework;
 using Kmd.Momentum.Mea.Common.Framework.PollyOptions;
 using Kmd.Momentum.Mea.Common.MeaHttpClient;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,20 +11,25 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api
 {
     public class Startup
     {
-        private readonly IConfiguration configuration;
+        private readonly IConfiguration _configuration;
 
-        public Startup(IConfiguration configuration) => this.configuration = configuration;
+        public Startup(IConfiguration configuration) => this._configuration = configuration;
 
 #pragma warning disable CA1822
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -40,22 +44,42 @@ namespace Kmd.Momentum.Mea.Api
                 });
 
             services
-                .AddPolicies(configuration)
+                .AddPolicies(_configuration)
                 .AddHttpClient<IMeaClient, MeaClient, MeaClientOptions>(
-                    configuration,
+                    _configuration,
                     nameof(ApplicationOptions.MeaClient));
 
             services.AddControllers();
 
-            services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
-                .AddAzureADB2CBearer(options => configuration.Bind("AzureAdB2C", options));
+            var azureAdB2C = _configuration.GetSection("AzureAdB2C");
+            services.AddSingleton(azureAdB2C);
+            var azureAd = _configuration.GetSection("AzureAd");
+            services.AddSingleton(azureAd);
+
+            var tokenValidationParamteres = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateLifetime = true,
+                ValidateAudience = true,
+                ValidateIssuerSigningKey = true,
+                ValidAudiences = new[]
+                {
+                    "1d18d151-5192-47f1-a611-efa50dbdc431", // application id or client id
+                    "69d9693e-c4b7-4294-a29f-cddaebfa518b" // audience or aud claim value
+                }
+            };
+
+            SettingTokenValidationParameters(tokenValidationParamteres, azureAdB2C, azureAd).Wait();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(x => {x.TokenValidationParameters = tokenValidationParamteres;});
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(Resource.Access, policy => policy.Requirements.Add(new HasResourceRequirement(Resource.Access)));
+                options.AddPolicy(MeaCustomClaimAttributes.AudienceClaimTypeName, policy => policy.Requirements.Add(new MeaCustomClaimRequirement(MeaCustomClaimAttributes.AudienceClaimTypeName, MeaCustomClaimAttributes.TenantClaimTypeName)));
             });
 
-            services.AddSingleton<IAuthorizationHandler, HasResourceHandler>();
+            services.AddSingleton<IAuthorizationHandler, MeaCustomClaimHandler>();
 
             services.AddSwaggerGen(c =>
             {
@@ -95,6 +119,39 @@ namespace Kmd.Momentum.Mea.Api
             {
                 options.Predicate = (check) => check.Tags.Contains("ready");
             });
+        }
+
+        private static async Task SettingTokenValidationParameters(TokenValidationParameters tokenValidationParamteres,
+            IConfiguration azureAdB2C, IConfiguration azureAd)
+        {
+            var tenant = azureAdB2C.GetValue<string>("Tenant");
+            var policy = azureAdB2C.GetValue<string>("Policy");
+            var authority = azureAd.GetValue<string>("Authority");
+
+            var b2cDomain =
+                tenant.Replace(".onmicrosoft.com", ".b2clogin.com", StringComparison.InvariantCulture);
+
+            var b2cMetadataEndpoint =
+                $"https://{b2cDomain}/{tenant}/v2.0/.well-known/openid-configuration?p={policy}";
+            var b2cConfiguration = await GetOpenIdConnectConfigurationAsync(b2cMetadataEndpoint).ConfigureAwait(false);
+
+            var aadMetadataEndpoint = authority + ".well-known/openid-configuration";
+            var aadConfiguration = await GetOpenIdConnectConfigurationAsync(aadMetadataEndpoint).ConfigureAwait(false);
+
+            tokenValidationParamteres.ValidIssuers = new[] { b2cConfiguration.Issuer, aadConfiguration.Issuer };
+            tokenValidationParamteres.IssuerSigningKeys =
+                b2cConfiguration.SigningKeys.Concat(aadConfiguration.SigningKeys);
+        }
+
+        private static async Task<OpenIdConnectConfiguration> GetOpenIdConnectConfigurationAsync(
+            string metadataEndpoint)
+        {
+            var configManager = new ConfigurationManager<OpenIdConnectConfiguration>(
+                metadataEndpoint,
+                new OpenIdConnectConfigurationRetriever(),
+                new HttpDocumentRetriever());
+
+            return await configManager.GetConfigurationAsync().ConfigureAwait(false);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

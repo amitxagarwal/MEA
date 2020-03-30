@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Kmd.Momentum.Mea.Common.Exceptions;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -18,7 +21,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             _config = config;
             _httpClient = httpClient;
         }
-        public async Task<string> GetAsync(Uri url)
+        public async Task<ResultOrHttpError<string, Error>> GetAsync(Uri url)
         {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
@@ -28,7 +31,20 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
-            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+
+                if(errorResponse == null || errorResponse.Errors == null || errorResponse.Errors.Length <= 0)
+                {
+                    var error = new Error(Guid.NewGuid().ToString(), new string[] { "An error occured while fetching the record from Core Api" }, "MEA");
+                    return new ResultOrHttpError<string, Error>(error, response.StatusCode);
+                }
+
+                return new ResultOrHttpError<string, Error>(errorResponse, response.StatusCode);
+            }
+            
+            return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
         public Task<string> PostAsync(Uri uri, StringContent stringContent)

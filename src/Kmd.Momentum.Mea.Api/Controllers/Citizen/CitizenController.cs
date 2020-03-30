@@ -7,6 +7,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
@@ -30,14 +31,25 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="200">The active citizen data is loaded successfully</response>
         ///<response code="400">Bad request</response>
         ///<response code="404">The active citizen data is not found</response>
+        ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
         [SwaggerOperation(OperationId = "GetAllActiveCitizens")]
-        public async Task<IReadOnlyList<CitizenDataResponseModel>> GetAllActiveCitizens()
+        public async Task<ActionResult<IReadOnlyList<CitizenDataResponseModel>>> GetAllActiveCitizens()
         {
-            return await _citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
+            var result = await _citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
+            
+            if (result.IsError)
+            {
+                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error.Errors);
+            }
+            else
+            {
+                return Ok(result.Result);
+            }
         }
 
         ///<summary>
@@ -46,15 +58,26 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="200">The citizen detail by CPR no is loaded successfully</response>
         ///<response code="400">Bad request</response>
         ///<response code="404">The citizen detail by CPR no is not found</response>
+        ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
         [Route("cpr/{cprNumber}")]
         [SwaggerOperation(OperationId = "GetCitizenByCpr")]
-        public async Task<CitizenDataResponseModel> GetCitizenByCpr([Required] [FromRoute] string cprNumber)
+        public async Task<ActionResult<CitizenDataResponseModel>> GetCitizenByCpr([Required] [FromRoute] string cprNumber)
         {
-            return await _citizenService.GetCitizenByCprAsync(cprNumber).ConfigureAwait(false);
+            var result = await _citizenService.GetCitizenByCprAsync(cprNumber).ConfigureAwait(false);
+
+            if (result.IsError)
+            {
+                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error.Errors);
+            }
+            else 
+            {
+                return Ok(result.Result);
+            }
         }
 
         ///<summary>
@@ -63,16 +86,26 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="200">The citizen detail by id is loaded successfully</response>
         ///<response code="400">Bad request</response>
         ///<response code="404">The citizen detail by id is not found</response>
+        ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]        
         [Route("kss/{citizenId}")]
         [SwaggerOperation(OperationId = "GetCitizenById")]
-        public async Task<CitizenDataResponseModel> GetCitizenById([Required] [FromRoute] string citizenId)
+        public async Task<ActionResult<CitizenDataResponseModel>> GetCitizenById([Required] [FromRoute] string citizenId)
         {
-            var response = await _citizenService.GetCitizenByIdAsync(citizenId).ConfigureAwait(false);
-            return response;
+            var result = await _citizenService.GetCitizenByIdAsync(citizenId).ConfigureAwait(false);
+
+            if (result.IsError)
+            {
+                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error.Errors);
+            }
+            else
+            {
+                return Ok(result.Result);
+            }
         }
     }
 }

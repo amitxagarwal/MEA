@@ -10,7 +10,7 @@ namespace Kmd.Momentum.Mea.Common.Framework
 {
     internal class UserAgentDelegatingHandler : DelegatingHandler
     {
-        public const string UserAgentProductName = "Kmd.Logic.Api";
+        public const string UserAgentProductName = "Kmd.Momentum.Mea.Api";
 
         private static ProductInfoHeaderValue UserAgentValue { get; } = GetUserAgentValue();
 

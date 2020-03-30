@@ -16,9 +16,9 @@ parameters:
 jobs:
   - deployment: deploy_momentum_mea_${{ parameters.environmentNameSuffix }}
     pool: { vmImage: 'windows-2019' }
-    environment: momentum_mea_${{ parameters.environment }}
+    environment: momentum_mea_${{ parameters.environmentNameSuffix }}
     variables:
-      Environment: ${{ parameters.environmentNameSuffix }}
+      Environment: ${{ parameters.environment }}
       InstanceId: ${{ parameters.instanceId }}
       ResourceGroupLocation: ${{ parameters.resourceGroupLocation }}
       DiagnosticSeqServerUrl: ${{ parameters.diagnosticSeqServerUrl }}

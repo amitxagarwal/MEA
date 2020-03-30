@@ -157,7 +157,6 @@ try {
     $mcaScop = $env:McaScope;
 
     Write-Host "ClientId into '$ClientId' ----------- $env:McaClientId ";
-    Write-Host "McaApiUri into '$McaAppUri' ----------- $env:McaApiUri ";
     Write-Host "McaScope into '$Scope' ----------- $env:McaScope ";
 
     Write-Host "ClientId into '$ClientId' ----------- $env:McaClientId ";
@@ -166,7 +165,7 @@ try {
 
     Write-Host "ClientId into '$ClientId' ----------- $env:McaClientId ";
     Write-Host "McaApiUri into '$McaAppUri' ----------- '$uri' ";
-    Write-Host "McaScope into '$Scope' ----------- '$mcaScop' ";
+    Write-Host "McaScope into '$Scope' ----------- $mcaScop ";
 
     foreach ($testFolder in Get-ChildItem "./test/*.Tests") {
         Push-Location "$testFolder"

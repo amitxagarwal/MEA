@@ -14,13 +14,14 @@ stages:
       maxParallel: 3
     pool:
       vmImage: $(imageName)
+    
     steps:
     - task: UseDotNet@2
       inputs:
         packageType: 'sdk'
         useGlobalJson: true
     - task: NuGetAuthenticate@0
-    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -ImageName "$(imageName)"
+    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -ClientId "$(McaClientId)" -ClientSecret "$(McaClientSecret)" -McaApiUri "$(McaApiUri)" -Scope "$(McaScope)" -Environment "$(ENVIRONMENT)"
       displayName: run build.ps1
       failOnStderr: true
       env:
@@ -43,6 +44,7 @@ stages:
   - template: azure-pipelines-release-template.yml
     parameters:
       environmentNameSuffix: phoenix
+      environment: Phoenix
       environmentAutoDelete: true
       azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
       instanceId: phoenix$(Build.BuildId)
@@ -62,6 +64,7 @@ stages:
   - template: azure-pipelines-release-template.yml
     parameters:
       environmentNameSuffix: internal
+      environment: Internal
       environmentAutoDelete: false
       azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
       instanceId: internal

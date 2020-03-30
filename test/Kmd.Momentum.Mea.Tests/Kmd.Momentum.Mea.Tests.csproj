@@ -34,4 +34,10 @@
       <ProjectReference Include="..\..\src\Kmd.Momentum.Mea.Common\Kmd.Momentum.Mea.Common.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

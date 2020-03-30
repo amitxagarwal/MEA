@@ -60,11 +60,25 @@ Param(
     [string]
     $BuildId = $env:BUILD_BUILDID,
 
-    # Image name e.g. ubuntu-18.04, macos-10.14 defaults is windows-2019
-    [Parameter(Mandatory=$false, Position=5)]
-    [string]
-    $ImageName = "windows-2019"
-    
+    # The client id for integration tests to run
+    [Parameter(Mandatory=$true)]
+    $ClientId,
+
+    # The client secret for integration tests to run
+    [Parameter(Mandatory=$true)]
+    $ClientSecret,
+
+    # The MCA Api Uri for integration tests to run
+    [Parameter(Mandatory=$true)]
+    $McaApiUri,
+
+    # The scope for integration tests to run
+    [Parameter(Mandatory=$true)]
+    $Scope,
+
+    # The environment for integration tests to run only in phoenix environment
+    [Parameter(Mandatory=$true)]
+    $Environment
 )
 
 function Compress-Directory {
@@ -212,8 +226,12 @@ try {
         Push-Location "$testFolder"
         try {
             Write-Host "build: Testing project in '$testFolder'"
-
-            & dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
+            
+            ($env:KMD_MOMENTUM_MEA_ClientSecret = $ClientSecret); 
+            ($env:KMD_MOMENTUM_MEA_ClientId = $ClientId); 
+            ($env:KMD_MOMENTUM_MEA_McaApiUri = $McaApiUri); 
+            ($env:Scope = $Scope);
+            ($env:ASPNETCORE_ENVIRONMENT = $Environment) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             if($LASTEXITCODE -ne 0) { exit 3 }
         }
         finally {

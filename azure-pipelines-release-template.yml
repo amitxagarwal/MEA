@@ -1,6 +1,7 @@
 parameters:
   azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
   environmentNameSuffix: phoenix
+  environment: Phoenix
   environmentAutoDelete: false
   instanceId: p12345
   resourceGroupLocation: westeurope
@@ -17,6 +18,7 @@ jobs:
     pool: { vmImage: 'windows-2019' }
     environment: momentum_mea_${{ parameters.environmentNameSuffix }}
     variables:
+      Environment: ${{ parameters.environment }}
       InstanceId: ${{ parameters.instanceId }}
       ResourceGroupLocation: ${{ parameters.resourceGroupLocation }}
       DiagnosticSeqServerUrl: ${{ parameters.diagnosticSeqServerUrl }}
@@ -40,7 +42,7 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'
                 ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-infrastructure.ps1'
-                ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)' -ClientId '$(ClientId)' -ClientSecret '$(ClientSecret)'
+                ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)' -ClientId '$(ClientId)' -ClientSecret '$(ClientSecret)' -Environment '$(Environment)'
                 azurePowerShellVersion: 'LatestVersion'
                 pwsh: true
 

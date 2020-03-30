@@ -76,7 +76,11 @@ Param
 
   [Parameter(Mandatory=$true)]
   [string]
-  $ClientSecret
+  $ClientSecret,
+
+  [Parameter(Mandatory=$true)]
+  [string]
+  $Environment
 )
 
 Push-Location $PSScriptRoot
@@ -105,6 +109,7 @@ $DbName="$ResourceNamePrefix-db";
 $DbConnection="Server=$($DbServerName).postgres.database.azure.com;Database=$($DbName);Port=5432;User Id=$($env:DbLoginId)@$($DbServerName);Password=$($env:DbLoginPassword);Ssl Mode=Require;"
 # Set ARM template parameter values
 $TemplateParameters = @{
+  environment = $Environment;
   instanceId = $InstanceId;
   resourceNamePrefix = $ResourceNamePrefix;
   applicationInsightsName = $ApplicationInsightsName;

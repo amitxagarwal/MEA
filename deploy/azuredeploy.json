@@ -2,6 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "environment": {
+      "type": "string",
+      "metadata": {
+        "description": "Environment suffix to identify the environment"
+      }
+    },
     "mcaApiUri": {
       "type": "string",
       "metadata": {
@@ -196,6 +202,10 @@
               "value": "[parameters('instanceId')]"
             },
             {
+              "name": "ASPNETCORE_ENVIRONMENT",
+              "value": "[parameters('environment')]"
+            },
+            {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
               "value": "[reference(resourceId(resourceGroup().Name, 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
             },
@@ -286,6 +296,10 @@
             {
               "name": "KMD_MOMENTUM_MEA_EnvironmentInstanceId",
               "value": "[parameters('instanceId')]"
+            },
+            {
+              "name": "ASPNETCORE_ENVIRONMENT",
+              "value": "[parameters('environment')]"
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",

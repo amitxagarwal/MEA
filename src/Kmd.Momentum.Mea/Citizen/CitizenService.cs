@@ -49,13 +49,13 @@ namespace Kmd.Momentum.Mea.Citizen
             {
                 Log.ForContext("CPR", cpr)
                 .Error("An Error Occured while retriving citizen data by cpr");
-                return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error);
+                return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error, HttpStatusCode.BadRequest);
             }
 
             var json = JObject.Parse(response.Result);
             var citizenData = JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString());
 
-            Log.ForContext("CPR", citizenData.CitizenId)
+            Log.ForContext("CPR", cpr)
                 .Information("The citizen details by CPR number is returned successfully");
 
             return new ResultOrHttpError<CitizenDataResponseModel, Error> (citizenData);

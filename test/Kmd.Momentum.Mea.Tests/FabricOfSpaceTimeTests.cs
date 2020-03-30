@@ -8,7 +8,7 @@ namespace Kmd.Momentum.Mea.Tests
         [Fact]
         public void IsCorrectUniverse()
         {
-            true.Should().BeTrue(because: "In this World, 'true' definitely is 'true'");
+            true.Should().BeTrue(because: "In this universe, 'true' definitely is 'true'");
         }
     }
 }

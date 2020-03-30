@@ -66,6 +66,5 @@ namespace Kmd.Momentum.Mea.Common.Framework
                 .AddHttpMessageHandler<CorrelationIdDelegatingHandler>()
                 .AddHttpMessageHandler<UserAgentDelegatingHandler>()
                 .Services;
-
     }
 }

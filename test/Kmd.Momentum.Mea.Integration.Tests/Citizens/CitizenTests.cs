@@ -1,11 +1,8 @@
 ﻿using FluentAssertions;
-using Kmd.Momentum.Mea.Api;
 using Kmd.Momentum.Mea.Citizen.Model;
 using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;

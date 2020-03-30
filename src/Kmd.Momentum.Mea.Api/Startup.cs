@@ -1,14 +1,8 @@
 using CorrelationId;
 using Kmd.Momentum.Mea.Common.Authorization;
-using Kmd.Momentum.Mea.Common.Framework;
-using Kmd.Momentum.Mea.Common.Framework.PollyOptions;
-using Kmd.Momentum.Mea.Common.MeaHttpClient;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Kmd.Momentum.Mea.Common.DatabaseStore;
 using Kmd.Momentum.Mea.Common.Modules;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,8 +16,8 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -71,7 +65,7 @@ namespace Kmd.Momentum.Mea.Api
             services.AddControllers();
             services.AddSingleton<IMeaAssemblyDiscoverer>(MeaAssemblyDiscoverer);
 
-            MeaAssemblyDiscoverer.ConfigureDiscoveredServices(services, configuration);
+            MeaAssemblyDiscoverer.ConfigureDiscoveredServices(services, _configuration);
 
             foreach (var (type, attr) in MeaAssemblyDiscoverer.DiscoverScopedDITypes())
             {

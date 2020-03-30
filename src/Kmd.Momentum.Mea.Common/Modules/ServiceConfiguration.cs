@@ -12,7 +12,7 @@ namespace Kmd.Momentum.Mea.Common.Modules
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IAuthorizationHandler, HasResourceHandler>();
+            services.AddSingleton<IAuthorizationHandler, MeaCustomClaimHandler>();
             services
                 .AddPolicies(configuration)
                 .AddHttpClient<IMeaClient, MeaClient, MeaClientOptions>(

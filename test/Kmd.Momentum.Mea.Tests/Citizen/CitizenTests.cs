@@ -18,7 +18,6 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
     public class CitizenTests
     {
         [Fact]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public async Task GetAllActiveCitizensSuccess()
         {
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
@@ -48,7 +47,6 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         }
 
         [Fact]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public async Task GetAllActiveCitizensFails()
         {
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
@@ -111,7 +109,6 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         }
 
         [Fact]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public async Task GetCitizenDataByCprFails()
         {
             //Arrange

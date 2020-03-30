@@ -20,13 +20,13 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
     public class CitizenTests : IClassFixture<IntegrationTestApplicationFactory>
     {
         private readonly IntegrationTestApplicationFactory _factory;
-        
+
         public CitizenTests(IntegrationTestApplicationFactory factory)
         {
             _factory = factory;
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping the test cases for now")]
         public async Task GetActiveCitizensSuccess()
         {
             //Arrange
@@ -46,15 +46,15 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             List<CitizenDataResponseModel> lst = new List<CitizenDataResponseModel>()
             {
-                new CitizenDataResponseModel(citizenId.ToString(), "TestDisplay1", "givenname", "middlename", "initials", 
+                new CitizenDataResponseModel(citizenId.ToString(), "TestDisplay1", "givenname", "middlename", "initials",
                 "test@email.com", "1234567891", "", "description"),
-                new CitizenDataResponseModel(citizenId.ToString(), "TestDisplay2", "givenname", "middlename", "initials", 
+                new CitizenDataResponseModel(citizenId.ToString(), "TestDisplay2", "givenname", "middlename", "initials",
                 "test@email.com", "1234567891", "", "description")
             };
 
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel(citizenId.ToString(), "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel(citizenId.ToString(), "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
-            
+
             httpClientHelperMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri("https://kmd-rct-momentum-159-api.azurewebsites.net/api//search")))
                 .Returns(Task.FromResult((IReadOnlyList<string>)mockResponseData));
 
@@ -69,7 +69,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             actualResponse.Should().BeEquivalentTo(lst);
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping the test cases for now")]
         public async Task GetCitizenByCprNoSuccess()
         {
             //Arrange
@@ -80,7 +80,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             var citizenDataResponse = new CitizenDataResponseModel(citizenId.ToString(), "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description");
             var httpClientCitizenDataResponse = JsonConvert.SerializeObject(citizenDataResponse);
-            
+
             var mockedFactory = _factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
             {
                 services.AddScoped(_ => httpClientHelperMoq.Object);
@@ -102,7 +102,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         }
 
 
-        [Fact]
+        [Fact(Skip = "Skipping the test cases for now")]
         public async Task GetCitizenByCitizenIdSuccess()
         {
             //Arrange

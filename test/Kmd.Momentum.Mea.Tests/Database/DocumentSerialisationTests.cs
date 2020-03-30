@@ -1,6 +1,4 @@
-﻿using AutoFixture;
-using AutoFixture.Idioms;
-using FluentAssertions;
+﻿using FluentAssertions;
 using FluentAssertions.Types;
 using Kmd.Momentum.Mea.Api;
 using Kmd.Momentum.Mea.Common.DatabaseStore;
@@ -72,15 +70,18 @@ namespace Kmd.Momentum.Mea.Tests.Database
         [MemberData(nameof(GetConcreteDocumentTypes))]
         public void AllPublicPropertiesAreReadOnly(Type documentType)
         {
+            //Arrange
 #pragma warning disable CA1062 // Validate arguments of public methods
             var allPublicProperties = documentType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 #pragma warning restore CA1062 // Validate arguments of public methods
 
+            //Act
             foreach (var property in allPublicProperties)
             {
-                property.Should().BeReadable();
-
                 var setter = property.GetSetMethod();
+
+                //Assert
+                property.Should().BeReadable();
                 if (setter != null)
                 {
                     setter.IsPrivate.Should().Be(true);
@@ -96,18 +97,20 @@ namespace Kmd.Momentum.Mea.Tests.Database
         [Fact]
         public void AssertionThrowsIfConcreteDocumentTypeIdIsWriteable()
         {
+            //Act
             Action act = () => AssertTypeHasValidIdProperty(typeof(ClassWithPublicIdSetter));
             var expectedMessage = "Expected property Id not to have a public setter.";
+
+            //Assert
             act.Should().ThrowExactly<Xunit.Sdk.XunitException>().WithMessage(expectedMessage);
         }
 
         [Fact]
         public void DocumentMappableTestDiscoversAllTypes()
         {
+            //Arrange
             var assemblies = new HashSet<Assembly> { this.GetType().Assembly };
             var seenTypes = new HashSet<Type>();
-
-            CheckForDocumentMappableAttribute(typeof(ClassWithDifferentMappableName), assemblies, seenTypes);
 
             var expectedTypes = new HashSet<Type>
             {
@@ -125,6 +128,10 @@ namespace Kmd.Momentum.Mea.Tests.Database
                 typeof(ChildClassWithDifferentMappableNameBase[])
             };
 
+            //Act
+            CheckForDocumentMappableAttribute(typeof(ClassWithDifferentMappableName), assemblies, seenTypes);
+
+            //Assert
             seenTypes.Should().BeEquivalentTo(expectedTypes);
         }
 
@@ -132,9 +139,11 @@ namespace Kmd.Momentum.Mea.Tests.Database
         [MemberData(nameof(GetConcreteDocumentTypes))]
         public void AllDocumentsAndReferencedClassesHaveDocumentMappableAttribute(Type documentType)
         {
+            //Arrange
             var assemblies = new HashSet<Assembly>(Startup.MeaAssemblyDiscoverer.Assemblies);
             var seenTypes = new HashSet<Type>();
 
+            //Act
 #pragma warning disable CA1062 // Validate arguments of public methods
             CheckForDocumentMappableAttribute(documentType, assemblies, seenTypes);
 #pragma warning restore CA1062 // Validate arguments of public methods

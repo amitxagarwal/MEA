@@ -11,7 +11,7 @@ namespace Kmd.Momentum.Mea.Modules
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<ICitizenService, CitizenService>();
-            services.AddScoped<IHttpClientHelper, HttpClientHelper>();
+            services.AddScoped<ICitizenHttpClientHelper, CitizenHttpClientHelper>();
         }
     }
 }

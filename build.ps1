@@ -127,9 +127,7 @@ try{
 
     & dotnet run -- migrate -s $DbServer -d $BuildDatabaseName -u $BuildDatabaseName -p RtAhL8j9946W -f "$PSScriptRoot/MigrationScripts"
     
-    if($LASTEXITCODE -ne 0) { exit 1 }    
-
-    $connString = "Server=$DbServer.postgres.database.azure.com;Database=$BuildDatabaseName;Port=5432;User Id=$BuildDatabaseName@$DbServer;Password=RtAhL8j9946W;Ssl Mode=Require;"    
+    if($LASTEXITCODE -ne 0) { exit 1 }  
        
     $expiryMinutes = 120;
     

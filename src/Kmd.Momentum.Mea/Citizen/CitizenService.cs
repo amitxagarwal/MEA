@@ -55,7 +55,7 @@ namespace Kmd.Momentum.Mea.Citizen
             var json = JObject.Parse(response.Result);
             var citizenData = JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString());
 
-            Log.ForContext("Citizen Id", citizenData.CitizenId)
+            Log.ForContext("CPR", citizenData.CitizenId)
                 .Information("The citizen details by CPR number is returned successfully");
 
             return new ResultOrHttpError<CitizenDataResponseModel, Error> (citizenData);
@@ -73,7 +73,7 @@ namespace Kmd.Momentum.Mea.Citizen
 
             var json = JObject.Parse(response.Result);
 
-            Log.ForContext("CitizenID", citizenId)
+            Log.ForContext("CitizenId", citizenId)
                 .Information("The citizen details by CitizenId has been returned successfully");
 
             return new ResultOrHttpError<CitizenDataResponseModel, Error>(JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString()));

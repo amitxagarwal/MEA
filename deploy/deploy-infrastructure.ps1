@@ -3,12 +3,12 @@
   Deploys the Azure resources for Momentum External API. This requires you to login to Azure first.
 .DESCRIPTION
   Deploys the Azure resources for invoicing. If you haven't already logged in, execute `Connect-AzAccount`
-  and `Select-AzSubscription -Subscription "LoGIC DEV"'. Depending on your account, you might need to use something
-  like `Connect-AzAccount -Subscription "LoGIC DEV" -TenantId "1aaaea9d-df3e-4ce7-a55d-43de56e79442"`.
+  and `Select-AzSubscription -Subscription "KMD Momentum Internal"'. Depending on your account, you might need to use something
+  like `Connect-AzAccount -Subscription "KMD Momentum Internal" -TenantId "1aaaea9d-df3e-4ce7-a55d-43de56e79442"`.
 .PARAMETER $MarkForAutoDelete
   When $true, the resource group will be tagged for auto-deletion. Useful for temporary personal or phoenix environments.
 .PARAMETER $InstanceId
-  The unique instance identifier (e.g. "shareddev" or "udvdev" or "prod") which will be used to name the azure resources.
+  The unique instance identifier (e.g. "internal" or "external") which will be used to name the azure resources.
 .PARAMETER $ResourceGroupLocation
   The azure location of the created resource group (e.g. "australiaeast" or "centralindia" or "westeurope").
 .PARAMETER $ApplicationInsightsName
@@ -27,9 +27,9 @@
   none
 .NOTES
   Version:        1.0
-  Author:         Adam Chester
-  Creation Date:  22 Nov 2019
-  Purpose/Change: Deploy sts bridge azure infrastructure.
+  Author:         Ajay Aggarwal
+  Creation Date:  02 March 2020
+  Purpose/Change: Deploys momentum mea azure infrastructure.
 
 .EXAMPLE
   ./deploy-infrastructure.ps1 -InstanceId udvdev -DiagnosticSeqServerUrl "https://xxx.kmdlogic.io/" -DiagnosticSeqApiKey "xxx" -MarkForAutoDelete -ResourceGroupLocation "australiaeast" -ApplicationInsightsName "kmd-momentum-mea-udvdev-ai" -ApplicationInsightsResourceGroup "kmd-momentum-mea-udvdev-rg" -WebAppServicePlanSku P1V2 -WebAppConfigAlwaysOn $true -AuditEventHubsConnectionString "xxx"
@@ -104,7 +104,9 @@ function Format-ValidationOutput {
 
 $ResourceGroupName = "$ResourceNamePrefix-rg"
 $ApplicationInsightsName="$ResourceNamePrefix-ai";
-
+$DbServerName="$ResourceNamePrefix-dbsvr";
+$DbName="$ResourceNamePrefix-db";
+$DbConnection="Server=$($DbServerName).postgres.database.azure.com;Database=$($DbName);Port=5432;User Id=$($env:DbLoginId)@$($DbServerName);Password=$($env:DbLoginPassword);Ssl Mode=Require;"
 # Set ARM template parameter values
 $TemplateParameters = @{
   environment: $Environment;
@@ -117,7 +119,12 @@ $TemplateParameters = @{
   webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
   clientId = $ClientId;
   clientSecret = $ClientSecret;
-  mcaApiUri=$env:McaApiUri;
+  mcaApiUri = $env:McaApiUri;
+  dbServerName = $DbServerName;
+  dbLoginId = $env:DbLoginId;
+  dbLoginPassword = $env:DbLoginPassword;
+  dbName = $DbName;
+  dbConnection = $DbConnection
 }
 
 # Create or update the resource group using the specified template file and template parameter values

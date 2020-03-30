@@ -1,10 +1,8 @@
 using CorrelationId;
 using Kmd.Momentum.Mea.Common.Authorization;
-using Kmd.Momentum.Mea.Common.Framework;
-using Kmd.Momentum.Mea.Common.Framework.PollyOptions;
-using Kmd.Momentum.Mea.Common.MeaHttpClient;
+using Kmd.Momentum.Mea.Common.DatabaseStore;
+using Kmd.Momentum.Mea.Common.Modules;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +16,9 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -30,6 +30,24 @@ namespace Kmd.Momentum.Mea.Api
         private readonly IConfiguration _configuration;
 
         public Startup(IConfiguration configuration) => this._configuration = configuration;
+
+        /// <summary>
+        ///     The list of assemblies that contribute parts to this application, including controllers,
+        ///     modules, initialisers, and so on. Where possible, use the resolved service of type
+        ///     <see cref="IMeaAssemblyDiscoverer" /> from the DI container, or the
+        /// </summary>
+        private static
+            IReadOnlyCollection<(Assembly assembly, string productPathName, string openApiProductName, Version
+                apiVersion)> MeaAssemblyParts
+        { get; } =
+            new List<(Assembly assembly, string productPathName, string openApiProductName, Version apiVersion)>
+            {
+                (typeof(Kmd.Momentum.Mea.Common.Modules.MeaAssemblyPart).Assembly, productPathName: "Common", openApiProductName: "Common", new Version("0.0.1")),
+                (typeof(Kmd.Momentum.Mea.Modules.MeaAssemblyPart).Assembly, productPathName: "Mea", openApiProductName: "Mea", new Version("0.0.1"))
+            };
+
+        public static MeaAssemblyDiscoverer MeaAssemblyDiscoverer { get; } =
+            new MeaAssemblyDiscoverer(MeaAssemblyParts);
 
 #pragma warning disable CA1822
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -43,13 +61,16 @@ namespace Kmd.Momentum.Mea.Api
                     a.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
-            services
-                .AddPolicies(_configuration)
-                .AddHttpClient<IMeaClient, MeaClient, MeaClientOptions>(
-                    _configuration,
-                    nameof(ApplicationOptions.MeaClient));
-
+            services.AddDocumentStore(MeaAssemblyDiscoverer);
             services.AddControllers();
+            services.AddSingleton<IMeaAssemblyDiscoverer>(MeaAssemblyDiscoverer);
+
+            MeaAssemblyDiscoverer.ConfigureDiscoveredServices(services, _configuration);
+
+            foreach (var (type, attr) in MeaAssemblyDiscoverer.DiscoverScopedDITypes())
+            {
+                services.AddScoped(attr.AsInterface ?? type, type);
+            }
 
             var azureAdB2C = _configuration.GetSection("AzureAdB2C");
             services.AddSingleton(azureAdB2C);
@@ -79,16 +100,12 @@ namespace Kmd.Momentum.Mea.Api
                 options.AddPolicy(MeaCustomClaimAttributes.AudienceClaimTypeName, policy => policy.Requirements.Add(new MeaCustomClaimRequirement(MeaCustomClaimAttributes.AudienceClaimTypeName, MeaCustomClaimAttributes.TenantClaimTypeName)));
             });
 
-            services.AddSingleton<IAuthorizationHandler, MeaCustomClaimHandler>();
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
                     Title = "Kmd Momentum External Api",
-                    Description = "A simple example ASP.NET Core Web API",
-                    TermsOfService = new Uri("https://example.com/terms"),
                 });
                 var securityScheme = new OpenApiSecurityScheme
                 {
@@ -113,7 +130,6 @@ namespace Kmd.Momentum.Mea.Api
                 //c.IncludeXmlComments(xmlPath);
             });
 
-            services.AddMea();
             services.AddHealthChecks().AddCheck("basic_readiness_check", () => new HealthCheckResult(status: HealthStatus.Healthy), new[] { "ready" });
             services.Configure<HealthCheckPublisherOptions>(options =>
             {

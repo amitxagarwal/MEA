@@ -47,6 +47,16 @@ jobs:
                 pwsh: true
 
             - task: AzurePowerShell@4
+              displayName: Deploy Database
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                ScriptType: 'FilePath'
+                ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-database.ps1'
+                ScriptArguments: -InstanceId '$(InstanceId)' -ArtifactPath '$(Pipeline.Workspace)'
+                azurePowerShellVersion: 'LatestVersion'
+                pwsh: true
+
+            - task: AzurePowerShell@4
               displayName: Deploy webapp binaries
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}

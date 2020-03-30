@@ -31,10 +31,12 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="200">The active citizen data is loaded successfully</response>
         ///<response code="400">Bad request</response>
         ///<response code="404">The active citizen data is not found</response>
+        ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
         [SwaggerOperation(OperationId = "GetAllActiveCitizens")]
         public async Task<ActionResult<IReadOnlyList<CitizenDataResponseModel>>> GetAllActiveCitizens()
         {
@@ -56,10 +58,12 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="200">The citizen detail by CPR no is loaded successfully</response>
         ///<response code="400">Bad request</response>
         ///<response code="404">The citizen detail by CPR no is not found</response>
+        ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
         [Route("cpr/{cprNumber}")]
         [SwaggerOperation(OperationId = "GetCitizenByCpr")]
         public async Task<ActionResult<CitizenDataResponseModel>> GetCitizenByCpr([Required] [FromRoute] string cprNumber)
@@ -82,10 +86,12 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="200">The citizen detail by id is loaded successfully</response>
         ///<response code="400">Bad request</response>
         ///<response code="404">The citizen detail by id is not found</response>
+        ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(401)]        
         [Route("kss/{citizenId}")]
         [SwaggerOperation(OperationId = "GetCitizenById")]
         public async Task<ActionResult<CitizenDataResponseModel>> GetCitizenById([Required] [FromRoute] string citizenId)

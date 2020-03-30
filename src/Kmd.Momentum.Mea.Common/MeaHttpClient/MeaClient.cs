@@ -33,21 +33,16 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
-                var error = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
 
-                if(error==null)
+                if(errorResponse == null || errorResponse.Errors == null || errorResponse.Errors.Length <= 0)
                 {
-                    error = new Error(Guid.NewGuid().ToString(), new string[] { "An error occured while fetching the record from Core Api" }, "MEA");
+                    var error = new Error(Guid.NewGuid().ToString(), new string[] { "An error occured while fetching the record from Core Api" }, "MEA");
+                    return new ResultOrHttpError<string, Error>(error, response.StatusCode);
                 }
 
-                if(error.Errors == null || error.Errors.Length<=0)
-                {
-                    error.Errors[0] = "An error occured while fetching the record from Core Api";
-                }
-
-                return new ResultOrHttpError<string, Error>(error, response.StatusCode);
+                return new ResultOrHttpError<string, Error>(errorResponse, response.StatusCode);
             }
-
             
             return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }

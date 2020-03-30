@@ -34,7 +34,7 @@ namespace Kmd.Momentum.Mea.Citizen
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
                 Log.ForContext("GetAllActiveCitizensAsync", "All Active Citizens")
                 .Error("An Error Occured while retriving data of all active citizens" + error);
-                return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>(response.Error);
+                return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>(response.Error, response.StatusCode.Value);
             }
 
             var result = response.Result;
@@ -55,7 +55,7 @@ namespace Kmd.Momentum.Mea.Citizen
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
                 Log.ForContext("GetCitizenByCprAsync", "cpr")
                 .Error("An Error Occured while retriving citizen data by cpr" + error);
-                return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error, HttpStatusCode.BadRequest);
+                return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error, response.StatusCode.Value);
             }
 
             var json = JObject.Parse(response.Result);
@@ -78,7 +78,7 @@ namespace Kmd.Momentum.Mea.Citizen
                 Log.ForContext("GetCitizenByIdAsync", "citizenId")
                 .ForContext("CitizenId", citizenId)
                 .Error("An Error Occured while retriving citizen data by citizenID" + error);
-                return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error);
+                return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error, response.StatusCode.Value);
             }
 
             var json = JObject.Parse(response.Result);

@@ -37,7 +37,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
                 if(response.IsError)
                 {
-                    return  new ResultOrHttpError<IReadOnlyList<string>, Error>(response.Error);
+                    return  new ResultOrHttpError<IReadOnlyList<string>, Error>(response.Error, response.StatusCode.Value);
                 }
 
                 var content = response.Result;
@@ -80,7 +80,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             if(response.IsError)
             {
-                return new ResultOrHttpError<string, Error>(response.Error);
+                return new ResultOrHttpError<string, Error>(response.Error, response.StatusCode.Value);
             }
 
             var content = response.Result;

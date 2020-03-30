@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 {
-    public interface IHttpClientHelper
+    public interface ICitizenHttpClientHelper
     {
         Task<IReadOnlyList<string>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url);
 

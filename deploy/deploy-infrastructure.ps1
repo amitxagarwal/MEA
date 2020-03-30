@@ -76,7 +76,11 @@ Param
 
   [Parameter(Mandatory=$true)]
   [string]
-  $ClientSecret
+  $ClientSecret,
+
+  [Parameter(Mandatory=$true)]
+  [string]
+  $Environment
 )
 
 Push-Location $PSScriptRoot
@@ -103,6 +107,7 @@ $ApplicationInsightsName="$ResourceNamePrefix-ai";
 
 # Set ARM template parameter values
 $TemplateParameters = @{
+  environment: $Environment;
   instanceId = $InstanceId;
   resourceNamePrefix = $ResourceNamePrefix;
   applicationInsightsName = $ApplicationInsightsName;

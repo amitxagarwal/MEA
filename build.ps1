@@ -58,7 +58,27 @@ Param(
     # The build ID e.g. 12345, defaults to $env:BUILD_BUILDID from Azure DevOps
     [Parameter(Mandatory=$false, Position=5)]
     [string]
-    $BuildId = $env:BUILD_BUILDID
+    $BuildId = $env:BUILD_BUILDID,
+
+    # The client id for integration tests to run
+    [Parameter(Mandatory=$true)]
+    $ClientId,
+
+    # The client secret for integration tests to run
+    [Parameter(Mandatory=$true)]
+    $ClientSecret,
+
+    # The MCA Api Uri for integration tests to run
+    [Parameter(Mandatory=$true)]
+    $McaAppUri,
+
+    # The scope for integration tests to run
+    [Parameter(Mandatory=$true)]
+    $Scope,
+
+    # The environment for integration tests to run only in phoenix environment
+    [Parameter(Mandatory=$true)]
+    $Environment
 )
 
 function Compress-Directory {
@@ -137,8 +157,12 @@ try {
         Push-Location "$testFolder"
         try {
             Write-Host "build: Testing project in '$testFolder'"
-
-            & dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
+            
+            ($env:KMD_MOMENTUM_MEA_ClientSecret = $ClientSecret); 
+            ($env:KMD_MOMENTUM_MEA_ClientId = $ClientId); 
+            ($env:KMD_MOMENTUM_MEA_McaApiUri = $McaAppUri); 
+            ($env:Scope = $Scope);
+            ($env:ASPNETCORE_ENVIRONMENT = $Environment) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             if($LASTEXITCODE -ne 0) { exit 3 }
         }
         finally {

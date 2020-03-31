@@ -1,6 +1,9 @@
 trigger:
-- master
-- dev
+  branches:
+  - master
+  - dev
+  paths:
+  - Api/*
 
 stages:
 - stage: Build

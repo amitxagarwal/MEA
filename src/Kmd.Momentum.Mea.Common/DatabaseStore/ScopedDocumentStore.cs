@@ -1,7 +1,9 @@
 ﻿using Marten;
 using Marten.Schema;
+using Marten.Services;
 using Marten.Storage;
 using Newtonsoft.Json;
+using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -48,6 +50,58 @@ namespace Kmd.Momentum.Mea.Common.DatabaseStore
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public IDocumentSession LightweightSession<T>(string tenant = null)
+        {
+            return LightweightSession(typeof(T), tenant);
+        }
+
+        public IDocumentSession LightweightSession(Type documentType, string tenant = null)
+        {
+            ValidateTenant(documentType, tenant);
+
+            var opts = new SessionOptions
+            {
+                Tracking = DocumentTracking.None,
+                ConcurrencyChecks = ConcurrencyChecks.Disabled,
+                TenantId = string.IsNullOrEmpty(tenant) ? Tenancy.DefaultTenantId : tenant
+            };
+
+            return store.OpenSession(opts);
+        }
+
+        private void ValidateTenant(Type documentType, string tenant)
+        {
+            TenancyStyle tenancyStyle;
+
+            if (!mappedTenancy.TryGetValue(documentType, out tenancyStyle))
+            {
+                tenancyStyle = store.Options.Storage.AllMappings
+                    .SingleOrDefault(x => x.DocumentType == documentType)
+                    ?.TenancyStyle ?? TenancyStyle.Single;
+
+                mappedTenancy.AddOrUpdate(documentType, tenancyStyle, (type, style) => tenancyStyle);
+            }
+
+            if (tenancyStyle == TenancyStyle.Single)
+            {
+                if (!string.IsNullOrEmpty(tenant) && tenant != Tenancy.DefaultTenantId)
+                {
+                    var ex = new InvalidTenantException($"You must not specify a tenant for document {documentType.Name}.");
+                    Log.Error(ex, "Attempted to create a database session for single-tenancy style which has a multi-tenancy style {TenancyStyle} without specifying a tenant", tenancyStyle);
+                    throw ex;
+                }
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(tenant) || tenant == Tenancy.DefaultTenantId)
+                {
+                    var ex = new InvalidTenantException("You must specify a tenant for this type of document.");
+                    Log.Error(ex, "Attempted to create a database session for multi-tenancy style {TenancyStyle} which has a non single tenancy style without specifying a tenant", tenancyStyle);
+                    throw ex;
+                }
+            }
         }
 
         private void Dispose(bool disposing)

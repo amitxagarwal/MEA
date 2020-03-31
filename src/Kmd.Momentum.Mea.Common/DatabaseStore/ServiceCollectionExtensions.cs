@@ -11,6 +11,9 @@ namespace Kmd.Momentum.Mea.Common.DatabaseStore
             services.TryAddSingleton<DocumentStoreFactory>();
             services.TryAddSingleton<DocumentMappableSerializationBinder>();
             services.TryAddSingleton<IDocumentStoreAssemblyDiscoverer>(discoverer);
+            services.TryAddScoped(typeof(IDocumentRepository<,>), typeof(DocumentRepository<,>));
+            services.TryAddScoped(typeof(IDocumentRepository<>), typeof(DocumentRepository<>));
+            services.TryAddScoped<IDocumentStoreQueryLogger, DocumentStoreQueryLogger>();
             return services;
         }
     }

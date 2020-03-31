@@ -1,0 +1,63 @@
+trigger:
+  branches:
+    include:
+    - master
+    - dev
+  paths:
+    include:
+    - Ui/*
+
+stages:
+- stage: Build
+  jobs:
+  - job: build
+    strategy:
+      matrix:
+        windows: { imageName: "windows-2019" }
+      maxParallel: 3
+    pool:
+      vmImage: $(imageName)
+    
+    steps:
+    - task: NodeTool@0
+      displayName: 'Use Node 10.13.0'
+      inputs:
+        versionSpec: 10.13.0
+
+    - task: Npm@1
+      displayName: Npm install
+      inputs:
+        command: 'custom'
+        workingDir: 'Ui/mea-ui/'
+        verbose: false
+        customCommand: 'ci'
+
+    - task: Npm@1
+      displayName: Npm test
+      inputs:
+        command: 'custom'
+        workingDir: 'Ui/mea-ui/'
+        verbose: false
+        customCommand: 'run test:ci'
+
+    - task: Npm@1
+      displayName: Npm build
+      inputs:
+        command: 'custom'
+        workingDir: 'Ui/mea-ui/'
+        verbose: false
+        customCommand: 'run build'
+
+    - task: Npm@1
+      displayName: Update buildversion
+      inputs:
+        command: custom
+        workingDir: 'Ui/mea-ui/'
+        verbose: false
+        customCommand: 'run buildversion'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/Ui/mea-ui/build'
+        ArtifactName: 'meaUiCI'
+        publishLocation: 'Container'

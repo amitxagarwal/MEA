@@ -21,7 +21,7 @@
     "test": "react-scripts test",
     "test:ci": "cross-env CI=true react-scripts test --ci",
     "eject": "react-scripts eject",
-    "buildversion": "node build-version.js"
+    "buildversion": "node ../build-version.js"
   },
   "eslintConfig": {
     "extends": "react-app"

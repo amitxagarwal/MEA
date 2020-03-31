@@ -38,7 +38,7 @@ stages:
         command: 'custom'
         workingDir: 'Ui/mea-ui/'
         verbose: false
-        customCommand: 'run test:ci'
+        customCommand: 'run test'
 
     - task: Npm@1
       displayName: Npm build

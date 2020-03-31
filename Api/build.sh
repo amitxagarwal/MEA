@@ -1,2 +1,2 @@
 #!/bin/bash
-pwsh ./build.ps1 "$@"
+pwsh ./Api/build.ps1 "$@"

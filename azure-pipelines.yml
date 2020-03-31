@@ -39,7 +39,7 @@ stages:
         buildPlatform: '$(imageName)'
 
 - stage: deploy_phoenix
-  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+  condition: and(succeeded(), in(variables['Build.Reason'], 'PullRequest','Manual'))
   jobs:
   - template: azure-pipelines-release-template.yml
     parameters:

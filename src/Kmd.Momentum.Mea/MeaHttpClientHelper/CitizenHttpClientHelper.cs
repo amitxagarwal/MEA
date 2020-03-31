@@ -35,9 +35,9 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 var queryStringParams = $"term=Citizen&size={size}&skip={skip}&isActive=true";
                 var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
 
-                if(response.IsError)
+                if (response.IsError)
                 {
-                    return  new ResultOrHttpError<IReadOnlyList<string>, Error>(response.Error, response.StatusCode.Value);
+                    return new ResultOrHttpError<IReadOnlyList<string>, Error>(response.Error, response.StatusCode.Value);
                 }
 
                 var content = response.Result;
@@ -47,7 +47,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 skip += size;
 
                 remainingRecords = totalNoOfRecords - skip;
-                
+
                 totalRecords.AddRange(jsonArray.Children());
 
             } while (remainingRecords > 0);
@@ -58,12 +58,12 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 {
                     citizenId = item["id"],
                     displayName = item["name"],
-                    givenName = "",
-                    middleName = "",
-                    initials = "",
-                    address = "",
-                    number = "",
-                    caseworkerIdentifier = "",
+                    givenName = (string)null,
+                    middleName = (string)null,
+                    initials = (string)null,
+                    address = (string)null,
+                    number = (string)null,
+                    caseworkerIdentifier = (string)null,
                     description = item["description"],
                     isBookable = true,
                     isActive = true
@@ -78,13 +78,13 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
         {
             var response = await _meaClient.GetAsync(url).ConfigureAwait(false);
 
-            if(response.IsError)
+            if (response.IsError)
             {
                 return new ResultOrHttpError<string, Error>(response.Error, response.StatusCode.Value);
             }
 
             var content = response.Result;
-            return  new ResultOrHttpError<string, Error>(content);
+            return new ResultOrHttpError<string, Error>(content);
         }
 
         private string GetVal(JObject _json, string _key)

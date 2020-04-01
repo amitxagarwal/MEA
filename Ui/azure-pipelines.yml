@@ -52,7 +52,7 @@ stages:
 
     - task: Npm@1
       displayName: Update buildversion
-      condition: eq($(imageName),"windows-2019")
+      condition: eq("$(imageName)","windows-2019")
       inputs:
         command: custom
         workingDir: 'Ui/mea-ui/'
@@ -61,7 +61,7 @@ stages:
 
     - task: PublishBuildArtifacts@1
       displayName: Publish Artifacts
-      condition: eq($(imageName),"windows-2019")
+      condition: eq("$(imageName)","windows-2019")
       inputs:
         PathtoPublish: '$(System.DefaultWorkingDirectory)/Ui/mea-ui/build'
         ArtifactName: 'meaUiCI'

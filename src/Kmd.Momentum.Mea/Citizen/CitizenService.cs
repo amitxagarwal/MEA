@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Kmd.Momentum.Mea.Common.Exceptions;
 using System.Net;
-using Kmd.Momentum.Mea.Common.DatabaseStore;
 
 namespace Kmd.Momentum.Mea.Citizen
 {
@@ -18,14 +17,11 @@ namespace Kmd.Momentum.Mea.Citizen
     {
         private readonly ICitizenHttpClientHelper _citizenHttpClient;
         private readonly IConfiguration _config;
-        private readonly IDocumentRepository<MeaPermissionModel> _documentRepository;
 
-        public CitizenService(ICitizenHttpClientHelper citizenHttpClient, IConfiguration config,
-            IDocumentRepository<MeaPermissionModel> documentRepository)
+        public CitizenService(ICitizenHttpClientHelper citizenHttpClient, IConfiguration config)
         {
             _citizenHttpClient = citizenHttpClient;
             _config = config;
-            _documentRepository = documentRepository;
         }
 
         public async Task<ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>> GetAllActiveCitizensAsync()
@@ -51,8 +47,6 @@ namespace Kmd.Momentum.Mea.Citizen
 
         public async Task<ResultOrHttpError<CitizenDataResponseModel, Error>> GetCitizenByCprAsync(string cpr)
         {
-            var model = new MeaPermissionModel(Guid.NewGuid(), 123, "testclient0", "owner");
-            await _documentRepository.SaveAsync(model).ConfigureAwait(false);
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync
                 (new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")).ConfigureAwait(false);
 

@@ -38,11 +38,7 @@ Param
 
   [Parameter(Mandatory=$false)]
   [string]
-  $ResourceGroupLocation = "westeurope",
-
-  [Parameter(Mandatory=$true)]
-  [string]
-  $Environment
+  $ResourceGroupLocation = "westeurope"
 )
 
 Push-Location $PSScriptRoot
@@ -73,7 +69,7 @@ $TemplateParameters = @{
   accountType = "Standard_RAGRS"; 
   kind = "StorageV2";
   accessTier = "Cool";
-  supportsHttpsTrafficOnly = true
+  supportsHttpsTrafficOnly = $true
 }
 
 # Create or update the resource group using the specified template file and template parameter values

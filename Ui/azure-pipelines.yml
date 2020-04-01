@@ -8,7 +8,6 @@ trigger:
     - Ui/*
 
 stages:
-
 - stage: deploy_phoenix
   jobs:
   - template: azure-pipelines-release-template.yml

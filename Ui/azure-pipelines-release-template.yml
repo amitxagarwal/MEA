@@ -27,7 +27,7 @@ jobs:
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'
-                ScriptPath: './deploy-infrastructure.ps1'
+                ScriptPath: '.\deploy-infrastructure.ps1'
                 ScriptArguments: -MarkForAutoDelete:('$(EnvironmentAutoDelete)' -eq 'true') -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)'
                 azurePowerShellVersion: 'LatestVersion'
                 errorActionPreference: 'stop'

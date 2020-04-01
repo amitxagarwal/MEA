@@ -17,3 +17,4 @@ stages:
       environmentNameSuffix: phoenix
       instanceId: phoenix$(Build.BuildId)
       resourceGroupLocation: westeurope
+      environmentAutoDelete: true

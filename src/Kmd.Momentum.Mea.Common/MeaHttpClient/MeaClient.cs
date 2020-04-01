@@ -25,7 +25,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
         {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
-            var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
+            var accessToken = JObject.Parse(await authResponse.Result.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("bearer " + accessToken);
 
@@ -52,18 +52,30 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             throw new NotImplementedException();
         }
 
-        private async Task<HttpResponseMessage> ReturnAuthorizationTokenAsync()
+        private async Task<ResultOrHttpError<HttpResponseMessage,string>> ReturnAuthorizationTokenAsync()
         {
-            var content = new FormUrlEncodedContent(new[]
-           {
+            try
+            {
+                var content = new FormUrlEncodedContent(new[]
+               {
                         new KeyValuePair<string, string>("grant_type","client_credentials"),
                         new KeyValuePair<string, string>("client_id", _config["KMD_MOMENTUM_MEA_ClientId"]),
                         new KeyValuePair<string, string>("client_secret", _config["KMD_MOMENTUM_MEA_ClientSecret"]),
                         new KeyValuePair<string, string>("resource", "74b4f45c-4e9b-4be1-98f1-ea876d9edd11")
                     });
 
-            var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"), content).ConfigureAwait(false);
-            return response;
+                var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"), content).ConfigureAwait(false);
+
+                return response.IsSuccessStatusCode
+                    ? new ResultOrHttpError<HttpResponseMessage, string>(response)
+                    : new ResultOrHttpError<HttpResponseMessage, string>("Couldn't get the authorization to access MCA", System.Net.HttpStatusCode.Unauthorized);
+            }
+            catch(Exception ex)
+            {
+                Log.Error($"Couldn't fetch the configuration data to access MCA with error {ex.InnerException}");
+
+                return new ResultOrHttpError<HttpResponseMessage, string>("Couldn't fetch the configuration data to access MCA", System.Net.HttpStatusCode.Unauthorized);
+            }
         }
     }
 }

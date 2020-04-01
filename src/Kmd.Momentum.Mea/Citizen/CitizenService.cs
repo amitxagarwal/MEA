@@ -1,4 +1,5 @@
 ﻿using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -8,8 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Kmd.Momentum.Mea.Common.Exceptions;
-using System.Net;
 
 namespace Kmd.Momentum.Mea.Citizen
 {

@@ -171,8 +171,9 @@ namespace Kmd.Momentum.Mea.Api
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            app.UseCorrelationId();
+        {            
+            app.UseCorrelationId(new CorrelationIdOptions() { IncludeInResponse = true, Header = "X-CORRELATION-ID"  });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

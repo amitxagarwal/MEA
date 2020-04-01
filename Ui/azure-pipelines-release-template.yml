@@ -21,7 +21,6 @@ jobs:
             - download: current
 
             - task: AzurePowerShell@4
-              failOnStderr: true
               displayName: Deploy azure infrastructure
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}

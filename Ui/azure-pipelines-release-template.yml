@@ -29,4 +29,5 @@ jobs:
                 ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)'
                 azurePowerShellVersion: 'LatestVersion'
                 errorActionPreference: 'stop'
+                failOnStandardError: true
                 pwsh: true

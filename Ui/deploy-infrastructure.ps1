@@ -60,8 +60,8 @@ function Format-ValidationOutput {
   return @($ValidationOutput | Where-Object { $_ -ne $null } | ForEach-Object { @('  ' * $Depth + ': ' + $_.Message) + @(Format-ValidationOutput @($_.Details) ($Depth + 1)) })
 }
 
-$ResourceGroupName = "$ResourceNamePrefix-rg"
-$StorageAccountName= $ResourceNamePrefix.ToLower() -replace "-",""
+$ResourceGroupName = "$ResourceNamePrefix-rg";
+$StorageAccountName = "$ResourceNamePrefix-sa".ToLower() -replace "-","";
 
 # Set ARM template parameter values
 $TemplateParameters = @{

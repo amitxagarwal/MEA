@@ -66,3 +66,13 @@ stages:
         PathtoPublish: '$(System.DefaultWorkingDirectory)/Ui/mea-ui/build'
         ArtifactName: 'meaUiCI'
         publishLocation: 'Container'
+
+- stage: deploy_phoenix
+  condition: and(succeeded(), in(variables['Build.Reason'], 'PullRequest','Manual'))
+  jobs:
+  - template: azure-pipelines-release-template.yml
+    parameters:
+      azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
+      environmentNameSuffix: phoenix
+      instanceId: phoenix$(Build.BuildId)
+      resourceGroupLocation: westeurope

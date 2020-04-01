@@ -1,0 +1,31 @@
+parameters:
+  azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
+  environmentNameSuffix: phoenix
+  environmentAutoDelete: false
+  instanceId: p12345
+  resourceGroupLocation: westeurope
+
+jobs:
+  - deployment: deploy_momentum_mea_${{ parameters.environmentNameSuffix }}
+    pool: { vmImage: 'windows-2019' }
+    environment: momentum_mea_${{ parameters.environmentNameSuffix }}
+    variables:
+      InstanceId: ${{ parameters.instanceId }}
+      ResourceGroupLocation: ${{ parameters.resourceGroupLocation }}
+      ResourceGroupName: kmd-momentum-mea-${{ parameters.instanceId }}-rg
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+
+            - task: AzurePowerShell@4
+              displayName: Deploy azure infrastructure
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                ScriptType: 'FilePath'
+                ScriptPath: 'deploy-infrastructure.ps1'
+                ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)'
+                azurePowerShellVersion: 'LatestVersion'
+                pwsh: true

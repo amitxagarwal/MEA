@@ -12,7 +12,7 @@ parameters:
   autoSwapSlots: false
   clientId: <secret>
   clientSecret: <secret>
-  dbRequired: 'false'
+  isDbRequired: 'false'
 
 jobs:
   - deployment: deploy_momentum_mea_${{ parameters.environmentNameSuffix }}
@@ -30,7 +30,7 @@ jobs:
       WebAppConfigAlwaysOn: ${{ parameters.webAppConfigAlwaysOn }}
       ClientId: ${{ parameters.clientId }}
       ClientSecret: ${{ parameters.clientSecret }}
-      DbRequired: ${{ parameters.dbRequired }}
+      DbRequired: ${{ parameters.isDbRequired }}
 
     strategy:
       runOnce:

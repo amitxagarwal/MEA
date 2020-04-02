@@ -105,7 +105,8 @@ if ($VerbosePreference) {
 
 
 try{
-
+if(($env:DbRequired).ToLower() -eq 'true')
+{
     Push-Location "$PSScriptRoot/src/PostgreSqlDb"
 
     Write-Host "build: Starting in folder Kmd.Momentum.Mea.DbAdmin"
@@ -165,6 +166,7 @@ try{
          }
     }
     Pop-Location
+}
 }
 catch{
     exit 1

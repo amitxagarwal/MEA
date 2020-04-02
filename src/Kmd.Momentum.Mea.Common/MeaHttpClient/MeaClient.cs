@@ -15,6 +15,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
     {
         private static HttpClient _httpClient;
         private readonly IConfiguration _config;
+        private string _correlationId;
 
         public MeaClient(IConfiguration config, HttpClient httpClient)
         {
@@ -23,7 +24,15 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
         }
         public async Task<ResultOrHttpError<string, Error>> GetAsync(Uri url)
         {
+
+            _correlationId = _httpClient.DefaultRequestHeaders.GetValues("X-CORRELATION-ID").ToString();
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
+
+            if (authResponse.IsError)
+            {
+                var error = new Error(_correlationId, new string[] { authResponse.Error }, "Momentum Core Api");
+                return new ResultOrHttpError<string, Error>(error, authResponse.StatusCode.Value);
+            }
 
             var accessToken = JObject.Parse(await authResponse.Result.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
             _httpClient.DefaultRequestHeaders.Clear();
@@ -31,19 +40,22 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            if (!response.IsSuccessStatusCode)
             {
                 var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
 
-                if(errorResponse == null || errorResponse.Errors == null || errorResponse.Errors.Length <= 0)
+                if (errorResponse == null || errorResponse.Errors == null || errorResponse.Errors.Length <= 0)
                 {
                     var error = new Error(Guid.NewGuid().ToString(), new string[] { "An error occured while fetching the record from Core Api" }, "MEA");
+                    Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System {error}");
+
                     return new ResultOrHttpError<string, Error>(error, response.StatusCode);
                 }
 
+                Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System {errorResponse}");
                 return new ResultOrHttpError<string, Error>(errorResponse, response.StatusCode);
             }
-            
+
             return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
@@ -52,8 +64,10 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             throw new NotImplementedException();
         }
 
-        private async Task<ResultOrHttpError<HttpResponseMessage,string>> ReturnAuthorizationTokenAsync()
+        private async Task<ResultOrHttpError<HttpResponseMessage, string>> ReturnAuthorizationTokenAsync()
         {
+
+            _correlationId = _httpClient.DefaultRequestHeaders.GetValues("X-CORRELATION-ID").ToString();
             try
             {
                 var content = new FormUrlEncodedContent(new[]
@@ -62,19 +76,25 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
                         new KeyValuePair<string, string>("client_id", _config["KMD_MOMENTUM_MEA_ClientId"]),
                         new KeyValuePair<string, string>("client_secret", _config["KMD_MOMENTUM_MEA_ClientSecret"]),
                         new KeyValuePair<string, string>("resource", "74b4f45c-4e9b-4be1-98f1-ea876d9edd11")
-                    });
+               });
 
                 var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"), content).ConfigureAwait(false);
 
-                return response.IsSuccessStatusCode
-                    ? new ResultOrHttpError<HttpResponseMessage, string>(response)
-                    : new ResultOrHttpError<HttpResponseMessage, string>("Couldn't get the authorization to access MCA", System.Net.HttpStatusCode.Unauthorized);
-            }
-            catch(Exception ex)
-            {
-                Log.Error($"Couldn't fetch the configuration data to access MCA with error {ex.InnerException}");
+                if(!response.IsSuccessStatusCode)
+                {
+                    var errorResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    Log.ForContext("CorrelationId", _correlationId).Error($"Couldn't get the authorization from Momentum Core System with error as {errorResponse}", errorResponse);
 
-                return new ResultOrHttpError<HttpResponseMessage, string>("Couldn't fetch the configuration data to access MCA", System.Net.HttpStatusCode.Unauthorized);
+                    return new ResultOrHttpError<HttpResponseMessage, string>("Couldn't get the authorization to access Momentum Core System", System.Net.HttpStatusCode.Unauthorized);
+                }
+
+                Log.ForContext("CorrelationId", _correlationId).Information("Access granted to access Momentum Core System");
+                return new ResultOrHttpError<HttpResponseMessage, string>(response);
+            }
+            catch (Exception ex)
+            {
+                Log.ForContext("CorrelationId", _correlationId).Error($"Couldn't fetch the configuration data to access Momentum Core System with error {ex.InnerException}");
+                return new ResultOrHttpError<HttpResponseMessage, string>("Couldn't fetch the configuration data to access Momentum Core System", System.Net.HttpStatusCode.Unauthorized);
             }
         }
     }

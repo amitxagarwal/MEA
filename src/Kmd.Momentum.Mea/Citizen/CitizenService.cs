@@ -1,6 +1,7 @@
 ﻿using Kmd.Momentum.Mea.Citizen.Model;
 using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,11 +17,14 @@ namespace Kmd.Momentum.Mea.Citizen
     {
         private readonly ICitizenHttpClientHelper _citizenHttpClient;
         private readonly IConfiguration _config;
+        private readonly HttpContext _context;
 
-        public CitizenService(ICitizenHttpClientHelper citizenHttpClient, IConfiguration config)
+        public CitizenService(ICitizenHttpClientHelper citizenHttpClient, IConfiguration config,
+            IHttpContextAccessor httpContextAccessor)
         {
             _citizenHttpClient = citizenHttpClient;
             _config = config;
+            _context = httpContextAccessor.HttpContext;
         }
 
         public async Task<ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>> GetAllActiveCitizensAsync()

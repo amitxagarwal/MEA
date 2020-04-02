@@ -76,6 +76,7 @@ namespace Kmd.Momentum.Mea.Api
             services.AddSingleton(azureAdB2C);
             var azureAd = _configuration.GetSection("AzureAd");
             services.AddSingleton(azureAd);
+            services.AddHttpContextAccessor();
 
             var tokenValidationParamteres = new TokenValidationParameters
             {

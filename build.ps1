@@ -111,7 +111,7 @@ if ($VerbosePreference) {
 
 
 try{
-    $DbRequired = $DbRequired.ToLower();
+    #$DbRequired = $DbRequired.ToLower();
 
     if($DbRequired -eq 'true')
     {

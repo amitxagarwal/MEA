@@ -78,7 +78,7 @@ Param(
 
     # The environment for integration tests to run only in phoenix environment
     [Parameter(Mandatory=$true)]
-    $Environment
+    $Environment,
 
     # The DbRequired for build database if it is true
     [Parameter(Mandatory=$false)]

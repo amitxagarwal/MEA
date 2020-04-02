@@ -111,9 +111,13 @@ if ($VerbosePreference) {
 
 
 try{
+   Write-Host "1 Database is not required $DbRequired"
+   DbRequired = $DbRequired.ToLower();
+   Write-Host "2 Database is not required $DbRequired"   
+
     #$DbRequired = $DbRequired.ToLower();
 
-    if($DbRequired -eq 'true')
+    #if($DbRequired -eq 'true')
     {
         Write-Host "Database is required"
 
@@ -177,7 +181,7 @@ try{
         }
         Pop-Location
     }
-    else
+   # else
     {
         Write-Host "Database is not required"
     }

@@ -110,6 +110,8 @@ if ($VerbosePreference) {
 
 
 try{
+    $DbRequired = $DbRequired.ToLower();
+
     if(($DbRequired.ToLower()) -eq 'true')
     {
         Write-Host "Database is required"

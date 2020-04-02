@@ -49,7 +49,7 @@ jobs:
                 pwsh: true
 
             - task: AzurePowerShell@4
-              condition: eq(variables['DbRequired'],'true')
+              condition: eq(variables['isDbRequired'],'true')
               displayName: Deploy Database
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}

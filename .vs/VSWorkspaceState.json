@@ -1,10 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\deploy",
-    "\\Kmd.Momentum.Mea",
-    "\\Kmd.Momentum.Mea.Common"
+    "\\Api",
+    "\\Api\\deploy",
+    "\\Ui"
   ],
-  "SelectedNode": "\\azure-pipelines.yml",
+  "SelectedNode": "\\Api\\azure-pipelines-release-template.yml",
   "PreviewInSolutionExplorer": false
 }

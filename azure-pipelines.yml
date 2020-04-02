@@ -77,4 +77,4 @@ stages:
       autoSwapSlots: true
       clientId: $(McaClientId)
       clientSecret: $(McaClientSecret)
-      dbRequired: $(DbRequired)
+      isDbRequired: $(DbRequired)

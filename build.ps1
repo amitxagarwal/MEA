@@ -82,7 +82,7 @@ Param(
 
     # The DbRequired for build database if it is true
     [Parameter(Mandatory=$false)]
-    $DbRequired ="false"
+    $DbRequired = "false"
     
 )
 
@@ -110,7 +110,7 @@ if ($VerbosePreference) {
 
 
 try{
-    if($DbRequired.ToLower() -eq 'true')
+    if(($DbRequired.ToLower()) -eq 'true')
     {
         Write-Host "Database is required"
 

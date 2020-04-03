@@ -37,7 +37,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             actualResponse.Count.Should().BeGreaterThan(0);
         }
 
-        [Fact(Skip = "")]
+        [Fact]
         public async Task GetCitizenByCprNoSuccess()
         {
             //Arrange
@@ -58,7 +58,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         }
 
 
-        [Fact(Skip = "")]
+        [Fact]
         public async Task GetCitizenByCitizenIdSuccess()
         {
             //Arrange

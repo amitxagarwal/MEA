@@ -73,7 +73,7 @@ Param(
     $McaApiUri,
 
     # The scope for integration tests to run
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$false)]
     $Scope,
 
     # The environment for integration tests to run only in phoenix environment

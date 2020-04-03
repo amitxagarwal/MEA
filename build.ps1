@@ -73,7 +73,7 @@ Param(
     $McaApiUri,
 
     # The scope for integration tests to run
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$true)]
     $Scope,
 
     # The environment for integration tests to run only in phoenix environment
@@ -87,10 +87,6 @@ Param(
     # The client secret to get token
     [Parameter(Mandatory=$true)]
     $MeaClientSecret,
-
-    # The MEA Api Uri to get token
-    [Parameter(Mandatory=$true)]
-    $MeaApiUri,
 
     # The scope to get token
     [Parameter(Mandatory=$true)]

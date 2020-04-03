@@ -13,10 +13,10 @@ namespace Kmd.Momentum.Mea.Integration.Tests
         {
             var clientCrednetialsConfig = new ClientCredentialsConfig()
             {
-                Grant_Type = "client_credentials",
-                MeaClientId = Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_MeaClientId"),
-                MeaClientSecret = Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_MeaClientSecret"),
-                MeaScope = Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_MeaScope"),
+                Grant_Type = Environment.GetEnvironmentVariable("Grant_Type_For_Token"),
+                MeaClientId = Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_ClientId_For_Token"),
+                MeaClientSecret = Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_ClientSecret_For_Token"),
+                MeaScope = Environment.GetEnvironmentVariable("MeaScope_For_Token"),
                 TokenEndPoint = "clientCredentials/token?issuer=b2clogin.com&tenant=159",
                 TokenEndPointAddress = "https://identity-api.kmdlogic.io/clientCredentials/token?issuer=b2clogin.com&tenant=159"
             };

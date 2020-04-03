@@ -15,6 +15,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests
                 MeaClientId = Environment.GetEnvironmentVariable("MeaClientId"),
                 MeaClientSecret = Environment.GetEnvironmentVariable("MeaClientSecret"),
                 MeaScope = Environment.GetEnvironmentVariable("MeaScope"),
+                Grant_Type = Environment.GetEnvironmentVariable("Grant_Type"),
                 TokenEndPoint = "clientCredentials/token?issuer=b2clogin.com&tenant=159",
                 TokenEndPointAddress = "https://identity-api.kmdlogic.io/clientCredentials/token?issuer=b2clogin.com&tenant=159"
             };

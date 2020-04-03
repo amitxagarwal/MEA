@@ -17,11 +17,14 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             _factory = factory;
         }
 
-        [Fact(Skip = "Skipping the test cases for now")]
+        [Fact]
         public async Task GetActiveCitizensSuccess()
         {
             //Arrange       
             var clientMoq = _factory.CreateClient();
+            var tokenHelper = new TokenGenerator();
+            var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
+            clientMoq.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
             var response = await clientMoq.GetAsync($"/citizens").ConfigureAwait(false);
@@ -34,7 +37,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             actualResponse.Count.Should().BeGreaterThan(0);
         }
 
-        [Fact(Skip = "Skipping the test cases for now")]
+        [Fact]
         public async Task GetCitizenByCprNoSuccess()
         {
             //Arrange
@@ -55,7 +58,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         }
 
 
-        [Fact(Skip = "Skipping the test cases for now")]
+        [Fact]
         public async Task GetCitizenByCitizenIdSuccess()
         {
             //Arrange

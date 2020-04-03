@@ -79,6 +79,26 @@ Param(
     # The environment for integration tests to run only in phoenix environment
     [Parameter(Mandatory=$true)]
     $Environment
+
+     # The client id to get token
+    [Parameter(Mandatory=$true)]
+    $MeaClientId,
+
+    # The client secret to get token
+    [Parameter(Mandatory=$true)]
+    $MeaClientSecret,
+
+    # The MEA Api Uri to get token
+    [Parameter(Mandatory=$true)]
+    $MeaApiUri,
+
+    # The scope to get token
+    [Parameter(Mandatory=$true)]
+    $MeaScope,
+
+     # The Grant_Type to get token
+    [Parameter(Mandatory=$true)]
+    $Grant_type,
 )
 
 function Compress-Directory {
@@ -231,6 +251,10 @@ try {
             ($env:KMD_MOMENTUM_MEA_ClientId = $ClientId); 
             ($env:KMD_MOMENTUM_MEA_McaApiUri = $McaApiUri); 
             ($env:Scope = $Scope);
+            ($env:KMD_MOMENTUM_MEA_ClientSecret_For_Token = $MeaClientSecret); 
+            ($env:KMD_MOMENTUM_MEA_ClientId_For_Token = $MeaClientId); 
+            ($env:MeaScope_For_Token = $MeaScope);
+            ($env:Grant_Type_For_Token = $Grant_type);
             ($env:ASPNETCORE_ENVIRONMENT = $Environment) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             if($LASTEXITCODE -ne 0) { exit 3 }
         }

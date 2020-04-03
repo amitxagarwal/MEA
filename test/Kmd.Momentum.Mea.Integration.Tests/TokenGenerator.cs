@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -12,9 +13,10 @@ namespace Kmd.Momentum.Mea.Integration.Tests
         {
             var clientCrednetialsConfig = new ClientCredentialsConfig()
             {
-                MeaClientId = Environment.GetEnvironmentVariable("MeaClientId"),
-                MeaClientSecret = Environment.GetEnvironmentVariable("MeaClientSecret"),
-                MeaScope = Environment.GetEnvironmentVariable("MeaScope"),
+                Grant_Type = "client_credentials",
+                MeaClientId = Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_MeaClientId"),
+                MeaClientSecret = Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_MeaClientSecret"),
+                MeaScope = Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_MeaScope"),
                 TokenEndPoint = "clientCredentials/token?issuer=b2clogin.com&tenant=159",
                 TokenEndPointAddress = "https://identity-api.kmdlogic.io/clientCredentials/token?issuer=b2clogin.com&tenant=159"
             };

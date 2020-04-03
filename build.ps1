@@ -98,7 +98,7 @@ Param(
 
      # The Grant_Type to get token
     [Parameter(Mandatory=$true)]
-    $Grant_type,
+    $Grant_type
 )
 
 function Compress-Directory {

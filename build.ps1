@@ -78,7 +78,7 @@ Param(
 
     # The environment for integration tests to run only in phoenix environment
     [Parameter(Mandatory=$true)]
-    $Environment
+    $Environment,
 
      # The client id to get token
     [Parameter(Mandatory=$true)]
@@ -255,7 +255,7 @@ try {
             ($env:KMD_MOMENTUM_MEA_ClientId_For_Token = $MeaClientId); 
             ($env:MeaScope_For_Token = $MeaScope);
             ($env:Grant_Type_For_Token = $Grant_type);
-            ($env:ASPNETCORE_ENVIRONMENT = $Environment) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore);
+            ($env:ASPNETCORE_ENVIRONMENT = $Environment) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             if($LASTEXITCODE -ne 0) { exit 3 }
         }
         finally {

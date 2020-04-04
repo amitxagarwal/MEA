@@ -17,14 +17,14 @@ namespace Kmd.Momentum.Mea.Citizen
     {
         private readonly ICitizenHttpClientHelper _citizenHttpClient;
         private readonly IConfiguration _config;
-        private readonly HttpContext _context;
+        private readonly string _correlationId;
 
         public CitizenService(ICitizenHttpClientHelper citizenHttpClient, IConfiguration config,
             IHttpContextAccessor httpContextAccessor)
         {
             _citizenHttpClient = citizenHttpClient;
             _config = config;
-            _context = httpContextAccessor.HttpContext;
+            _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
         }
 
         public async Task<ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>> GetAllActiveCitizensAsync()
@@ -35,7 +35,7 @@ namespace Kmd.Momentum.Mea.Citizen
             if(response.IsError)
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
-                Log.ForContext("GetAllActiveCitizensAsync", "All Active Citizens")
+                Log.ForContext("CorrelationId", _correlationId)
                 .Error("An Error Occured while retriving data of all active citizens" + error);
                 return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>(response.Error, response.StatusCode.Value);
             }
@@ -43,7 +43,7 @@ namespace Kmd.Momentum.Mea.Citizen
             var result = response.Result;
             var content = result.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x));
 
-            Log.ForContext("GetAllActiveCitizensAsync", "All Active Citizens")
+            Log.ForContext("CorrelationId", _correlationId)
                 .Information("All the active citizens data retrived successfully");
             return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>(content.ToList());
         }
@@ -56,7 +56,7 @@ namespace Kmd.Momentum.Mea.Citizen
             if (response.IsError)
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
-                Log.ForContext("GetCitizenByCprAsync", "cpr")
+                Log.ForContext("CorrelationId", _correlationId)
                 .Error("An Error Occured while retriving citizen data by cpr" + error);
                 return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error, response.StatusCode.Value);
             }
@@ -64,7 +64,7 @@ namespace Kmd.Momentum.Mea.Citizen
             var json = JObject.Parse(response.Result);
             var citizenData = JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString());
 
-            Log.ForContext("GetCitizenByCprAsync", "cpr")
+            Log.ForContext("CorrelationId", _correlationId)
                 .ForContext("CitizenId", citizenData.CitizenId)
                 .Information("The citizen details by CPR number is returned successfully");
 
@@ -78,8 +78,8 @@ namespace Kmd.Momentum.Mea.Citizen
             if (response.IsError)
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
-                Log.ForContext("GetCitizenByIdAsync", "citizenId")
-                .ForContext("CitizenId", citizenId)
+                Log.ForContext("CorrelationId", _correlationId)
+                 .ForContext("CitizenId", citizenId)
                 .Error("An Error Occured while retriving citizen data by citizenID" + error);
                 return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error, response.StatusCode.Value);
             }
@@ -87,7 +87,7 @@ namespace Kmd.Momentum.Mea.Citizen
             var json = JObject.Parse(response.Result);
             var citizenData = JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString());
 
-            Log.ForContext("GetCitizenByIdAsync", "citizenId")
+            Log.ForContext("CorrelationId", _correlationId)
                 .ForContext("CitizenId", citizenData.CitizenId)
                 .Information("The citizen details by CitizenId has been returned successfully");
 

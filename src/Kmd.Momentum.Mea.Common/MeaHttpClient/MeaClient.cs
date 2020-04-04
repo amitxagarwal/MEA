@@ -1,4 +1,5 @@
 ﻿using Kmd.Momentum.Mea.Common.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -17,15 +18,14 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
         private readonly IConfiguration _config;
         private string _correlationId;
 
-        public MeaClient(IConfiguration config, HttpClient httpClient)
+        public MeaClient(IConfiguration config, HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
         {
             _config = config;
             _httpClient = httpClient;
+            _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
         }
         public async Task<ResultOrHttpError<string, Error>> GetAsync(Uri url)
-        {
-
-            _correlationId = _httpClient.DefaultRequestHeaders.GetValues("X-CORRELATION-ID").ToString();
+        {            
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
             if (authResponse.IsError)
@@ -46,7 +46,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
                 if (errorResponse == null || errorResponse.Errors == null || errorResponse.Errors.Length <= 0)
                 {
-                    var error = new Error(Guid.NewGuid().ToString(), new string[] { "An error occured while fetching the record from Core Api" }, "MEA");
+                    var error = new Error(_correlationId, new string[] { "An error occured while fetching the record from Core Api" }, "MEA");
                     Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System {error}");
 
                     return new ResultOrHttpError<string, Error>(error, response.StatusCode);
@@ -66,8 +66,6 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
         private async Task<ResultOrHttpError<HttpResponseMessage, string>> ReturnAuthorizationTokenAsync()
         {
-
-            _correlationId = _httpClient.DefaultRequestHeaders.GetValues("X-CORRELATION-ID").ToString();
             try
             {
                 var content = new FormUrlEncodedContent(new[]
@@ -85,10 +83,10 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
                     var errorResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     Log.ForContext("CorrelationId", _correlationId).Error($"Couldn't get the authorization from Momentum Core System with error as {errorResponse}", errorResponse);
 
-                    return new ResultOrHttpError<HttpResponseMessage, string>("Couldn't get the authorization to access Momentum Core System", System.Net.HttpStatusCode.Unauthorized);
+                    return new ResultOrHttpError<HttpResponseMessage, string>("Current request is not authorized to access Momentum Core System", System.Net.HttpStatusCode.Unauthorized);
                 }
 
-                Log.ForContext("CorrelationId", _correlationId).Information("Access granted to access Momentum Core System");
+                Log.ForContext("CorrelationId", _correlationId).Information("Current request is authorized to access Momentum Core System");
                 return new ResultOrHttpError<HttpResponseMessage, string>(response);
             }
             catch (Exception ex)

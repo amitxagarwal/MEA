@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CorrelationId;
 using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace Kmd.Momentum.Mea.Common.Framework
 {

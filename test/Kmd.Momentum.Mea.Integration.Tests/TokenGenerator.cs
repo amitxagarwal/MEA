@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -8,49 +9,41 @@ namespace Kmd.Momentum.Mea.Integration.Tests
 {
     public class TokenGenerator : ITokenGenerator
     {
+        public static string GetMeaClientId() =>
+            Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_ClientId");
+
+        public static string GetMeaClientSecret() =>
+            Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_ClientSecret");
+
+        public static string GetMeaScope() =>
+            Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_Scope");
+
+        public readonly string tokenEndPoint = "clientCredentials/token?issuer=b2clogin.com&tenant=159";
+
+        public readonly string tokenEndPointAddress = "https://identity-api.kmdlogic.io/clientCredentials/token?issuer=b2clogin.com&tenant=159";
+
         public async Task<string> GetToken()
-        {
-            var clientCrednetialsConfig = new ClientCredentialsConfig()
-            {
-                MeaClientId = Environment.GetEnvironmentVariable("MeaClientId"),
-                MeaClientSecret = Environment.GetEnvironmentVariable("MeaClientSecret"),
-                MeaScope = Environment.GetEnvironmentVariable("MeaScope"),
-                Grant_Type = Environment.GetEnvironmentVariable("Grant_Type"),
-                TokenEndPoint = "clientCredentials/token?issuer=b2clogin.com&tenant=159",
-                TokenEndPointAddress = "https://identity-api.kmdlogic.io/clientCredentials/token?issuer=b2clogin.com&tenant=159"
-            };
-            
+        {   
             var client = new HttpClient
             {
-                BaseAddress = new Uri(clientCrednetialsConfig.TokenEndPointAddress)
+                BaseAddress = new Uri(tokenEndPointAddress)
             };
 
             var content = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("client_id", clientCrednetialsConfig.MeaClientId),
-                new KeyValuePair<string, string>("client_secret", clientCrednetialsConfig.MeaClientSecret ),
-                new KeyValuePair<string, string>("scope", clientCrednetialsConfig.MeaScope),
-                new KeyValuePair<string, string>("grant_Type", clientCrednetialsConfig.Grant_Type)
+                new KeyValuePair<string, string>("client_id", GetMeaClientId()),
+                new KeyValuePair<string, string>("client_secret", GetMeaClientSecret()),
+                new KeyValuePair<string, string>("scope", GetMeaScope()),
+                new KeyValuePair<string, string>("grant_Type", "client_credentials")
             });
 
-            var requestForToken = await client.PostAsync(clientCrednetialsConfig.TokenEndPointAddress, content);
+            var requestForToken = await client.PostAsync(tokenEndPointAddress, content);
             var result = await requestForToken.Content.ReadAsStringAsync();
 
             var json = JObject.Parse(result);
             var accessToken = (string)json["access_token"];
 
             return accessToken;
-        }
-
-        private class ClientCredentialsConfig
-        {
-            public string MeaClientId { get; set; }
-            public string MeaClientSecret { get; set; }
-            public string MeaScope { get; set; }
-            public string Grant_Type { get; set; }
-            public string  TokenEndPoint { get; set; }
-            public string TokenEndPointAddress { get; set; }
-
         }
     }
 }

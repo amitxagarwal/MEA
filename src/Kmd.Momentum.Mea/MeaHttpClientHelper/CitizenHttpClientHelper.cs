@@ -7,6 +7,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.MeaHttpClientHelper
@@ -77,6 +78,20 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
         public async Task<ResultOrHttpError<string, Error>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
         {
             var response = await _meaClient.GetAsync(url).ConfigureAwait(false);
+
+            if (response.IsError)
+            {
+                return new ResultOrHttpError<string, Error>(response.Error, response.StatusCode.Value);
+            }
+
+            var content = response.Result;
+            return new ResultOrHttpError<string, Error>(content);
+        }
+
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsyncFromMomentumCoreAsync(Uri url, string serializedRequest)
+        {
+            StringContent _stringContent = new StringContent(serializedRequest,System.Text.Encoding.UTF8, "application/json");
+            var response = await _meaClient.PostAsync(url, _stringContent).ConfigureAwait(false);
 
             if (response.IsError)
             {

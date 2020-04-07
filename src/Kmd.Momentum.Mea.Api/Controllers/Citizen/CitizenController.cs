@@ -107,5 +107,33 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
                 return Ok(result.Result);
             }
         }
+
+        ///<summary>
+        ///Create a Journal Note in Momentum with attachment
+        ///</summary>
+        ///<response code="200">The Journal Note created successfully</response>
+        ///<response code="400">Bad request</response>
+        ///<response code="404">The Create a Journal Note is not found</response>
+        ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [Route("journal/{momentumCitizenId}")]
+        [SwaggerOperation(OperationId = "CreateJournalNote")]
+        public async Task<ActionResult> CreateJournalNote([Required] [FromRoute] string momentumCitizenId, [Required] [FromBody] MeaCitizenJournalNoteRequestModel requestModel)
+        {
+            var result = await _citizenService.CreateJournalNoteAsync(requestModel).ConfigureAwait(false);
+             
+            if (result.IsError)
+            {
+                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error.Errors);
+            }
+            else
+            {
+                return Ok();
+            }
+        }
     }
 }

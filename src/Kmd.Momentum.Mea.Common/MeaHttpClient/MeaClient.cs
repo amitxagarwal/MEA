@@ -47,9 +47,30 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
-        public Task<string> PostAsync(Uri uri, StringContent stringContent)
+        public async Task<ResultOrHttpError<string, Error>> PostAsync(Uri url, StringContent stringContent)
         {
-            throw new NotImplementedException();
+            var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
+
+            var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("bearer " + accessToken);
+                        
+            var response = await _httpClient.PostAsync(url, stringContent).ConfigureAwait(false);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+
+                if (errorResponse == null || errorResponse.Errors == null || errorResponse.Errors.Length <= 0)
+                {
+                    var error = new Error(Guid.NewGuid().ToString(), new string[] { "An error occured while creating the record from Core Api" }, "MEA");
+                    return new ResultOrHttpError<string, Error>(error, response.StatusCode);
+                }
+
+                return new ResultOrHttpError<string, Error>(errorResponse, response.StatusCode);
+            }
+
+            return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
         private async Task<HttpResponseMessage> ReturnAuthorizationTokenAsync()

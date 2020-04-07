@@ -29,7 +29,7 @@ namespace Kmd.Momentum.Mea.Citizen
             var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCoreAsync
                 (new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/search")).ConfigureAwait(false);
 
-            if(response.IsError)
+            if (response.IsError)
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
                 Log.ForContext("GetAllActiveCitizensAsync", "All Active Citizens")
@@ -65,13 +65,13 @@ namespace Kmd.Momentum.Mea.Citizen
                 .ForContext("CitizenId", citizenData.CitizenId)
                 .Information("The citizen details by CPR number is returned successfully");
 
-            return new ResultOrHttpError<CitizenDataResponseModel, Error> (citizenData);
+            return new ResultOrHttpError<CitizenDataResponseModel, Error>(citizenData);
         }
 
         public async Task<ResultOrHttpError<CitizenDataResponseModel, Error>> GetCitizenByIdAsync(string citizenId)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")).ConfigureAwait(false);
-            
+
             if (response.IsError)
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
@@ -89,6 +89,34 @@ namespace Kmd.Momentum.Mea.Citizen
                 .Information("The citizen details by CitizenId has been returned successfully");
 
             return new ResultOrHttpError<CitizenDataResponseModel, Error>(citizenData);
+        }
+
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsync(MeaCitizenJournalNoteRequestModel requestModel)
+        {
+            McaCitizenJournalNoteRequestModel _mcaRequestModel = new McaCitizenJournalNoteRequestModel()
+            {
+                Body = requestModel.Body,
+                Cpr = requestModel.Cpr,
+                CreateDateTime = System.DateTime.UtcNow.GetDateTimeFormats()[102],
+                Documents = requestModel.Documents,
+                Email = requestModel.Email,
+                Source = requestModel.Type,
+                Title = requestModel.Title
+            };
+
+            string _serializedRequest = JsonConvert.SerializeObject(_mcaRequestModel);
+            var response = await _citizenHttpClient.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}journals/document"), _serializedRequest).ConfigureAwait(false);
+
+            if (response.IsError)
+            {
+                var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
+                Log.Error("An Error Occured while creating Journal Note");
+                return new ResultOrHttpError<string, Error>(response.Error, response.StatusCode.Value);
+            }
+
+            Log.Information("Journal Note created successfully");
+
+            return new ResultOrHttpError<string, Error>("");
         }
     }
 }

@@ -1,5 +1,7 @@
 using CorrelationId;
-using Kmd.Momentum.Mea.Common.Authorization;
+using Kmd.Momentum.Mea.Common.Authorization.Caseworker;
+using Kmd.Momentum.Mea.Common.Authorization.Citizen;
+using Kmd.Momentum.Mea.Common.Authorization.Journal;
 using Kmd.Momentum.Mea.Common.DatabaseStore;
 using Kmd.Momentum.Mea.Common.Modules;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -93,11 +95,24 @@ namespace Kmd.Momentum.Mea.Api
             SettingTokenValidationParameters(tokenValidationParamteres, azureAdB2C, azureAd).Wait();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(x => {x.TokenValidationParameters = tokenValidationParamteres;});
+                .AddJwtBearer(x => { x.TokenValidationParameters = tokenValidationParamteres; });
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(MeaCustomClaimAttributes.AudienceClaimTypeName, policy => policy.Requirements.Add(new MeaCustomClaimRequirement(MeaCustomClaimAttributes.AudienceClaimTypeName, MeaCustomClaimAttributes.TenantClaimTypeName)));
+                options.AddPolicy(MeaCitizenClaimAttributes.Role, policy => policy.Requirements.Add(new MeaCitizenClaimRequirement(
+                    MeaCitizenClaimAttributes.CitizenAudienceClaimTypeName,
+                    MeaCitizenClaimAttributes.CitizenTenantClaimTypeName,
+                    MeaCitizenClaimAttributes.CitizenScopeClaimTypeName)));
+
+                options.AddPolicy(MeaCaseworkerClaimAttributes.Role, policy => policy.Requirements.Add(new MeaCaseworkerClaimRequirement(
+                    MeaCaseworkerClaimAttributes.CaseworkerAudienceClaimTypeName,
+                    MeaCaseworkerClaimAttributes.CaseworkerTenantClaimTypeName,
+                    MeaCaseworkerClaimAttributes.CaseworkerScopeClaimTypeName)));
+
+                options.AddPolicy(MeaJournalClaimAttributes.Role, policy => policy.Requirements.Add(new MeaJournalClaimRequirement(
+                    MeaJournalClaimAttributes.JournalAudienceClaimTypeName,
+                    MeaJournalClaimAttributes.JournalTenantClaimTypeName,
+                    MeaJournalClaimAttributes.JournalScopeClaimTypeName)));
             });
 
             services.AddSwaggerGen(c =>

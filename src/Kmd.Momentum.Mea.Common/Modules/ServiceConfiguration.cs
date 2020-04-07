@@ -1,4 +1,6 @@
-﻿using Kmd.Momentum.Mea.Common.Authorization;
+﻿using Kmd.Momentum.Mea.Common.Authorization.Caseworker;
+using Kmd.Momentum.Mea.Common.Authorization.Citizen;
+using Kmd.Momentum.Mea.Common.Authorization.Journal;
 using Kmd.Momentum.Mea.Common.Framework;
 using Kmd.Momentum.Mea.Common.Framework.PollyOptions;
 using Kmd.Momentum.Mea.Common.MeaHttpClient;
@@ -12,7 +14,9 @@ namespace Kmd.Momentum.Mea.Common.Modules
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IAuthorizationHandler, MeaCustomClaimHandler>();
+            services.AddSingleton<IAuthorizationHandler, MeaCitizenClaimHandler>();
+            services.AddSingleton<IAuthorizationHandler, MeaCaseworkerClaimHandler>();
+            services.AddSingleton<IAuthorizationHandler, MeaJournalClaimHandler>();
             services
                 .AddPolicies(configuration)
                 .AddHttpClient<IMeaClient, MeaClient, MeaClientOptions>(

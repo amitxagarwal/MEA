@@ -90,7 +90,7 @@ Param(
 
     # The scope to get token
     [Parameter(Mandatory=$true)]
-    $MeaScope
+    $MeaScope,
 
     # The DbRequired for build database if it is true
     [Parameter(Mandatory=$false)]

@@ -77,15 +77,7 @@ namespace Kmd.Momentum.Mea.Api
             var azureAdB2C = _configuration.GetSection("AzureAdB2C");
             services.AddSingleton(azureAdB2C);
             var azureAd = _configuration.GetSection("AzureAd");
-            services.AddSingleton(azureAd);
-
-            services
-                .AddPolicies(_configuration)
-                .AddHttpClient<IMeaClient, MeaClient, MeaClientOptions>(
-                    _configuration,
-                    nameof(ApplicationOptions.MeaClient))
-                .AddCorrelationId();
-           
+            services.AddSingleton(azureAd);          
 
             services.AddHttpContextAccessor();
 

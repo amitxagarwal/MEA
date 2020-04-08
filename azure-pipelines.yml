@@ -56,6 +56,7 @@ stages:
       autoSwapSlots: true
       clientId: $(McaClientId)
       clientSecret: $(McaClientSecret)
+      isDbRequired: $(DbRequired)
 
 - stage: deploy_internal
   dependsOn: Build
@@ -76,3 +77,4 @@ stages:
       autoSwapSlots: true
       clientId: $(McaClientId)
       clientSecret: $(McaClientSecret)
+      isDbRequired: $(DbRequired)

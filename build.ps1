@@ -117,66 +117,75 @@ if ($VerbosePreference) {
 
 
 try{
+   
+    if($DbRequired -eq 'true')
+    {
+        Write-Host "Database is required"
 
-    Push-Location "$PSScriptRoot/src/PostgreSqlDb"
+        Push-Location "$PSScriptRoot/src/PostgreSqlDb"
 
-    Write-Host "build: Starting in folder Kmd.Momentum.Mea.DbAdmin"
+        Write-Host "build: Starting in folder Kmd.Momentum.Mea.DbAdmin"
     
-    if(Test-Path ./artifacts) {
-        Write-Host "build: Cleaning ./artifacts"
-        Remove-Item ./artifacts -Force -Recurse
-    }
-
-    $branch = @{ $true = $SrcBranchName; $false = $(git symbolic-ref --short -q HEAD) }[$SrcBranchName -ne $NULL];    
-    $suffix = @{ $true = ""; $false = "$($branch.Substring(0, [math]::Min(10,$branch.Length)))-$revision"}[$branch -eq "master" -and $revision -ne "lo"]
-    $commitHash = $(git rev-parse --short HEAD)
-    $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
-
-    & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
-  
-    if($LASTEXITCODE -ne 0) { exit 3 }
-
-    $now = Get-Date
-    $nowStr = $now.ToUniversalTime().ToString("yyyyMMddHHmmss")
-    $BuildDatabaseName = "$nowStr-$ImageName-$buildSuffix"
-    $DbServer = "kmd-momentum-api-build-dbsvr"
-    
-    Push-Location "./Kmd.Momentum.Mea.DbAdmin"
-
-    Write-Host "Creating Database '$BuildDatabaseName'"
-
-    & dotnet run -- create -s $DbServer -d $BuildDatabaseName -u $BuildDatabaseName -p RtAhL8j9946W
-    
-    if($LASTEXITCODE -ne 0) { exit 1 }
-
-    Write-Host "Migrate Database '$BuildDatabaseName' with MigrationScripts"
-
-    & dotnet run -- migrate -s $DbServer -d $BuildDatabaseName -u $BuildDatabaseName -p RtAhL8j9946W -f "$PSScriptRoot/MigrationScripts"
-    
-    if($LASTEXITCODE -ne 0) { exit 1 }  
-       
-    $expiryMinutes = 120;
-    
-    Write-Host "cleanup: database '$BuildDatabaseName'"
-    Write-Host "Also looking for any databases with a timestamp <=" $expiryMinutes "minutes ago"
-    
-    & dotnet run -- delete -s $DbServer -d $BuildDatabaseName -r "^\\d{14}\\-" -e $expiryMinutes -f "yyyyMMddHHmmss-"
-
-    if($LASTEXITCODE -ne 0) { exit 1 }
-    
-    if ($PublishArtifactsToAzureDevOps) {
-     
-        foreach ($item in Get-ChildItem "./bin/*/*") {
-     
-            Write-Host "##vso[artifact.upload artifactname=dbApp;]$item"
+        if(Test-Path ./artifacts) {
+            Write-Host "build: Cleaning ./artifacts"
+            Remove-Item ./artifacts -Force -Recurse
         }
+
+        $branch = @{ $true = $SrcBranchName; $false = $(git symbolic-ref --short -q HEAD) }[$SrcBranchName -ne $NULL];    
+        $suffix = @{ $true = ""; $false = "$($branch.Substring(0, [math]::Min(10,$branch.Length)))-$revision"}[$branch -eq "master" -and $revision -ne "lo"]
+        $commitHash = $(git rev-parse --short HEAD)
+        $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
+
+        & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
+  
+        if($LASTEXITCODE -ne 0) { exit 3 }
+
+        $now = Get-Date
+        $nowStr = $now.ToUniversalTime().ToString("yyyyMMddHHmmss")
+        $BuildDatabaseName = "$nowStr-$ImageName-$buildSuffix"
+        $DbServer = "kmd-momentum-api-build-dbsvr"
+    
+        Push-Location "./Kmd.Momentum.Mea.DbAdmin"
+
+        Write-Host "Creating Database '$BuildDatabaseName'"
+
+        & dotnet run -- create -s $DbServer -d $BuildDatabaseName -u $BuildDatabaseName -p RtAhL8j9946W
+    
+        if($LASTEXITCODE -ne 0) { exit 1 }
+
+        Write-Host "Migrate Database '$BuildDatabaseName' with MigrationScripts"
+
+        & dotnet run -- migrate -s $DbServer -d $BuildDatabaseName -u $BuildDatabaseName -p RtAhL8j9946W -f "$PSScriptRoot/MigrationScripts"
+    
+        if($LASTEXITCODE -ne 0) { exit 1 }  
+       
+        $expiryMinutes = 120;
+    
+        Write-Host "cleanup: database '$BuildDatabaseName'"
+        Write-Host "Also looking for any databases with a timestamp <=" $expiryMinutes "minutes ago"
+    
+        & dotnet run -- delete -s $DbServer -d $BuildDatabaseName -r "^\\d{14}\\-" -e $expiryMinutes -f "yyyyMMddHHmmss-"
+
+        if($LASTEXITCODE -ne 0) { exit 1 }
+    
+        if ($PublishArtifactsToAzureDevOps) {
+     
+            foreach ($item in Get-ChildItem "./bin/*/*") {
+     
+                Write-Host "##vso[artifact.upload artifactname=dbApp;]$item"
+            }
         
-        foreach ($item in Get-ChildItem "$PSScriptRoot/MigrationScripts") {
+            foreach ($item in Get-ChildItem "$PSScriptRoot/MigrationScripts") {
         
-            Write-Host "##vso[artifact.upload artifactname=migrationScripts;]$item"
-         }
+                Write-Host "##vso[artifact.upload artifactname=migrationScripts;]$item"
+             }
+        }
+        Pop-Location
     }
-    Pop-Location
+    else
+    {
+        Write-Host "Database is not required"
+    }
 }
 catch{
     exit 1

@@ -1,4 +1,5 @@
 using CorrelationId;
+using Kmd.Momentum.Mea.Common.Authorization;
 using Kmd.Momentum.Mea.Common.Authorization.Caseworker;
 using Kmd.Momentum.Mea.Common.Authorization.Citizen;
 using Kmd.Momentum.Mea.Common.Authorization.Journal;
@@ -99,20 +100,20 @@ namespace Kmd.Momentum.Mea.Api
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(MeaCitizenClaimAttributes.Role, policy => policy.Requirements.Add(new MeaCitizenClaimRequirement(
-                    MeaCitizenClaimAttributes.CitizenAudienceClaimTypeName,
-                    MeaCitizenClaimAttributes.CitizenTenantClaimTypeName,
-                    MeaCitizenClaimAttributes.CitizenScopeClaimTypeName)));
+                options.AddPolicy(MeaCustomClaimAttributes.CitizenRole, policy => policy.Requirements.Add(new MeaCitizenClaimRequirement(
+                    MeaCustomClaimAttributes.AudienceClaimTypeName,
+                    MeaCustomClaimAttributes.TenantClaimTypeName,
+                    MeaCustomClaimAttributes.ScopeClaimTypeName)));
 
-                options.AddPolicy(MeaCaseworkerClaimAttributes.Role, policy => policy.Requirements.Add(new MeaCaseworkerClaimRequirement(
-                    MeaCaseworkerClaimAttributes.CaseworkerAudienceClaimTypeName,
-                    MeaCaseworkerClaimAttributes.CaseworkerTenantClaimTypeName,
-                    MeaCaseworkerClaimAttributes.CaseworkerScopeClaimTypeName)));
+                options.AddPolicy(MeaCustomClaimAttributes.CaseworkerRole, policy => policy.Requirements.Add(new MeaCaseworkerClaimRequirement(
+                    MeaCustomClaimAttributes.AudienceClaimTypeName,
+                    MeaCustomClaimAttributes.TenantClaimTypeName,
+                    MeaCustomClaimAttributes.ScopeClaimTypeName)));
 
-                options.AddPolicy(MeaJournalClaimAttributes.Role, policy => policy.Requirements.Add(new MeaJournalClaimRequirement(
-                    MeaJournalClaimAttributes.JournalAudienceClaimTypeName,
-                    MeaJournalClaimAttributes.JournalTenantClaimTypeName,
-                    MeaJournalClaimAttributes.JournalScopeClaimTypeName)));
+                options.AddPolicy(MeaCustomClaimAttributes.JournalRole, policy => policy.Requirements.Add(new MeaJournalClaimRequirement(
+                    MeaCustomClaimAttributes.AudienceClaimTypeName,
+                    MeaCustomClaimAttributes.TenantClaimTypeName,
+                    MeaCustomClaimAttributes.ScopeClaimTypeName)));
             });
 
             services.AddSwaggerGen(c =>

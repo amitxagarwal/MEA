@@ -33,8 +33,8 @@ namespace Kmd.Momentum.Mea.Common.Authorization.Citizen
                 return Task.CompletedTask;
 
             // Split the audience, tenants, scope string into an array
-            var audience = context.User.FindFirst(c => c.Type == MeaCitizenClaimAttributes.CitizenAudienceClaimTypeName).Value.Split(' ');
-            var tenant = context.User.FindFirst(c => c.Type == MeaCitizenClaimAttributes.CitizenTenantClaimTypeName).Value.Split(' ');
+            var audience = context.User.FindFirst(c => c.Type == MeaCustomClaimAttributes.AudienceClaimTypeName).Value.Split(' ');
+            var tenant = context.User.FindFirst(c => c.Type == MeaCustomClaimAttributes.TenantClaimTypeName).Value.Split(' ');
             var scope = context.User.Claims.FirstOrDefault(x => x.Type.Contains("scope")).Value.Split(' ');
 
             // Succeed if the audience, tenant and scope array contains the required audience, tenant and scope

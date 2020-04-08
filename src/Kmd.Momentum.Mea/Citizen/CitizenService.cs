@@ -36,7 +36,7 @@ namespace Kmd.Momentum.Mea.Citizen
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
                 Log.ForContext("CorrelationId", _correlationId)
-                .Error("An Error Occured while retriving data of all active citizens" + error);
+                .Error("An error occurred while retrieving data of all active citizens" + error);
                 return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>(response.Error, response.StatusCode.Value);
             }
 
@@ -44,7 +44,7 @@ namespace Kmd.Momentum.Mea.Citizen
             var content = result.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x));
 
             Log.ForContext("CorrelationId", _correlationId)
-                .Information("All the active citizens data retrived successfully");
+                .Information("All the active citizens data retrieved successfully");
             return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>(content.ToList());
         }
 
@@ -57,7 +57,7 @@ namespace Kmd.Momentum.Mea.Citizen
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
                 Log.ForContext("CorrelationId", _correlationId)
-                .Error("An Error Occured while retriving citizen data by cpr" + error);
+                .Error("An error occured while retrieving citizen data by cpr" + error);
                 return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error, response.StatusCode.Value);
             }
 
@@ -80,7 +80,7 @@ namespace Kmd.Momentum.Mea.Citizen
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
                 Log.ForContext("CorrelationId", _correlationId)
                  .ForContext("CitizenId", citizenId)
-                .Error("An Error Occured while retriving citizen data by citizenID" + error);
+                .Error("An error occured while retrieving citizen data by citizenID" + error);
                 return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error, response.StatusCode.Value);
             }
 

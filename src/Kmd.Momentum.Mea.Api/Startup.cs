@@ -1,5 +1,4 @@
 using CorrelationId;
-
 using Kmd.Momentum.Mea.Common.Authorization;
 using Kmd.Momentum.Mea.Common.DatabaseStore;
 using Kmd.Momentum.Mea.Common.Framework;

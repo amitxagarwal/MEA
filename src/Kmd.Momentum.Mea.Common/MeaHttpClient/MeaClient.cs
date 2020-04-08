@@ -16,7 +16,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
     {
         private static HttpClient _httpClient;
         private readonly IConfiguration _config;
-        private string _correlationId;
+        private readonly string _correlationId;
 
         public MeaClient(IConfiguration config, HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
         {

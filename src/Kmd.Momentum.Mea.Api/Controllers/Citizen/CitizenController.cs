@@ -19,7 +19,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
     public class CitizenController : ControllerBase
     {
         private readonly ICitizenService _citizenService;
-        
+
         public CitizenController(ICitizenService citizenService)
         {
             _citizenService = citizenService ?? throw new ArgumentNullException(nameof(citizenService));
@@ -41,7 +41,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         public async Task<ActionResult<IReadOnlyList<CitizenDataResponseModel>>> GetAllActiveCitizens()
         {
             var result = await _citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
-            
+
             if (result.IsError)
             {
                 return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error.Errors);
@@ -74,7 +74,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
             {
                 return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error.Errors);
             }
-            else 
+            else
             {
                 return Ok(result.Result);
             }
@@ -91,7 +91,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(401)]        
+        [ProducesResponseType(401)]
         [Route("kss/{citizenId}")]
         [SwaggerOperation(OperationId = "GetCitizenById")]
         public async Task<ActionResult<CitizenDataResponseModel>> GetCitizenById([Required] [FromRoute] string citizenId)
@@ -125,7 +125,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         public async Task<ActionResult> CreateJournalNote([Required] [FromRoute] string momentumCitizenId, [Required] [FromBody] MeaCitizenJournalNoteRequestModel requestModel)
         {
             var result = await _citizenService.CreateJournalNoteAsync(requestModel).ConfigureAwait(false);
-             
+
             if (result.IsError)
             {
                 return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error.Errors);

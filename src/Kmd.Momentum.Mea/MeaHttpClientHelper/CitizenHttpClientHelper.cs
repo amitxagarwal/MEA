@@ -1,4 +1,5 @@
-﻿using Kmd.Momentum.Mea.Common.Exceptions;
+﻿using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -88,9 +89,21 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             return new ResultOrHttpError<string, Error>(content);
         }
 
-        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsyncFromMomentumCoreAsync(Uri url, string serializedRequest)
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsyncFromMomentumCoreAsync(Uri url, MeaCitizenJournalNoteRequestModel requestModel)
         {
-            StringContent _stringContent = new StringContent(serializedRequest,System.Text.Encoding.UTF8, "application/json");
+            McaCitizenJournalNoteRequestModel _mcaRequestModel = new McaCitizenJournalNoteRequestModel()
+            {
+                Body = requestModel.Body,
+                Cpr = requestModel.Cpr,
+                CreateDateTime = System.DateTime.UtcNow.GetDateTimeFormats()[102],
+                Documents = requestModel.Documents,
+                Email = requestModel.Email,
+                Source = requestModel.Type,
+                Title = requestModel.Title
+            };
+
+            string _serializedRequest = JsonConvert.SerializeObject(_mcaRequestModel);
+            StringContent _stringContent = new StringContent(_serializedRequest, System.Text.Encoding.UTF8, "application/json");
             var response = await _meaClient.PostAsync(url, _stringContent).ConfigureAwait(false);
 
             if (response.IsError)

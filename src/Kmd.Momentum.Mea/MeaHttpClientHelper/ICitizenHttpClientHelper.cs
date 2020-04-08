@@ -1,4 +1,5 @@
-﻿using Kmd.Momentum.Mea.Common.Exceptions;
+﻿using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,6 +12,6 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
         Task<ResultOrHttpError<string, Error>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url);
 
-        Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsyncFromMomentumCoreAsync(Uri url, string serializedRequest);
+        Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsyncFromMomentumCoreAsync(Uri url, MeaCitizenJournalNoteRequestModel requestModel);
     }
 }

@@ -93,19 +93,8 @@ namespace Kmd.Momentum.Mea.Citizen
 
         public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsync(MeaCitizenJournalNoteRequestModel requestModel)
         {
-            McaCitizenJournalNoteRequestModel _mcaRequestModel = new McaCitizenJournalNoteRequestModel()
-            {
-                Body = requestModel.Body,
-                Cpr = requestModel.Cpr,
-                CreateDateTime = System.DateTime.UtcNow.GetDateTimeFormats()[102],
-                Documents = requestModel.Documents,
-                Email = requestModel.Email,
-                Source = requestModel.Type,
-                Title = requestModel.Title
-            };
 
-            string _serializedRequest = JsonConvert.SerializeObject(_mcaRequestModel);
-            var response = await _citizenHttpClient.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}journals/document"), _serializedRequest).ConfigureAwait(false);
+            var response = await _citizenHttpClient.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}journals/document"), requestModel).ConfigureAwait(false);
 
             if (response.IsError)
             {
@@ -116,7 +105,7 @@ namespace Kmd.Momentum.Mea.Citizen
 
             Log.Information("Journal Note created successfully");
 
-            return new ResultOrHttpError<string, Error>("");
+            return new ResultOrHttpError<string, Error>(response.Result);
         }
     }
 }

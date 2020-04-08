@@ -35,7 +35,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             {
                 var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
 
-                if(errorResponse == null || errorResponse.Errors == null || errorResponse.Errors.Length <= 0)
+                if (errorResponse == null || errorResponse.Errors == null || errorResponse.Errors.Length <= 0)
                 {
                     var error = new Error(Guid.NewGuid().ToString(), new string[] { "An error occured while fetching the record from Core Api" }, "MEA");
                     return new ResultOrHttpError<string, Error>(error, response.StatusCode);
@@ -43,7 +43,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
                 return new ResultOrHttpError<string, Error>(errorResponse, response.StatusCode);
             }
-            
+
             return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
@@ -54,7 +54,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             var accessToken = JObject.Parse(await authResponse.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("bearer " + accessToken);
-                        
+
             var response = await _httpClient.PostAsync(url, stringContent).ConfigureAwait(false);
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)

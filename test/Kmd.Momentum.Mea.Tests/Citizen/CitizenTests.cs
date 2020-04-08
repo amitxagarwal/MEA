@@ -195,7 +195,6 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task CreateJournalNoteAsyncSuccess()
         {
             //Arrange
-
             CitizenJournalNoteRequestDocumentModel[] requestDocumentModel = { new CitizenJournalNoteRequestDocumentModel() {
                 Content="testContent",
                 ContentType="testContentType",
@@ -213,29 +212,13 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             };
 
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
-            var _configuration = new Mock<IConfiguration>();            
+            var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-                        
-            McaCitizenJournalNoteRequestModel _mcaRequestModel = new McaCitizenJournalNoteRequestModel()
-            {
-                Body = requestModel.Body,
-                Cpr = requestModel.Cpr,
-                CreateDateTime = DateTime.UtcNow.GetDateTimeFormats()[102],
-                Documents = requestModel.Documents,
-                Email = requestModel.Email,
-                Source = requestModel.Type,
-                Title = requestModel.Title
-            };
-
-            string _serializedRequest = JsonConvert.SerializeObject(_mcaRequestModel);
-
-            helperHttpClientMoq.Setup(x => x.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}journals/document"), _serializedRequest))
-                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(String.Empty)));
+            helperHttpClientMoq.Setup(x => x.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}journals/document"), requestModel))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>("")));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object);
-
-
 
             //Act
             var result = await citizenService.CreateJournalNoteAsync(requestModel).ConfigureAwait(false);

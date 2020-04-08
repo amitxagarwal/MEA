@@ -91,6 +91,11 @@ Param(
     # The scope to get token
     [Parameter(Mandatory=$true)]
     $MeaScope
+
+    # The DbRequired for build database if it is true
+    [Parameter(Mandatory=$false)]
+    [string]
+    $DbRequired = "false"
 )
 
 function Compress-Directory {

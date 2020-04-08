@@ -34,7 +34,7 @@ namespace Kmd.Momentum.Mea.Common.Authorization.Journal
 
             // Split the audience, tenants, scope string into an array
             var audience = context.User.FindFirst(c => c.Type == MeaCustomClaimAttributes.AudienceClaimTypeName).Value.Split(' ');
-            var tenant = context.User.FindFirst(c => c.Type == MeaCustomClaimAttributes.TenantClaimTypeName).Value.Split(' ');
+            var tenant = context.User.FindFirst(c => c.Type == MeaCustomClaimAttributes.TenantClaimTypeName).Value;
             var scope = context.User.Claims.FirstOrDefault(x => x.Type.Contains("scope")).Value.Split(' ');
 
             // Succeed if the audience, tenant and scope array contains the required audience, tenant and scope
@@ -44,18 +44,14 @@ namespace Kmd.Momentum.Mea.Common.Authorization.Journal
             return Task.CompletedTask;
         }
 
-        private bool CheckForValidScope(string[] tenant, string[] scope)
+        private bool CheckForValidScope(string tenant, string[] scope)
         {
             bool result = false;
-            var authorization = _configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<Authorization>>();
+            var authorization = _configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<Authorization>>().First(x => x.KommuneId == tenant);
 
-            foreach (var item in authorization)
-            {
-                if (tenant.Any(x => x == item.KommuneId) && scope.Any(x => x == item.Scopes.ScopeForJournalApi))
-                {
-                    result = true;
-                }
-            }
+            if (scope.Contains(authorization.Scopes.ScopeForJournalApi))
+                return true;
+
             return result;
         }
     }

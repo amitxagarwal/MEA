@@ -32,16 +32,16 @@ namespace Kmd.Momentum.Mea.Caseworker1
             if (response.IsError)
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
-                Log.ForContext("GetAllActiveCitizensAsync", "All Active Citizens")
-                .Error("An Error Occured while retriving data of all active citizens" + error);
+                Log.ForContext("GetAllCaseworkersAsync", "All Caseworkers")
+                .Error("An Error Occured while retriving data of all caseworkers" + error);
                 return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>(response.Error, response.StatusCode.Value);
             }
 
             var result = response.Result;
             var content = result.Select(x => JsonConvert.DeserializeObject<CaseworkerDataResponseModel>(x));
 
-            Log.ForContext("GetAllActiveCitizensAsync", "All Active Citizens")
-                .Information("All the active citizens data retrived successfully");
+            Log.ForContext("GetAllCaseworkersAsync", "All Caseworkers")
+                .Information("All the caseworkers data retrived successfully");
             return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>(content.ToList());
         }
 

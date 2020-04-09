@@ -62,11 +62,11 @@ Param(
 
     # The client id for integration tests to run
     [Parameter(Mandatory=$true)]
-    $ClientId,
+    $McaClientId,
 
     # The client secret for integration tests to run
     [Parameter(Mandatory=$true)]
-    $ClientSecret,
+    $McaClientSecret,
 
     # The MCA Api Uri for integration tests to run
     [Parameter(Mandatory=$true)]
@@ -74,7 +74,7 @@ Param(
 
     # The scope for integration tests to run
     [Parameter(Mandatory=$true)]
-    $Scope,
+    $McaScope,
 
     # The environment for integration tests to run only in phoenix environment
     [Parameter(Mandatory=$true)]
@@ -253,10 +253,10 @@ try {
         try {
             Write-Host "build: Testing project in '$testFolder'"
             
-            ($env:KMD_MOMENTUM_MEA_McaClientSecret = $ClientSecret); 
-            ($env:KMD_MOMENTUM_MEA_McaClientId = $ClientId); 
+            ($env:KMD_MOMENTUM_MEA_McaClientSecret = $McaClientSecret); 
+            ($env:KMD_MOMENTUM_MEA_McaClientId = $McaClientId); 
             ($env:KMD_MOMENTUM_MEA_McaApiUri = $McaApiUri); 
-            ($env:KMD_MOMENTUM_MEA_McaScope = $Scope);
+            ($env:KMD_MOMENTUM_MEA_McaScope = $McaScope);
             ($env:KMD_MOMENTUM_MEA_ClientSecret = $MeaClientSecret); 
             ($env:KMD_MOMENTUM_MEA_ClientId = $MeaClientId); 
             ($env:KMD_MOMENTUM_MEA_Scope = $MeaScope);

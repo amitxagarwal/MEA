@@ -21,7 +21,7 @@ stages:
         packageType: 'sdk'
         useGlobalJson: true
     - task: NuGetAuthenticate@0
-    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -ClientId "$(McaClientId)" -ClientSecret "$(McaClientSecret)" -McaApiUri "$(McaApiUri)" -Scope "$(McaScope)" -Environment "$(ENVIRONMENT)"
+    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -ClientId "$(McaClientId)" -ClientSecret "$(McaClientSecret)" -McaApiUri "$(McaApiUri)" -Scope "$(McaScope)" -Environment "$(ENVIRONMENT)" -DbRequired "$(DbRequired)"
       displayName: run build.ps1
       failOnStderr: true
       env:
@@ -56,6 +56,7 @@ stages:
       autoSwapSlots: true
       clientId: $(McaClientId)
       clientSecret: $(McaClientSecret)
+      isDbRequired: $(DbRequired)
 
 - stage: deploy_internal
   dependsOn: Build
@@ -76,3 +77,4 @@ stages:
       autoSwapSlots: true
       clientId: $(McaClientId)
       clientSecret: $(McaClientSecret)
+      isDbRequired: $(DbRequired)

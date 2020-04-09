@@ -14,6 +14,13 @@
         "description": "Base Uri for calling MCA API"
       }
     },
+    "dbRequired": {
+      "type": "string",
+      "defaultValue": "false",
+      "metadata": {
+        "description": "Flag for datbase required or not"
+      }
+    },
     "dbServerName": {
       "type": "string",
       "metadata": {
@@ -355,6 +362,7 @@
     },
     {
       "apiVersion": "2017-12-01-preview",
+      "condition": "[equals(parameters('dbRequired'),'true')]",
       "kind": "",
       "location": "[parameters('location')]",
       "name": "[parameters('dbServerName')]",
@@ -366,6 +374,7 @@
       "resources": [
         {
           "apiVersion": "2017-12-01-preview",
+          "condition": "[equals(parameters('dbRequired'),'true')]",
           "name": "[parameters('dbName')]",
           "type": "databases",
           "location": "[parameters('location')]",
@@ -375,6 +384,7 @@
         },
         {
           "name": "defaultRule",
+          "condition": "[equals(parameters('dbRequired'),'true')]",
           "type": "firewallrules",
           "location": "[parameters('location')]",
           "apiVersion": "2017-12-01-preview",

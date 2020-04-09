@@ -1,4 +1,5 @@
-﻿using Kmd.Momentum.Mea.Common.Authorization.Caseworker;
+﻿using Kmd.Momentum.Mea.Common.Authorization;
+using Kmd.Momentum.Mea.Common.Authorization.Caseworker;
 using Kmd.Momentum.Mea.Common.Authorization.Citizen;
 using Kmd.Momentum.Mea.Common.Authorization.Journal;
 using Kmd.Momentum.Mea.Common.Framework;
@@ -22,6 +23,7 @@ namespace Kmd.Momentum.Mea.Common.Modules
                 .AddHttpClient<IMeaClient, MeaClient, MeaClientOptions>(
                     configuration,
                     nameof(ApplicationOptions.MeaClient));
+            services.AddSingleton<IMeaCustomClaimsCheck, MeaCustomClaimsCheck>();
         }
     }
 }

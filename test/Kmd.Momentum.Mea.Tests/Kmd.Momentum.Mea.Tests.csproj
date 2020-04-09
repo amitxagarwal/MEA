@@ -11,14 +11,14 @@
 
     <ItemGroup>
         <PackageReference Include="AutoFixture.Idioms" Version="4.11.0" />
-        <PackageReference Include="FluentAssertions" Version="5.10.2" />
+        <PackageReference Include="FluentAssertions" Version="5.10.3" />
         <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
-        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0-beta3.final">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.2" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0-preview.2.20160.3" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.0-preview-20200318-01" />
         <PackageReference Include="Moq" Version="4.13.1" />
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" />
         <PackageReference Include="xunit" Version="2.4.1" />
@@ -26,7 +26,10 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="1.0.1" />
+        <PackageReference Include="coverlet.collector" Version="1.2.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>

@@ -66,7 +66,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                     caseworkerIdentifier = item["identifier"],
                     description = item["description"],
                     isBookable = true,
-                    isActive = true
+                    isActive = item["isActive"]
                 });
                 JsonStringList.Add(jsonToReturn);
 

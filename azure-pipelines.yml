@@ -10,7 +10,7 @@ stages:
       matrix:
         linux: { imageName: "ubuntu-18.04" }
         mac: { imageName: "macos-10.14" }
-        windows: { imageName: "vs2017" }
+        windows: { imageName: "windows-2019" }
       maxParallel: 3
     pool:
       vmImage: $(imageName)
@@ -21,7 +21,7 @@ stages:
         packageType: 'sdk'
         useGlobalJson: true
     - task: NuGetAuthenticate@0
-    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "vs2017")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -ClientId "$(McaClientId)" -ClientSecret "$(McaClientSecret)" -McaApiUri "$(McaApiUri)" -Scope "$(McaScope)" -Environment "$(ENVIRONMENT)" -DbRequired "$(DbRequired)"
+    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -ClientId "$(McaClientId)" -ClientSecret "$(McaClientSecret)" -McaApiUri "$(McaApiUri)" -Scope "$(McaScope)" -Environment "$(ENVIRONMENT)" -DbRequired "$(DbRequired)"
       displayName: run build.ps1
       failOnStderr: true
       env:

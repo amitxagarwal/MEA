@@ -24,12 +24,9 @@ namespace Kmd.Momentum.Mea.Common.Authorization.Journal
         {
             var claims = _meaCustomClaimsCheck.FetchClaims(context, requirement.JournalAudience, requirement.JournalTenant, requirement.JournalScope);
 
-            if (claims != null)
+            if (claims != null && claims.Audience.Any(s => s == Aud) && CheckForValidScope(claims.Tenant, claims.Scope) is true)
             {
-                if (claims.Audience.Any(s => s == Aud) && CheckForValidScope(claims.Tenant, claims.Scope) is true)
-                {
-                    context.Succeed(requirement);
-                }
+                context.Succeed(requirement);
             }
 
             return Task.CompletedTask;
@@ -38,9 +35,9 @@ namespace Kmd.Momentum.Mea.Common.Authorization.Journal
         private bool CheckForValidScope(string tenant, string[] scope)
         {
             bool result = false;
-            var authorization = _configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<Authorization>>().First(x => x.KommuneId == tenant);
+            var authorization = _configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<Authorization>>().FirstOrDefault(x => x.KommuneId == tenant);
 
-            if (scope.Contains(authorization.Scopes.ScopeForJournalApi))
+            if (authorization != null && scope.Contains(authorization.Scopes.ScopeForJournalApi))
                 return true;
 
             return result;

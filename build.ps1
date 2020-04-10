@@ -218,8 +218,11 @@ try {
     Write-Host "build: Package version suffix is $suffix"
     Write-Host "build: Build version suffix is $buildSuffix"
 
-    & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --no-dependencies --version-suffix "$buildSuffix"
+    & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
     if($LASTEXITCODE -ne 0) { 
+
+    Write-Host "build again to fix dependencies if exist"
+
     & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
     }
     if($LASTEXITCODE -ne 0) { exit 3 }

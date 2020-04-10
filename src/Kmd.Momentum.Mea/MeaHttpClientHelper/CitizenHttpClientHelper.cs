@@ -85,23 +85,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             var content = response.Result;
             return new ResultOrHttpError<string, Error>(content);
-        }
-
-        private string GetVal(JObject _json, string _key)
-        {
-            string[] _keyArr = _key.Split('.');
-            var _subJson = _json[_keyArr[0]];
-
-            if (_subJson == null || String.IsNullOrEmpty(_subJson.ToString()))
-                return String.Empty;
-
-            if (_keyArr.Length > 1)
-            {
-                _key = _key.Replace(_keyArr[0] + ".", string.Empty, System.StringComparison.CurrentCulture);
-                return GetVal((JObject)_subJson, _key);
-            }
-            return _subJson.ToString();
-        }
+        }        
     }
 }
 

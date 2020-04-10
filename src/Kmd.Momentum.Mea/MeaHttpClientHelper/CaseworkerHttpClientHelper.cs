@@ -1,9 +1,12 @@
-﻿using Kmd.Momentum.Mea.Common.Exceptions;
+﻿using Kmd.Momentum.Mea.Caseworker1;
+using Kmd.Momentum.Mea.Caseworker1.Model;
+using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -85,5 +88,33 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             var content = response.Result;
             return new ResultOrHttpError<string, Error>(content);
         }
+
+        public async Task<IReadOnlyList<CaseworkerDataResponseModel>> GetAllCaseworkerDatasFromMomentumCoreAsync(Uri url)
+        {
+            var paging = new Paging
+            {
+                PageNumber = -1,
+                pageSize = 50
+            };
+
+            bool hasMore = true;
+            List<CaseworkerDataResponseModel> totalRecords = new List<CaseworkerDataResponseModel>();
+            while (hasMore)
+            {
+                paging.PageNumber += 1;
+#pragma warning disable CA2000 // Dispose objects before losing scope
+                var response = await _meaClient.PostAsync(url, new StringContent(JsonConvert.SerializeObject(paging), Encoding.UTF8, "application/json")).ConfigureAwait(false);
+#pragma warning restore CA2000 // Dispose objects before losing scope
+                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var citizenDataObj = JsonConvert.DeserializeObject<PUnitData>(json);
+                var records = citizenDataObj.Data;
+                totalRecords.AddRange(records);
+                hasMore = citizenDataObj.HasMore;
+            }
+            return totalRecords;
+        }
+
+
     }
-}
+        }
+

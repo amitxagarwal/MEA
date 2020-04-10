@@ -80,5 +80,23 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
                 return Ok(result.Result);
             }
         }
+
+        ///<summary>
+        ///Get all active caseworkers
+        ///</summary>
+        ///<response code="200">The active citizen data is loaded successfully</response>
+        ///<response code="400">Bad request</response>
+        ///<response code="404">The active citizen data is not found</response>
+        ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [SwaggerOperation(OperationId = "GetAllActiveCaseworkers")]
+        public async Task<IReadOnlyList<CaseworkerDataResponseModel>> GetAllByCaseworkers()
+        {
+            return await _caseworkerService.GetCaseworkerIdAsync().ConfigureAwait(false);
+        }
     }
 }

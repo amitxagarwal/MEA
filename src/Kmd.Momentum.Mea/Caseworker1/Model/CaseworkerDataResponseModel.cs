@@ -5,6 +5,26 @@ using System.Text;
 
 namespace Kmd.Momentum.Mea.Caseworker1.Model
 {
+    public class PUnitData
+    {
+        [JsonProperty("totalPages")]
+        public int TotalPages { get; set; }
+
+        [JsonProperty("totalSearchCount")]
+        public int TotalSearchCount { get; set; }
+
+        [JsonProperty("page")]
+        public int Page { get; set; }
+
+        [JsonProperty("hasMore")]
+        public bool HasMore { get; set; }
+
+        [JsonProperty("data")]
+        public IReadOnlyList<CaseworkerDataResponseModel> Data { get; set; }
+
+
+    }
+}
     public class CaseworkerDataResponseModel
     {
         [JsonProperty("id")]

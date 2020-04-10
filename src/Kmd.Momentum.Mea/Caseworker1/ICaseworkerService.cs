@@ -13,6 +13,8 @@ namespace Kmd.Momentum.Mea.Caseworker1
 
         Task<ResultOrHttpError<CaseworkerDataResponseModel, Error>> GetCaseworkerByIdAsync(string caseworkerId);
 
+        Task<IReadOnlyList<CaseworkerDataResponseModel>> GetCaseworkerIdAsync();
+
 
     }
 }

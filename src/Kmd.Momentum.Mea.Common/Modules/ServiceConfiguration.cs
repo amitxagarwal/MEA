@@ -1,4 +1,5 @@
-﻿using Kmd.Momentum.Mea.Common.Authorization;
+﻿using CorrelationId;
+using Kmd.Momentum.Mea.Common.Authorization;
 using Kmd.Momentum.Mea.Common.Framework;
 using Kmd.Momentum.Mea.Common.Framework.PollyOptions;
 using Kmd.Momentum.Mea.Common.MeaHttpClient;
@@ -18,6 +19,8 @@ namespace Kmd.Momentum.Mea.Common.Modules
                 .AddHttpClient<IMeaClient, MeaClient, MeaClientOptions>(
                     configuration,
                     nameof(ApplicationOptions.MeaClient));
+
+            services.AddCorrelationId();
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using System.Net.Http;
+﻿using CorrelationId;
+using Microsoft.Extensions.Options;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using CorrelationId;
-using Microsoft.Extensions.Options;
 
 namespace Kmd.Momentum.Mea.Common.Framework
 {

@@ -51,13 +51,13 @@
         "description": "Base Uri for calling MCA API"
       }
     },
-    "mcaClientId": {
+    "clientId": {
       "type": "string",
       "metadata": {
         "description": "MCA client Id for authentication"
       }
     },
-    "mcaClientSecret": {
+    "clientSecret": {
       "type": "string",
       "metadata": {
         "description": "MCA client Secret for authentication"
@@ -230,11 +230,11 @@
             },
             {
               "name": "KMD_MOMENTUM_MEA_McaClientId",
-              "value": "[parameters('mcaClientId')]"
+              "value": "[parameters('clientId')]"
             },
             {
               "name": "KMD_MOMENTUM_MEA_McaClientSecret",
-              "value": "[parameters('mcaClientSecret')]"
+              "value": "[parameters('clientSecret')]"
             },
             {
               "name": "KMD_MOMENTUM_MEA_McaApiUri",
@@ -326,11 +326,11 @@
             },
             {
               "name": "KMD_MOMENTUM_MEA_McaClientId",
-              "value": "[parameters('mcaClientId')]"
+              "value": "[parameters('clientId')]"
             },
             {
               "name": "KMD_MOMENTUM_MEA_McaClientSecret",
-              "value": "[parameters('mcaClientSecret')]"
+              "value": "[parameters('clientSecret')]"
             },
             {
               "name": "KMD_MOMENTUM_MEA_McaApiUri",

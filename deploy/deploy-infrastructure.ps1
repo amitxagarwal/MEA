@@ -72,11 +72,11 @@ Param
 
   [Parameter(Mandatory=$true)]
   [string]
-  $ClientId,
+  $McaClientId,
 
   [Parameter(Mandatory=$true)]
   [string]
-  $ClientSecret,
+  $McaClientSecret,
 
   [Parameter(Mandatory=$true)]
   [string]
@@ -121,9 +121,10 @@ $TemplateParameters = @{
   diagnosticSeqApiKey = $DiagnosticSeqApiKey;
   webAppServicePlanSku = $WebAppServicePlanSku;
   webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
-  clientId = $ClientId;
-  clientSecret = $ClientSecret;
+  mcaClientId = $McaClientId;
+  mcaClientSecret = $McaClientSecret;
   mcaApiUri = $env:McaApiUri;
+  mcaScope = $env:McaScope;
   dbServerName = $DbServerName;
   dbLoginId = $env:DbLoginId;
   dbLoginPassword = $env:DbLoginPassword;

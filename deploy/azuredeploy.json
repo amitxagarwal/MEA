@@ -8,12 +8,6 @@
         "description": "Environment suffix to identify the environment"
       }
     },
-    "mcaApiUri": {
-      "type": "string",
-      "metadata": {
-        "description": "Base Uri for calling MCA API"
-      }
-    },
     "dbRequired": {
       "type": "string",
       "defaultValue": "false",
@@ -51,16 +45,28 @@
         "description": "Database Connection String"
       }
     },
-    "clientId": {
+    "mcaApiUri": {
       "type": "string",
       "metadata": {
-        "description": "Client Id for authentication"
+        "description": "Base Uri for calling MCA API"
       }
     },
-    "clientSecret": {
+    "mcaClientId": {
       "type": "string",
       "metadata": {
-        "description": "client Secret for authentication"
+        "description": "MCA client Id for authentication"
+      }
+    },
+    "mcaClientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "MCA client Secret for authentication"
+      }
+    },
+    "mcaScope": {
+      "type": "string",
+      "metadata": {
+        "description": "MCA scope for authentication"
       }
     },
     "instanceId": {
@@ -229,16 +235,20 @@
               "value": "[parameters('diagnosticSeqApiKey')]"
             },
             {
-              "name": "KMD_MOMENTUM_MEA_ClientId",
-              "value": "[parameters('clientId')]"
+              "name": "KMD_MOMENTUM_MEA_McaClientId",
+              "value": "[parameters('mcaClientId')]"
             },
             {
-              "name": "KMD_MOMENTUM_MEA_ClientSecret",
-              "value": "[parameters('clientSecret')]"
+              "name": "KMD_MOMENTUM_MEA_McaClientSecret",
+              "value": "[parameters('mcaClientSecret')]"
             },
             {
               "name": "KMD_MOMENTUM_MEA_McaApiUri",
               "value": "[parameters('mcaApiUri')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_McaScope",
+              "value": "[parameters('mcaScope')]"
             },
             {
               "name": "DbServerName",
@@ -298,7 +308,7 @@
           "appSettings": [
             {
               "name": "SlotName",
-              "value": "staging"
+              "value": "production"
             },
             {
               "name": "KMD_MOMENTUM_MEA_EnvironmentInstanceId",
@@ -325,16 +335,20 @@
               "value": "[parameters('diagnosticSeqApiKey')]"
             },
             {
-              "name": "KMD_MOMENTUM_MEA_ClientId",
-              "value": "[parameters('clientId')]"
+              "name": "KMD_MOMENTUM_MEA_McaClientId",
+              "value": "[parameters('mcaClientId')]"
             },
             {
-              "name": "KMD_MOMENTUM_MEA_ClientSecret",
-              "value": "[parameters('clientSecret')]"
+              "name": "KMD_MOMENTUM_MEA_McaClientSecret",
+              "value": "[parameters('mcaClientSecret')]"
             },
             {
               "name": "KMD_MOMENTUM_MEA_McaApiUri",
               "value": "[parameters('mcaApiUri')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_McaScope",
+              "value": "[parameters('mcaScope')]"
             },
             {
               "name": "DbServerName",

@@ -23,8 +23,8 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
         public async Task<IReadOnlyList<CaseworkerDataResponseModel>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url)
         {
-            List<JToken> totalRecords = new List<JToken>();
-            List<string> JsonStringList = new List<string>();
+          
+         
             var PageNumber = -1;
             var pageSize = 50;
             bool hasMore = true;
@@ -35,7 +35,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 var queryStringParams = $"pagingInfo.pageNumber={PageNumber}&pagingInfo.pageSize={pageSize}";
                 var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
                 var content = response.Result;
-                var jsonArray = JArray.Parse(JObject.Parse(content)["data"].ToString());
+                var jsonArray = JArray.Parse(JObject.Parse(content).ToString());
                 var citizenDataObj = JsonConvert.DeserializeObject<PUnitData>(jsonArray);
                 var records = citizenDataObj.Data;
                 totalRecords.AddRange(records);

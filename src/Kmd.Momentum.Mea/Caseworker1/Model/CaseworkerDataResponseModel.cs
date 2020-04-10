@@ -21,10 +21,10 @@ namespace Kmd.Momentum.Mea.Caseworker1.Model
 
         [JsonProperty("data")]
         public IReadOnlyList<CaseworkerDataResponseModel> Data { get; set; }
-
+    }
 
     }
-}
+
     public class CaseworkerDataResponseModel
     {
         [JsonProperty("id")]
@@ -77,4 +77,5 @@ namespace Kmd.Momentum.Mea.Caseworker1.Model
             IsActive = isActive;
         }
     }
-}
+
+

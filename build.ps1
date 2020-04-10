@@ -208,6 +208,14 @@ try {
     Write-Host "build: Build version suffix is $buildSuffix"
 
     & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
+
+    if($LASTEXITCODE -ne 0) { 
+
+    Write-Host "build again to fix dependencies if exist"
+
+    & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
+    }
+
     if($LASTEXITCODE -ne 0) { exit 3 }
 
     $PublishedApplications = $(

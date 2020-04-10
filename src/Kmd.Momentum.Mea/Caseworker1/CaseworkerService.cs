@@ -58,7 +58,7 @@ namespace Kmd.Momentum.Mea.Caseworker1
 
         public async Task<IReadOnlyList<CaseworkerDataResponseModel>> GetCaseworkerIdAsync()
         {
-            var response = await _caseworkerHttpClient.GetAllCaseworkerDatasFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/citizensearch")).ConfigureAwait(false);
+            var response = await _caseworkerHttpClient.GetAllCaseworkerDatasFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7")).ConfigureAwait(false);
 
             return response;
         }

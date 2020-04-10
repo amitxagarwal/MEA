@@ -129,11 +129,13 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
                 var content = response.Result;
                 var jsonArray = JArray.Parse(JObject.Parse(content)["data"].ToString());
-                var records = citizenDataObj.Data;
-                totalRecords.AddRange(records);
-                hasMore = citizenDataObj.HasMore;
+                //var citizenDataObj = JsonConvert.DeserializeObject<PUnitData>(content);
+                //var records = citizenDataObj.Data;
+                //totalRecords.AddRange(records);
+                //hasMore = citizenDataObj.HasMore;
             }
-            return totalRecords;
+            //return totalRecords;
+            return jsonArray;
         }
     }
 

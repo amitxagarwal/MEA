@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -42,15 +43,16 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             if (!response.IsSuccessStatusCode)
             {
-                var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
-
-                if (errorResponse == null || errorResponse.Errors == null || errorResponse.Errors.Length <= 0)
+                if((int)response.StatusCode >=(int)HttpStatusCode.BadRequest && (int)response.StatusCode < (int)HttpStatusCode.InternalServerError)
                 {
-                    var error = new Error(_correlationId, new string[] { "An error occured while fetching the record from Core Api" }, "MEA");
-                    Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System {error}");
+                    var errorFromResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var error = new Error(_correlationId, new string[] { "An error occured while fetching the record(s) from Core Api"}, "MEA");
+                    Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System : {errorFromResponse}");
 
                     return new ResultOrHttpError<string, Error>(error, response.StatusCode);
                 }
+
+                var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
 
                 Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System {errorResponse}");
                 return new ResultOrHttpError<string, Error>(errorResponse, response.StatusCode);

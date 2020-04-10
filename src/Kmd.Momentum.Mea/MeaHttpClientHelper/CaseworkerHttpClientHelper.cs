@@ -25,7 +25,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
         {
           
          
-            var PageNumber = -1;
+            var PageNumber = 0;
             var pageSize = 50;
             bool hasMore = true;
             List<CaseworkerDataResponseModel> totalRecords = new List<CaseworkerDataResponseModel>();
@@ -35,8 +35,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 var queryStringParams = $"pagingInfo.pageNumber={PageNumber}&pagingInfo.pageSize={pageSize}";
                 var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
                 var content = response.Result;
-                var jsonArray = JArray.Parse(JObject.Parse(content).ToString());
-                var citizenDataObj = JsonConvert.DeserializeObject<PUnitData>(jsonArray);
+                var citizenDataObj = JsonConvert.DeserializeObject<PUnitData>(content);
                 var records = citizenDataObj.Data;
                 totalRecords.AddRange(records);
                 hasMore = citizenDataObj.HasMore;

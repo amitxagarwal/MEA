@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Kmd.Momentum.Mea.Caseworker;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +8,9 @@ namespace Kmd.Momentum.Mea.Caseworker1.Model
 {
     public class PUnitData
     {
+        [JsonProperty("referenceId")]
+        public string ReferenceId { get; set; }
+
         [JsonProperty("totalPages")]
         public int TotalPages { get; set; }
 
@@ -19,8 +23,13 @@ namespace Kmd.Momentum.Mea.Caseworker1.Model
         [JsonProperty("hasMore")]
         public bool HasMore { get; set; }
 
+        [JsonProperty("additionalValues")]
+        public string AdditionalValues { get; set; }
+
         [JsonProperty("data")]
-        public IReadOnlyList<CaseworkerDataResponseModel> Data { get; set; }
+        public CaseworkerDataResponseModel[] Data { get; set; }
+
+
     }
 
     }
@@ -42,11 +51,12 @@ namespace Kmd.Momentum.Mea.Caseworker1.Model
         [JsonProperty("initials")]
         public string Initials { get; }
 
-        [JsonProperty("address")]
-        public string Email { get; }
+        [JsonProperty("email")]
+        public Email Email { get; }
+
 
         [JsonProperty("number")]
-        public string Phone { get; }
+        public Phone Phone { get; }
 
         [JsonProperty("caseworkerIdentifier")]
         public string CaseworkerIdentifier { get; }
@@ -60,7 +70,7 @@ namespace Kmd.Momentum.Mea.Caseworker1.Model
         [JsonProperty("isActive")]
         public bool IsActive { get; }
 
-        public CaseworkerDataResponseModel(string caseworkerId, string displayName, string givenName, string middleName, string initials, string email, string phone,
+        public CaseworkerDataResponseModel(string caseworkerId, string displayName, string givenName, string middleName, string initials, Email email, Phone phone,
            string caseworkerIdentifier, string description,
            bool isActive = true, bool isBookable = true)
         {

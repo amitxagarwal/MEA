@@ -22,7 +22,7 @@ stages:
         useGlobalJson: true
     - task: NuGetToolInstaller@1
       inputs:
-        versionSpec: '4.x','5.x'
+        versionSpec: '>=1.0.0'
     - task: NuGetAuthenticate@0
     - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -ClientId "$(McaClientId)" -ClientSecret "$(McaClientSecret)" -McaApiUri "$(McaApiUri)" -Scope "$(McaScope)" -Environment "$(ENVIRONMENT)" -DbRequired "$(DbRequired)"
       displayName: run build.ps1

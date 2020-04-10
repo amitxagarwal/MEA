@@ -127,8 +127,8 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 PageNumber++;
                 var queryStringParams = $"pagingInfo.pageNumber={PageNumber}&pagingInfo.pageSize={pageSize}";
                 var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
-                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var citizenDataObj = JsonConvert.DeserializeObject<PUnitData>(json);
+                var content = response.Result;
+                var jsonArray = JArray.Parse(JObject.Parse(content)["data"].ToString());
                 var records = citizenDataObj.Data;
                 totalRecords.AddRange(records);
                 hasMore = citizenDataObj.HasMore;

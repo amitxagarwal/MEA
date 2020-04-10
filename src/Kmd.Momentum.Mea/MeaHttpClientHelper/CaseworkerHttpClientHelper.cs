@@ -89,22 +89,44 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             return new ResultOrHttpError<string, Error>(content);
         }
 
+        //        public async Task<IReadOnlyList<CaseworkerDataResponseModel>> GetAllCaseworkerDatasFromMomentumCoreAsync(Uri url)
+        //        {
+        //            var paging = new Paging
+        //            {
+        //                PageNumber = -1,
+        //                pageSize = 50
+        //            };
+
+        //            bool hasMore = true;
+        //            List<CaseworkerDataResponseModel> totalRecords = new List<CaseworkerDataResponseModel>();
+        //            while (hasMore)
+        //            {
+        //                paging.PageNumber += 1;
+        //#pragma warning disable CA2000 // Dispose objects before losing scope
+        //                var response = await _meaClient.GetAsync(url, new StringContent(JsonConvert.SerializeObject(paging), Encoding.UTF8, "application/json")).ConfigureAwait(false);
+        //#pragma warning restore CA2000 // Dispose objects before losing scope
+        //                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        //                var citizenDataObj = JsonConvert.DeserializeObject<PUnitData>(json);
+        //                var records = citizenDataObj.Data;
+        //                totalRecords.AddRange(records);
+        //                hasMore = citizenDataObj.HasMore;
+        //            }
+        //            return totalRecords;
+        //        }
+
         public async Task<IReadOnlyList<CaseworkerDataResponseModel>> GetAllCaseworkerDatasFromMomentumCoreAsync(Uri url)
         {
-            var paging = new Paging
-            {
-                PageNumber = -1,
-                pageSize = 50
-            };
-
+            List<JToken> totalRecords = new List<JToken>();
+            List<string> JsonStringList = new List<string>();
+            var PageNumber = -1;
+            var pageSize = 50;
             bool hasMore = true;
             List<CaseworkerDataResponseModel> totalRecords = new List<CaseworkerDataResponseModel>();
             while (hasMore)
             {
-                paging.PageNumber += 1;
-#pragma warning disable CA2000 // Dispose objects before losing scope
-                var response = await _meaClient.PostAsync(url, new StringContent(JsonConvert.SerializeObject(paging), Encoding.UTF8, "application/json")).ConfigureAwait(false);
-#pragma warning restore CA2000 // Dispose objects before losing scope
+                PageNumber++;
+                var queryStringParams = $"pagingInfo.pageNumber={PageNumber}&pagingInfo.pageSize={pageSize}";
+                var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
                 var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var citizenDataObj = JsonConvert.DeserializeObject<PUnitData>(json);
                 var records = citizenDataObj.Data;
@@ -112,6 +134,9 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 hasMore = citizenDataObj.HasMore;
             }
             return totalRecords;
+        }
+    }
+
         }
 
 

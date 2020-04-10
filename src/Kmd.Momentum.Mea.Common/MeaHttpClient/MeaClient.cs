@@ -78,7 +78,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
                         new KeyValuePair<string, string>("resource", "74b4f45c-4e9b-4be1-98f1-ea876d9edd11")
                });
 
-                var response = await _httpClient.PostAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaScope"]}"), content).ConfigureAwait(false);
+                var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"), content).ConfigureAwait(false);
 
                 if(!response.IsSuccessStatusCode)
                 {

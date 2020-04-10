@@ -10,8 +10,8 @@ parameters:
   webAppServicePlanSku: B1
   webAppConfigAlwaysOn: true
   autoSwapSlots: false
-  McaClientId: <secret>
-  McaClientSecret: <secret>
+  clientId: <secret>
+  clientSecret: <secret>
   isDbRequired: 'false'
 
 jobs:
@@ -28,8 +28,8 @@ jobs:
       ResourceGroupName: kmd-momentum-mea-${{ parameters.instanceId }}-rg
       WebAppServicePlanSku: ${{ parameters.webAppServicePlanSku }}
       WebAppConfigAlwaysOn: ${{ parameters.webAppConfigAlwaysOn }}
-      McaClientId: ${{ parameters.McaClientId }}
-      McaClientSecret: ${{ parameters.McaClientSecret }}
+      ClientId: ${{ parameters.clientId }}
+      ClientSecret: ${{ parameters.clientSecret }}
       isDbRequired: ${{ parameters.isDbRequired }}
 
     strategy:
@@ -44,7 +44,7 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'
                 ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-infrastructure.ps1'
-                ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)' -McaClientId '$(McaClientId)' -McaClientSecret '$(McaClientSecret)' -Environment '$(Environment)' -DbRequired '$(isDbRequired)'
+                ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)' -ClientId '$(ClientId)' -ClientSecret '$(ClientSecret)' -Environment '$(Environment)' -DbRequired '$(isDbRequired)'
                 azurePowerShellVersion: 'LatestVersion'
                 pwsh: true
 

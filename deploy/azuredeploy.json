@@ -63,12 +63,6 @@
         "description": "MCA client Secret for authentication"
       }
     },
-    "mcaScope": {
-      "type": "string",
-      "metadata": {
-        "description": "MCA scope for authentication"
-      }
-    },
     "instanceId": {
       "type": "string",
       "minLength": 1,
@@ -247,10 +241,6 @@
               "value": "[parameters('mcaApiUri')]"
             },
             {
-              "name": "KMD_MOMENTUM_MEA_McaScope",
-              "value": "[parameters('mcaScope')]"
-            },
-            {
               "name": "DbServerName",
               "value": "[parameters('dbServerName')]"
             },
@@ -345,10 +335,6 @@
             {
               "name": "KMD_MOMENTUM_MEA_McaApiUri",
               "value": "[parameters('mcaApiUri')]"
-            },
-            {
-              "name": "KMD_MOMENTUM_MEA_McaScope",
-              "value": "[parameters('mcaScope')]"
             },
             {
               "name": "DbServerName",

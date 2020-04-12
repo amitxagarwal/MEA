@@ -1,9 +1,11 @@
-﻿using Kmd.Momentum.Mea.Caseworker;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Kmd.Momentum.Mea.Caseworker1.Model
+namespace Kmd.Momentum.Mea.Caseworker.Model
 {
-    public class CaseworkerDataResponseModel
+    public class ClaseworkerData
     {
         [JsonProperty("id")]
         public string CaseworkerId { get; }
@@ -21,7 +23,7 @@ namespace Kmd.Momentum.Mea.Caseworker1.Model
         public string Initials { get; }
 
         [JsonProperty(PropertyName = "email/address")]
-        public Email Email { get; }
+        public string Email { get; }
 
         [JsonProperty("number")]
         public Phone Phone { get; }
@@ -38,7 +40,7 @@ namespace Kmd.Momentum.Mea.Caseworker1.Model
         [JsonProperty("isActive")]
         public bool IsActive { get; }
 
-        public CaseworkerDataResponseModel(string caseworkerId, string displayName, string givenName, string middleName, string initials, Email email, Phone phone,
+        public ClaseworkerData(string caseworkerId, string displayName, string givenName, string middleName, string initials, string email, Phone phone,
            string caseworkerIdentifier, string description,
            bool isActive = true, bool isBookable = true)
         {
@@ -56,5 +58,5 @@ namespace Kmd.Momentum.Mea.Caseworker1.Model
         }
     }
 }
-
+    
 

@@ -1,9 +1,13 @@
-﻿using Kmd.Momentum.Mea.MeaHttpClientHelper;
+﻿using FluentAssertions;
+using Kmd.Momentum.Mea.Caseworker1;
+using Kmd.Momentum.Mea.Caseworker1.Model;
+using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -25,20 +29,21 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             mockResponseData.Add(JsonConvert.SerializeObject(new CaseworkerDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
             mockResponseData.Add(JsonConvert.SerializeObject(new CaseworkerDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
 
-            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search")))
-                .Returns(Task.FromResult(new IReadOnlyList<string>(mockResponseData)));
+            helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers")))
+                .Returns(Task.FromResult((IReadOnlyList<CaseworkerDataResponseModel>)mockResponseData));
+          
 
-            var citizenService = new CaseworkerService(helperHttpClientMoq.Object, _configuration.Object);
-            var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
+            var caseworkerService = new CaseworkerService(helperHttpClientMoq.Object, _configuration.Object);
+            var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CaseworkerDataResponseModel>(x)).ToList();
 
             //Act
-            var result = await citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
+            var result = await caseworkerService.GetAllCaseworkersInMomentumAsync().ConfigureAwait(false);
 
 
             //Asert
             result.Should().NotBeNull();
-            result.IsError.Should().BeFalse();
-            result.Result.Should().BeEquivalentTo(responseData);
+            //result.IsError.Should().BeFalse();
+            result.Should().BeEquivalentTo(mockResponseData);
         }
     }
 }

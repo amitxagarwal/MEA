@@ -1,6 +1,5 @@
-﻿using Kmd.Momentum.Mea.Caseworker1;
+﻿using Kmd.Momentum.Mea.Caseworker.Model;
 using Kmd.Momentum.Mea.Caseworker1.Model;
-using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 {
-     public class CaseworkerHttpClientHelper : ICaseworkerHttpClientHelper
+    public class CaseworkerHttpClientHelper : ICaseworkerHttpClientHelper
     {
         private readonly IMeaClient _meaClient;
 
@@ -23,8 +22,6 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
         public async Task<IReadOnlyList<CaseworkerDataResponseModel>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url)
         {
-          
-         
             var PageNumber = 0;
             var pageSize = 50;
             bool hasMore = true;
@@ -37,17 +34,17 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 var content = response.Result;
                 var citizenDataObj = JsonConvert.DeserializeObject<PUnitData>(content);
                 var records = citizenDataObj.Data;
+            //    ClaseworkerData data = new ClaseworkerData() { CaseworkerId,DisplayName,GivenName, MiddleName, Initials, Email,  Phone,
+            //CaseworkerIdentifier,  Description,
+            //IsActive = true,  IsBookable = true};
                 totalRecords.AddRange(records);
                 hasMore = citizenDataObj.HasMore;
             }
             return totalRecords;
-         
         }
-        
     }
+}
 
-        }
 
 
-    
 

@@ -129,7 +129,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            actualResponse.Should().NotBeNull();
+            actualResponse.Should().BeNull();
         }
     }
 }

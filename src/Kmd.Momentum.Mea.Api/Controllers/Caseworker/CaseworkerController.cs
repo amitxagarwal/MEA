@@ -27,7 +27,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         ///Get all the  caseworkers
         ///</summary>
         ///<response code="200">All the caseworkers data is loaded successfully</response>
-        ///<response code="400">Bad request</response>
+        ///<response code="400"> Bad request</response>
         ///<response code="404">The caseworker data is not found</response>
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
         [HttpGet]

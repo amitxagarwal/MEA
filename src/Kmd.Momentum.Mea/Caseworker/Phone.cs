@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kmd.Momentum.Mea.Caseworker
+﻿namespace Kmd.Momentum.Mea.Caseworker
 {
     public class Phone
     {

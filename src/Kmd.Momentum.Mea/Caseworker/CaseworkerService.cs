@@ -1,6 +1,7 @@
 ﻿using Kmd.Momentum.Mea.Caseworker.Model;
 using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
@@ -14,11 +15,15 @@ namespace Kmd.Momentum.Mea.Caseworker
     {
         private readonly ICaseworkerHttpClientHelper _caseworkerHttpClient;
         private readonly IConfiguration _config;
+        private readonly string _correlationId;
+        private readonly string _clientId;
 
-        public CaseworkerService(ICaseworkerHttpClientHelper caseworkerHttpClient, IConfiguration config)
+        public CaseworkerService(ICaseworkerHttpClientHelper caseworkerHttpClient, IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
             _caseworkerHttpClient = caseworkerHttpClient ?? throw new ArgumentNullException(nameof(caseworkerHttpClient));
             _config = config;
+            _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
+            _clientId = httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == "azp").Value;
         }
 
         public async Task<ResultOrHttpError<IReadOnlyList<CaseworkerDataResponse>, Error>> GetAllCaseworkersAsync()
@@ -30,13 +35,15 @@ namespace Kmd.Momentum.Mea.Caseworker
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
 
-                Log.ForContext("GetAllActiveCitizensAsync", "All Active Citizens")
+                Log.ForContext("CorrelationId", _correlationId)
+                   .ForContext("ClientId", _clientId)
                 .Error("An Error Occured while retrieving data of all the caseworkers" + error);
 
                 return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponse>, Error>(response.Error, response.StatusCode.Value);
             }
 
-            Log.ForContext("GetAllActiveCitizensAsync", "All Active Citizens")
+            Log.ForContext("CorrelationId", _correlationId)
+               .ForContext("ClientId", _clientId)
                 .Information("All the caseworkers data retrieved successfully");
 
             return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponse>, Error>(response.Result);

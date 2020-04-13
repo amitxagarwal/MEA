@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
 {
     [ApiController]
-    [Route("caseworker")]
+    [Route("caseworkers")]
     [Produces("application/json", "text/json")]
     [Authorize(MeaCustomClaimAttributes.AudienceClaimTypeName)]
     public class CaseworkerController : ControllerBase

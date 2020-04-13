@@ -49,6 +49,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
                 hasMore = citizenDataObj.HasMore;
             }
+
             return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponse>, Error>(totalRecords);
         }
     }

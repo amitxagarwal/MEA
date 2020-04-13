@@ -91,8 +91,9 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             List<McaCitizenJournalNoteRequestAttachmentModel> _attachmentList = new List<McaCitizenJournalNoteRequestAttachmentModel>();
 
-            foreach (var _doc in requestModel.Documents)
+            for (int i = 0; i < requestModel.Documents.Count; i++)
             {
+                var _doc = requestModel.Documents[i];
                 var _attachemnt = new McaCitizenJournalNoteRequestAttachmentModel()
                 {
                     ContentType = _doc.ContentType,

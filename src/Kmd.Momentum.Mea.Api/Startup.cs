@@ -1,6 +1,9 @@
 using CorrelationId;
 using Kmd.Momentum.Mea.Common.Authorization;
 using Kmd.Momentum.Mea.Common.DatabaseStore;
+using Kmd.Momentum.Mea.Common.Framework;
+using Kmd.Momentum.Mea.Common.Framework.PollyOptions;
+using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Kmd.Momentum.Mea.Common.Modules;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -53,7 +56,6 @@ namespace Kmd.Momentum.Mea.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCorrelationId();
             services.AddMvc()
                 .AddJsonOptions(a =>
                 {
@@ -75,7 +77,9 @@ namespace Kmd.Momentum.Mea.Api
             var azureAdB2C = _configuration.GetSection("AzureAdB2C");
             services.AddSingleton(azureAdB2C);
             var azureAd = _configuration.GetSection("AzureAd");
-            services.AddSingleton(azureAd);
+            services.AddSingleton(azureAd);          
+
+            services.AddHttpContextAccessor();
 
             var tokenValidationParamteres = new TokenValidationParameters
             {
@@ -172,7 +176,12 @@ namespace Kmd.Momentum.Mea.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCorrelationId();
+            app.UseCorrelationId(new CorrelationIdOptions()
+            {
+                IncludeInResponse = true,
+                UpdateTraceIdentifier = false
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

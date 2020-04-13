@@ -1,4 +1,5 @@
-﻿using Kmd.Momentum.Mea.Caseworker1.Model;
+﻿using Kmd.Momentum.Mea.Caseworker.Model;
+using Kmd.Momentum.Mea.Caseworker1.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +9,6 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 {
     public interface ICaseworkerHttpClientHelper
     {
-        Task<IReadOnlyList<CaseworkerDataResponseModel>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url);        
+        Task<IReadOnlyList<ClaseworkerData>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url);        
     }
 }

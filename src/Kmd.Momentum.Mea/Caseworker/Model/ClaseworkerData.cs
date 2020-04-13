@@ -26,7 +26,7 @@ namespace Kmd.Momentum.Mea.Caseworker.Model
         public string Email { get; }
 
         [JsonProperty("number")]
-        public Phone Phone { get; }
+        public string Phone { get; }
 
         [JsonProperty("caseworkerIdentifier")]
         public string CaseworkerIdentifier { get; }
@@ -40,7 +40,7 @@ namespace Kmd.Momentum.Mea.Caseworker.Model
         [JsonProperty("isActive")]
         public bool IsActive { get; }
 
-        public ClaseworkerData(string caseworkerId, string displayName, string givenName, string middleName, string initials, string email, Phone phone,
+        public ClaseworkerData(string caseworkerId, string displayName, string givenName, string middleName, string initials, string email, string phone,
            string caseworkerIdentifier, string description,
            bool isActive = true, bool isBookable = true)
         {

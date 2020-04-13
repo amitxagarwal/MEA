@@ -20,12 +20,12 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             _meaClient = meaClient;
         }
 
-        public async Task<IReadOnlyList<CaseworkerDataResponseModel>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url)
+        public async Task<IReadOnlyList<ClaseworkerData>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url)
         {
             var PageNumber = 0;
             var pageSize = 50;
             bool hasMore = true;
-            List<CaseworkerDataResponseModel> totalRecords = new List<CaseworkerDataResponseModel>();
+            List<ClaseworkerData> totalRecords = new List<ClaseworkerData>();
             while (hasMore)
             {
                 PageNumber++;
@@ -34,10 +34,43 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 var content = response.Result;
                 var citizenDataObj = JsonConvert.DeserializeObject<PUnitData>(content);
                 var records = citizenDataObj.Data;
-            //    ClaseworkerData data = new ClaseworkerData() { CaseworkerId,DisplayName,GivenName, MiddleName, Initials, Email,  Phone,
-            //CaseworkerIdentifier,  Description,
-            //IsActive = true,  IsBookable = true};
-                totalRecords.AddRange(records);
+
+                //    ClaseworkerData data = new ClaseworkerData() { CaseworkerId,DisplayName,GivenName, MiddleName, Initials, Email,  Phone,
+                //CaseworkerIdentifier,  Description,
+                //IsActive = true,  IsBookable = true};
+
+                foreach (var item in records)
+                {
+                    if (item.Phone == null && item.Email == null)
+                    {
+                        var x = new ClaseworkerData(item.CaseworkerId, item.DisplayName, item.GivenName, item.MiddleName, item.Initials, null,
+                       null, item.CaseworkerIdentifier, item.Description, item.IsActive, item.IsBookable);
+                        totalRecords.Add(x);
+                    }
+
+                    else if(item.Phone != null && item.Email != null)
+                    {
+                        var x = new ClaseworkerData(item.CaseworkerId, item.DisplayName, item.GivenName, item.MiddleName, item.Initials, item.Email.Address,
+                      item.Phone.Number, item.CaseworkerIdentifier, item.Description, item.IsActive, item.IsBookable);
+                        totalRecords.Add(x);
+                    }
+
+                    else if (item.Phone != null && item.Email == null)
+                    {
+                        var x = new ClaseworkerData(item.CaseworkerId, item.DisplayName, item.GivenName, item.MiddleName, item.Initials, null,
+                      item.Phone.Number, item.CaseworkerIdentifier, item.Description, item.IsActive, item.IsBookable);
+                        totalRecords.Add(x);
+                    }
+
+                    else
+                    {
+                        var x = new ClaseworkerData(item.CaseworkerId, item.DisplayName, item.GivenName, item.MiddleName, item.Initials, item.Email.Address,
+                      null, item.CaseworkerIdentifier, item.Description, item.IsActive, item.IsBookable);
+                        totalRecords.Add(x);
+                    }
+
+                }
+
                 hasMore = citizenDataObj.HasMore;
             }
             return totalRecords;

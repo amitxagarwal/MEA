@@ -1,4 +1,5 @@
-﻿using Kmd.Momentum.Mea.Caseworker1;
+﻿using Kmd.Momentum.Mea.Caseworker.Model;
+using Kmd.Momentum.Mea.Caseworker1;
 using Kmd.Momentum.Mea.Caseworker1.Model;
 using Kmd.Momentum.Mea.Common.Authorization;
 using Microsoft.AspNetCore.Authorization;
@@ -34,7 +35,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(401)]
-        public async Task<IReadOnlyList<CaseworkerDataResponseModel>> GetAllCaseworkersInMomentum()
+        public async Task<IReadOnlyList<ClaseworkerData>> GetAllCaseworkersInMomentum()
         {
             return await _caseworkerService.GetAllCaseworkersInMomentumAsync().ConfigureAwait(false);
         }

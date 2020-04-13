@@ -30,5 +30,5 @@ namespace Kmd.Momentum.Mea.Caseworker.Model
         public CaseworkerDataResponseModel[] Data { get; set; }
 
     }
-    }
+}
 

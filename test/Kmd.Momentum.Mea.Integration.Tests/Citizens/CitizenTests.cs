@@ -112,9 +112,9 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             {
                 new MeaCitizenJournalNoteRequestDocumentModel()
                 {
-                    Content = ".pdf",
+                    Content = "testName",
                     ContentType = "application/octet-stream",
-                    Name = "testName"
+                    Name = ".pdf"
                 }
             };
 

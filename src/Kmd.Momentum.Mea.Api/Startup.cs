@@ -1,5 +1,8 @@
 using CorrelationId;
 using Kmd.Momentum.Mea.Common.Authorization;
+using Kmd.Momentum.Mea.Common.Authorization.Caseworker;
+using Kmd.Momentum.Mea.Common.Authorization.Citizen;
+using Kmd.Momentum.Mea.Common.Authorization.Journal;
 using Kmd.Momentum.Mea.Common.DatabaseStore;
 using Kmd.Momentum.Mea.Common.Framework;
 using Kmd.Momentum.Mea.Common.Framework.PollyOptions;
@@ -97,11 +100,24 @@ namespace Kmd.Momentum.Mea.Api
             SettingTokenValidationParameters(tokenValidationParamteres, azureAdB2C, azureAd).Wait();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(x => {x.TokenValidationParameters = tokenValidationParamteres;});
+                .AddJwtBearer(x => { x.TokenValidationParameters = tokenValidationParamteres; });
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(MeaCustomClaimAttributes.AudienceClaimTypeName, policy => policy.Requirements.Add(new MeaCustomClaimRequirement(MeaCustomClaimAttributes.AudienceClaimTypeName, MeaCustomClaimAttributes.TenantClaimTypeName)));
+                options.AddPolicy(MeaCustomClaimAttributes.CitizenRole, policy => policy.Requirements.Add(new MeaCitizenClaimRequirement(
+                    MeaCustomClaimAttributes.AudienceClaimTypeName,
+                    MeaCustomClaimAttributes.TenantClaimTypeName,
+                    MeaCustomClaimAttributes.ScopeClaimTypeName)));
+
+                options.AddPolicy(MeaCustomClaimAttributes.CaseworkerRole, policy => policy.Requirements.Add(new MeaCaseworkerClaimRequirement(
+                    MeaCustomClaimAttributes.AudienceClaimTypeName,
+                    MeaCustomClaimAttributes.TenantClaimTypeName,
+                    MeaCustomClaimAttributes.ScopeClaimTypeName)));
+
+                options.AddPolicy(MeaCustomClaimAttributes.JournalRole, policy => policy.Requirements.Add(new MeaJournalClaimRequirement(
+                    MeaCustomClaimAttributes.AudienceClaimTypeName,
+                    MeaCustomClaimAttributes.TenantClaimTypeName,
+                    MeaCustomClaimAttributes.ScopeClaimTypeName)));
             });
 
             services.AddSwaggerGen(c =>

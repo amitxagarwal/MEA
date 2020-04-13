@@ -96,7 +96,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         public async Task CreateJournalNoteAsyncSuccess()
         {
             //Arrange
-            var momentumCitizenId = "70375a2b-14d2-4774-a9a2-ab123ebd2ff6";
+            var momentumCitizenId = "65cd9dba-96db-40b0-9f3b-d773881afc61";
             var requestUri = $"/citizens/journal/{momentumCitizenId}";
 
             var client = _factory.CreateClient();
@@ -113,14 +113,13 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
                 Body = "testBody",
                 Type = "SMS",
                 Documents = new MeaCitizenJournalNoteRequestDocumentModel[1] { new MeaCitizenJournalNoteRequestDocumentModel() {
-                Content= "tetsFile",
+                Content= "testFile",
                 ContentType="application/octet-stream",
                 Name="testName"
                 } }
             };
             string _serializedRequest = JsonConvert.SerializeObject(_mcaRequestModel);
             StringContent _stringContent = new StringContent(_serializedRequest, System.Text.Encoding.UTF8, "application/json");
-
 
             //Act
             var response = await client.PostAsync(requestUri, _stringContent).ConfigureAwait(false);

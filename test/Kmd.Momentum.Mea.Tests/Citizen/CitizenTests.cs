@@ -280,5 +280,48 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             result.IsError.Should().BeTrue();
             result.Error.Errors[0].Should().Be("Citizen with the supplied cpr no is not found");
         }
+
+        [Fact]
+        public async Task CreateJournalNoteAsyncSuccess()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
+            var context = new Mock<IHttpContextAccessor>();
+            var hc = new DefaultHttpContext();
+            CitizenJournalNoteRequestDocumentModel[] requestDocumentModel = { new CitizenJournalNoteRequestDocumentModel() {
+                Content="testContent",
+                ContentType="testContentType",
+                Name="testDocumentName"
+            } };
+
+            var requestModel = new MeaCitizenJournalNoteRequestModel()
+            {
+                Cpr = "testCpr",
+                Body = "testBody",
+                Email = "test@test.com",
+                Title = "testTitle",
+                Type = "testType",
+                Documents = requestDocumentModel
+            };
+
+            context.Setup(x => x.HttpContext).Returns(hc);
+
+            
+            var _configuration = new Mock<IConfiguration>();
+            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
+
+            helperHttpClientMoq.Setup(x => x.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}journals/document"), requestModel))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>("")));
+
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
+
+            //Act
+            var result = await citizenService.CreateJournalNoteAsync(requestModel).ConfigureAwait(false);
+
+            //Asert
+            result.Should().NotBeNull();
+            result.IsError.Should().BeFalse();
+            result.Result.Should().BeEquivalentTo("");
+        }
     }
 }

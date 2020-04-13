@@ -26,7 +26,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
         }
         public async Task<ResultOrHttpError<string, Error>> GetAsync(Uri url)
-        {            
+        {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
             if (authResponse.IsError)
@@ -43,10 +43,10 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             if (!response.IsSuccessStatusCode)
             {
-                if((int)response.StatusCode >=(int)HttpStatusCode.BadRequest && (int)response.StatusCode < (int)HttpStatusCode.InternalServerError)
+                if ((int)response.StatusCode >= (int)HttpStatusCode.BadRequest && (int)response.StatusCode < (int)HttpStatusCode.InternalServerError)
                 {
                     var errorFromResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    var error = new Error(_correlationId, new string[] { "An error occured while fetching the record(s) from Core Api"}, "MEA");
+                    var error = new Error(_correlationId, new string[] { "An error occured while fetching the record(s) from Core Api" }, "MEA");
                     Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System : {errorFromResponse}");
 
                     return new ResultOrHttpError<string, Error>(error, response.StatusCode);
@@ -61,9 +61,36 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
-        public Task<string> PostAsync(Uri uri, StringContent stringContent)
+        public async Task<ResultOrHttpError<string, Error>> PostAsync(Uri uri, StringContent stringContent)
         {
-            throw new NotImplementedException();
+            var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
+
+            if (authResponse.IsError)
+            {
+                var error = new Error(_correlationId, new string[] { authResponse.Error }, "Momentum Core Api");
+                return new ResultOrHttpError<string, Error>(error, authResponse.StatusCode.Value);
+            }
+
+            var accessToken = JObject.Parse(await authResponse.Result.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("bearer " + accessToken);
+
+            var response = await _httpClient.PostAsync(uri, stringContent).ConfigureAwait(false);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+
+                if (errorResponse == null || errorResponse.Errors == null || errorResponse.Errors.Length <= 0)
+                {
+                    var error = new Error(Guid.NewGuid().ToString(), new string[] { "An error occured while creating the record from Core Api" }, "MEA");
+                    return new ResultOrHttpError<string, Error>(error, response.StatusCode);
+                }
+
+                return new ResultOrHttpError<string, Error>(errorResponse, response.StatusCode);
+            }
+
+            return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
         private async Task<ResultOrHttpError<HttpResponseMessage, string>> ReturnAuthorizationTokenAsync()
@@ -80,7 +107,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
                 var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"), content).ConfigureAwait(false);
 
-                if(!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     Log.ForContext("CorrelationId", _correlationId).Error($"Couldn't get the authorization from Momentum Core System with error as {errorResponse}", errorResponse);

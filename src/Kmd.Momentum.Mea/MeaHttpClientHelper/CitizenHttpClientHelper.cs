@@ -1,13 +1,12 @@
 ﻿using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.Common.MeaHttpClient;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
+using Kmd.Momentum.Mea.Citizen.Model;
+using System.Net.Http;
 
 namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 {
@@ -85,7 +84,32 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             var content = response.Result;
             return new ResultOrHttpError<string, Error>(content);
-        }        
+        }
+
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsyncFromMomentumCoreAsync(Uri url, MeaCitizenJournalNoteRequestModel requestModel)
+        {
+            McaCitizenJournalNoteRequestModel _mcaRequestModel = new McaCitizenJournalNoteRequestModel()
+            {
+                Body = requestModel.Body,
+                Cpr = requestModel.Cpr,
+                CreateDateTime = System.DateTime.UtcNow.GetDateTimeFormats()[102],
+                Documents = requestModel.Documents,
+                Email = requestModel.Email,
+                Source = requestModel.Type,
+                Title = requestModel.Title
+            };
+
+            string _serializedRequest = JsonConvert.SerializeObject(_mcaRequestModel);
+            StringContent _stringContent = new StringContent(_serializedRequest, System.Text.Encoding.UTF8, "application/json");
+            var response = await _meaClient.PostAsync(url, _stringContent).ConfigureAwait(false);
+
+            if (response.IsError)
+            {
+                return new ResultOrHttpError<string, Error>(response.Error, response.StatusCode.Value);
+            }
+
+            var content = response.Result;
+            return new ResultOrHttpError<string, Error>(content);
+        }
     }
 }
-

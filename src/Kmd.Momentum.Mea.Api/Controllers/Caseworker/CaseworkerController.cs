@@ -24,7 +24,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         }
 
         ///<summary>
-        ///Get all the caseworkers
+        ///Get all the  caseworkers
         ///</summary>
         ///<response code="200">All the caseworkers data is loaded successfully</response>
         ///<response code="400">Bad request</response>

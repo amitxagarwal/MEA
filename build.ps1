@@ -62,11 +62,11 @@ Param(
 
     # The client id for integration tests to run
     [Parameter(Mandatory=$true)]
-    $ClientId,
+    $McaClientId,
 
     # The client secret for integration tests to run
     [Parameter(Mandatory=$true)]
-    $ClientSecret,
+    $McaClientSecret,
 
     # The MCA Api Uri for integration tests to run
     [Parameter(Mandatory=$true)]
@@ -74,17 +74,28 @@ Param(
 
     # The scope for integration tests to run
     [Parameter(Mandatory=$true)]
-    $Scope,
+    $McaScope,
 
     # The environment for integration tests to run only in phoenix environment
     [Parameter(Mandatory=$true)]
     $Environment,
 
+     # The client id to get token
+    [Parameter(Mandatory=$true)]
+    $MeaClientId,
+
+    # The client secret to get token
+    [Parameter(Mandatory=$true)]
+    $MeaClientSecret,
+
+    # The scope to get token
+    [Parameter(Mandatory=$true)]
+    $MeaScope,
+
     # The DbRequired for build database if it is true
     [Parameter(Mandatory=$false)]
     [string]
     $DbRequired = "false"
-    
 )
 
 function Compress-Directory {
@@ -208,7 +219,6 @@ try {
     Write-Host "build: Build version suffix is $buildSuffix"
 
     & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
-
     if($LASTEXITCODE -ne 0) { 
 
     Write-Host "build again to fix dependencies if exist"
@@ -216,6 +226,7 @@ try {
     & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
     }
     if($LASTEXITCODE -ne 0) { exit 3 }
+
     $PublishedApplications = $(
         "Kmd.Momentum.Mea.Api"
     )
@@ -248,10 +259,13 @@ try {
         try {
             Write-Host "build: Testing project in '$testFolder'"
             
-            ($env:KMD_MOMENTUM_MEA_ClientSecret = $ClientSecret); 
-            ($env:KMD_MOMENTUM_MEA_ClientId = $ClientId); 
+            ($env:KMD_MOMENTUM_MEA_McaClientSecret = $McaClientSecret); 
+            ($env:KMD_MOMENTUM_MEA_McaClientId = $McaClientId); 
             ($env:KMD_MOMENTUM_MEA_McaApiUri = $McaApiUri); 
-            ($env:Scope = $Scope);
+            ($env:KMD_MOMENTUM_MEA_McaScope = $McaScope);
+            ($env:KMD_MOMENTUM_MEA_ClientSecret = $MeaClientSecret); 
+            ($env:KMD_MOMENTUM_MEA_ClientId = $MeaClientId); 
+            ($env:KMD_MOMENTUM_MEA_Scope = $MeaScope);
             ($env:ASPNETCORE_ENVIRONMENT = $Environment) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             if($LASTEXITCODE -ne 0) { exit 3 }
         }

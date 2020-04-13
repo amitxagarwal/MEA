@@ -17,11 +17,16 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             _factory = factory;
         }
 
-        [Fact(Skip = "Skipping the test cases for now")]
+        [SkipLocalFact]
         public async Task GetActiveCitizensSuccess()
         {
             //Arrange       
             var clientMoq = _factory.CreateClient();
+
+            var tokenHelper = new TokenGenerator();
+            var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
+
+            clientMoq.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
             var response = await clientMoq.GetAsync($"/citizens").ConfigureAwait(false);
@@ -34,14 +39,20 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             actualResponse.Count.Should().BeGreaterThan(0);
         }
 
-        [Fact(Skip = "Skipping the test cases for now")]
+        [SkipLocalFact]
         public async Task GetCitizenByCprNoSuccess()
         {
             //Arrange
             var cprNumber = "0208682105";
             var requestUri = $"/citizens/cpr/{cprNumber}";
-            
+
             var client = _factory.CreateClient();
+
+            var tokenHelper = new TokenGenerator();
+            var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
@@ -55,13 +66,19 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         }
 
 
-        [Fact(Skip = "Skipping the test cases for now")]
+        [SkipLocalFact]
         public async Task GetCitizenByCitizenIdSuccess()
         {
             //Arrange
             var citizenId = "70375a2b-14d2-4774-a9a2-ab123ebd2ff6";
             var requestUri = $"/citizens/kss/{citizenId}";
+
             var client = _factory.CreateClient();
+
+            var tokenHelper = new TokenGenerator();
+            var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
@@ -75,4 +92,3 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         }
     }
 }
-

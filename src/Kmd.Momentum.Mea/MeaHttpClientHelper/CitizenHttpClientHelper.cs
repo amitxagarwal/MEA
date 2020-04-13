@@ -1,5 +1,4 @@
-﻿using Kmd.Momentum.Mea.Citizen.Model;
-using Kmd.Momentum.Mea.Common.Exceptions;
+﻿using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -8,7 +7,6 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.MeaHttpClientHelper
@@ -87,49 +85,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             var content = response.Result;
             return new ResultOrHttpError<string, Error>(content);
-        }
-
-        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsyncFromMomentumCoreAsync(Uri url, MeaCitizenJournalNoteRequestModel requestModel)
-        {
-            McaCitizenJournalNoteRequestModel _mcaRequestModel = new McaCitizenJournalNoteRequestModel()
-            {
-                Body = requestModel.Body,
-                Cpr = requestModel.Cpr,
-                CreateDateTime = System.DateTime.UtcNow.GetDateTimeFormats()[102],
-                Documents = requestModel.Documents,
-                Email = requestModel.Email,
-                Source = requestModel.Type,
-                Title = requestModel.Title
-            };
-
-            string _serializedRequest = JsonConvert.SerializeObject(_mcaRequestModel);
-            StringContent _stringContent = new StringContent(_serializedRequest, System.Text.Encoding.UTF8, "application/json");
-            var response = await _meaClient.PostAsync(url, _stringContent).ConfigureAwait(false);
-
-            if (response.IsError)
-            {
-                return new ResultOrHttpError<string, Error>(response.Error, response.StatusCode.Value);
-            }
-
-            var content = response.Result;
-            return new ResultOrHttpError<string, Error>(content);
-        }
-
-        private string GetVal(JObject _json, string _key)
-        {
-            string[] _keyArr = _key.Split('.');
-            var _subJson = _json[_keyArr[0]];
-
-            if (_subJson == null || String.IsNullOrEmpty(_subJson.ToString()))
-                return String.Empty;
-
-            if (_keyArr.Length > 1)
-            {
-                _key = _key.Replace(_keyArr[0] + ".", string.Empty, System.StringComparison.CurrentCulture);
-                return GetVal((JObject)_subJson, _key);
-            }
-            return _subJson.ToString();
-        }
+        }        
     }
 }
 

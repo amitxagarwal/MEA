@@ -1,5 +1,7 @@
 ﻿using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -8,8 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Kmd.Momentum.Mea.Common.Exceptions;
-using System.Net;
 
 namespace Kmd.Momentum.Mea.Citizen
 {
@@ -17,11 +17,16 @@ namespace Kmd.Momentum.Mea.Citizen
     {
         private readonly ICitizenHttpClientHelper _citizenHttpClient;
         private readonly IConfiguration _config;
+        private readonly string _correlationId;
+        private readonly string _clientId;
 
-        public CitizenService(ICitizenHttpClientHelper citizenHttpClient, IConfiguration config)
+        public CitizenService(ICitizenHttpClientHelper citizenHttpClient, IConfiguration config,
+            IHttpContextAccessor httpContextAccessor)
         {
             _citizenHttpClient = citizenHttpClient;
             _config = config;
+            _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
+            _clientId = httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == "azp").Value;
         }
 
         public async Task<ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>> GetAllActiveCitizensAsync()
@@ -32,16 +37,18 @@ namespace Kmd.Momentum.Mea.Citizen
             if (response.IsError)
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
-                Log.ForContext("GetAllActiveCitizensAsync", "All Active Citizens")
-                .Error("An Error Occured while retriving data of all active citizens" + error);
+                Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
+                .Error("An error occurred while retrieving data of all active citizens" + error);
                 return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>(response.Error, response.StatusCode.Value);
             }
 
             var result = response.Result;
             var content = result.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x));
 
-            Log.ForContext("GetAllActiveCitizensAsync", "All Active Citizens")
-                .Information("All the active citizens data retrived successfully");
+            Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
+                .Information("All the active citizens data retrieved successfully");
             return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>(content.ToList());
         }
 
@@ -53,15 +60,17 @@ namespace Kmd.Momentum.Mea.Citizen
             if (response.IsError)
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
-                Log.ForContext("GetCitizenByCprAsync", "cpr")
-                .Error("An Error Occured while retriving citizen data by cpr" + error);
+                Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
+                .Error("An error occured while retrieving citizen data by cpr" + error);
                 return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error, response.StatusCode.Value);
             }
 
             var json = JObject.Parse(response.Result);
             var citizenData = JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString());
 
-            Log.ForContext("GetCitizenByCprAsync", "cpr")
+            Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
                 .ForContext("CitizenId", citizenData.CitizenId)
                 .Information("The citizen details by CPR number is returned successfully");
 
@@ -75,16 +84,18 @@ namespace Kmd.Momentum.Mea.Citizen
             if (response.IsError)
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
-                Log.ForContext("GetCitizenByIdAsync", "citizenId")
-                .ForContext("CitizenId", citizenId)
-                .Error("An Error Occured while retriving citizen data by citizenID" + error);
+                Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
+                 .ForContext("CitizenId", citizenId)
+                .Error("An error occured while retrieving citizen data by citizenID" + error);
                 return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error, response.StatusCode.Value);
             }
 
             var json = JObject.Parse(response.Result);
             var citizenData = JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString());
 
-            Log.ForContext("GetCitizenByIdAsync", "citizenId")
+            Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
                 .ForContext("CitizenId", citizenData.CitizenId)
                 .Information("The citizen details by CitizenId has been returned successfully");
 

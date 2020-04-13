@@ -91,9 +91,8 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             List<McaCitizenJournalNoteRequestAttachmentModel> _attachmentList = new List<McaCitizenJournalNoteRequestAttachmentModel>();
 
-            for (int i = 0; i < requestModel.Documents.Count; i++)
+            foreach (var _doc in requestModel.Documents)
             {
-                var _doc = requestModel.Documents[i];
                 var _attachemnt = new McaCitizenJournalNoteRequestAttachmentModel()
                 {
                     ContentType = _doc.ContentType,
@@ -107,7 +106,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             McaCitizenJournalNoteRequestModel _mcaRequestModel = new McaCitizenJournalNoteRequestModel()
             {
                 Id = requestModel.Cpr,
-                OccurredAt = System.DateTime.UtcNow.GetDateTimeFormats()[102],
+                OccurredAt = System.DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.ff'Z'"),
                 Title = requestModel.Title,
                 Body = requestModel.Body,
                 Source = "Mea",

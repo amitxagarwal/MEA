@@ -1,11 +1,7 @@
 ﻿using FluentAssertions;
 using Kmd.Momentum.Mea.Caseworker.Model;
-using Kmd.Momentum.Mea.Caseworker1.Model;
-using Moq;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Xunit;
@@ -25,17 +21,17 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
         public async Task GetAllCaseworkersSuccess()
         {
             //Arrange       
-            var clientMoq = _factory.CreateClient();
-
+            var client = _factory.CreateClient();
+            var requestUri = "/caseworkers";
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
-            clientMoq.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
-            var response = await clientMoq.GetAsync($"/caseworkers").ConfigureAwait(false);
+            var response = await client.GetAsync(requestUri).ConfigureAwait(false);
             var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<List<CaseworkerDataResponseModel>>(result);
+            var actualResponse = JsonConvert.DeserializeObject<IReadOnlyList<CaseworkerDataResponse>>(result);
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);

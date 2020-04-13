@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kmd.Momentum.Mea.Citizen.Model
 {
-    public class CitizenJournalNoteRequestDocumentModel
+    public class MeaCitizenJournalNoteRequestDocumentModel
     {
         public string Name { get; set; }
 

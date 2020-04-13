@@ -7,18 +7,20 @@ namespace Kmd.Momentum.Mea.Citizen.Model
     public class McaCitizenJournalNoteRequestModel
     {
 
-        public string Cpr { get; set; }
+        public string Id { get; set; } //Map with CPR
+
+        public string OccurredAt { get; set; }
 
         public string Title { get; set; }
 
-        public string Email { get; set; }
-
-        public string Source { get; set; }
-
-        public string CreateDateTime { get; set; }
-
         public string Body { get; set; }
 
-        public CitizenJournalNoteRequestDocumentModel[] Documents { get; set; }
+        public string Source { get; set; } //Mea
+
+        public string ReferenceId { get; set; } //CitizenId
+
+        public string JournalTypeId { get; set; } //sms(022.247.000) or other(022.420.000)
+
+        public McaCitizenJournalNoteRequestAttachmentModel[] Attachments { get; set; }
     }
 }

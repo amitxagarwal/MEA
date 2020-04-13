@@ -3,6 +3,7 @@ using Kmd.Momentum.Mea.Citizen.Model;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -89,6 +90,45 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             actualResponse.Should().NotBeNull();
             actualResponse.CitizenId.Should().BeEquivalentTo(citizenId);
+        }
+
+        [SkipLocalFact]
+        public async Task CreateJournalNoteAsyncSuccess()
+        {
+            //Arrange
+            var momentumCitizenId = "70375a2b-14d2-4774-a9a2-ab123ebd2ff6";
+            var requestUri = $"/citizens/journal/{momentumCitizenId}";
+
+            var client = _factory.CreateClient();
+
+            var tokenHelper = new TokenGenerator();
+            var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+            McaCitizenJournalNoteRequestModel _mcaRequestModel = new McaCitizenJournalNoteRequestModel()
+            {
+                Id = "0101005402",
+                OccurredAt = System.DateTime.UtcNow.GetDateTimeFormats()[102],
+                Title = "testTitle",
+                Body = "testBody",
+                Source = "Mea",
+                ReferenceId = "65cd9dba-96db-40b0-9f3b-d773881afc61",
+                JournalTypeId = "022.420.000",
+                Attachments = new McaCitizenJournalNoteRequestAttachmentModel[0] { }
+            };
+            string _serializedRequest = JsonConvert.SerializeObject(_mcaRequestModel);
+            StringContent _stringContent = new StringContent(_serializedRequest, System.Text.Encoding.UTF8, "application/json");
+
+
+            //Act
+            var response = await client.PostAsync(requestUri, _stringContent).ConfigureAwait(false);
+            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualResponse = JsonConvert.DeserializeObject(responseBody);
+
+            //Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            actualResponse.Should().NotBeNull();
         }
     }
 }

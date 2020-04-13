@@ -9,12 +9,10 @@ namespace Kmd.Momentum.Mea.Citizen.Model
 
         public string Title { get; set; }
 
-        public string Email { get; set; }
-
         public string Type { get; set; }
         
         public string Body { get; set; }
 
-        public CitizenJournalNoteRequestDocumentModel[] Documents { get; set; }
+        public MeaCitizenJournalNoteRequestDocumentModel[] Documents { get; set; }
     }
 }

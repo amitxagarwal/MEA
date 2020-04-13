@@ -102,10 +102,10 @@ namespace Kmd.Momentum.Mea.Citizen
             return new ResultOrHttpError<CitizenDataResponseModel, Error>(citizenData);
         }
 
-        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsync(MeaCitizenJournalNoteRequestModel requestModel)
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsync(string momentumCitizenId, MeaCitizenJournalNoteRequestModel requestModel)
         {
 
-            var response = await _citizenHttpClient.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}journals/document"), requestModel).ConfigureAwait(false);
+            var response = await _citizenHttpClient.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}journals/note"), momentumCitizenId, requestModel).ConfigureAwait(false);
 
             if (response.IsError)
             {

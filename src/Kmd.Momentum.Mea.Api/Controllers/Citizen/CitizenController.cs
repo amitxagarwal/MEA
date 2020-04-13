@@ -124,7 +124,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         [SwaggerOperation(OperationId = "CreateJournalNote")]
         public async Task<ActionResult> CreateJournalNote([Required] [FromRoute] string momentumCitizenId, [Required] [FromBody] MeaCitizenJournalNoteRequestModel requestModel)
         {
-            var result = await _citizenService.CreateJournalNoteAsync(requestModel).ConfigureAwait(false);
+            var result = await _citizenService.CreateJournalNoteAsync(momentumCitizenId, requestModel).ConfigureAwait(false);
 
             if (result.IsError)
             {

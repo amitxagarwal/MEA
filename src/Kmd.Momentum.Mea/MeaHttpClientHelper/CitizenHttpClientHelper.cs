@@ -86,17 +86,33 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             return new ResultOrHttpError<string, Error>(content);
         }
 
-        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsyncFromMomentumCoreAsync(Uri url, MeaCitizenJournalNoteRequestModel requestModel)
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsyncFromMomentumCoreAsync(Uri url, string momentumCitizenId, MeaCitizenJournalNoteRequestModel requestModel)
         {
+
+            List<McaCitizenJournalNoteRequestAttachmentModel> _attachmentList = new List<McaCitizenJournalNoteRequestAttachmentModel>();
+
+            foreach (var _doc in requestModel.Documents)
+            {
+                var _attachemnt = new McaCitizenJournalNoteRequestAttachmentModel()
+                {
+                    ContentType = _doc.ContentType,
+                    Document = _doc.Content,
+                    Title = _doc.Name
+                };
+                _attachmentList.Add(_attachemnt);
+            }
+
+
             McaCitizenJournalNoteRequestModel _mcaRequestModel = new McaCitizenJournalNoteRequestModel()
             {
+                Id = requestModel.Cpr,
+                OccurredAt = System.DateTime.UtcNow.GetDateTimeFormats()[102],
+                Title = requestModel.Title,
                 Body = requestModel.Body,
-                Cpr = requestModel.Cpr,
-                CreateDateTime = System.DateTime.UtcNow.GetDateTimeFormats()[102],
-                Documents = requestModel.Documents,
-                Email = requestModel.Email,
-                Source = requestModel.Type,
-                Title = requestModel.Title
+                Source = "Mea",
+                ReferenceId = momentumCitizenId,
+                JournalTypeId = requestModel.Type.ToLower() == "sms" ? "022.247.000" : "022.420.000",
+                Attachments = _attachmentList.ToArray()
             };
 
             string _serializedRequest = JsonConvert.SerializeObject(_mcaRequestModel);

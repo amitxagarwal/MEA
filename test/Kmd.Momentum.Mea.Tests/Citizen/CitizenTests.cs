@@ -21,7 +21,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
     {
         public CitizenTests()
         {
-                
+
         }
         [Fact]
         public async Task GetAllActiveCitizensSuccess()
@@ -47,7 +47,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             var mockResponseData = new List<string>();
 
-            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1","givenname","middlename","initials","test@email.com","1234567891","","description",true,true)));
+            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
 
             helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search")))
@@ -58,8 +58,8 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             //Act
             var result = await citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
-            
-            
+
+
             //Asert
             result.Should().NotBeNull();
             result.IsError.Should().BeFalse();
@@ -266,7 +266,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            var error = new Error("123456", new string[] { "Citizen with the supplied cpr no is not found" }, "MCA"); 
+            var error = new Error("123456", new string[] { "Citizen with the supplied cpr no is not found" }, "MCA");
 
             helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")))
                 .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
@@ -288,7 +288,18 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = new Mock<IHttpContextAccessor>();
             var hc = new DefaultHttpContext();
-            CitizenJournalNoteRequestDocumentModel[] requestDocumentModel = { new CitizenJournalNoteRequestDocumentModel() {
+            hc.TraceIdentifier = Guid.NewGuid().ToString();
+            var claims = new List<Claim>()
+                        {
+                            new Claim("azp", Guid.NewGuid().ToString()),
+                        };
+            var identity = new ClaimsIdentity(claims, "JWT");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            hc.User = claimsPrincipal;
+
+            context.Setup(x => x.HttpContext).Returns(hc);
+            MeaCitizenJournalNoteRequestDocumentModel[] requestDocumentModel = { new MeaCitizenJournalNoteRequestDocumentModel() {
                 Content="testContent",
                 ContentType="testContentType",
                 Name="testDocumentName"
@@ -298,7 +309,6 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             {
                 Cpr = "testCpr",
                 Body = "testBody",
-                Email = "test@test.com",
                 Title = "testTitle",
                 Type = "testType",
                 Documents = requestDocumentModel
@@ -306,22 +316,76 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             context.Setup(x => x.HttpContext).Returns(hc);
 
-            
+
             var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            helperHttpClientMoq.Setup(x => x.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}journals/document"), requestModel))
+            helperHttpClientMoq.Setup(x => x.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}journals/note"), "testCitizenId", requestModel))
                 .Returns(Task.FromResult(new ResultOrHttpError<string, Error>("")));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
 
             //Act
-            var result = await citizenService.CreateJournalNoteAsync(requestModel).ConfigureAwait(false);
+            var result = await citizenService.CreateJournalNoteAsync("testCitizenId", requestModel).ConfigureAwait(false);
 
             //Asert
             result.Should().NotBeNull();
             result.IsError.Should().BeFalse();
             result.Result.Should().BeEquivalentTo("");
+        }
+
+        [Fact]
+        public async Task CreateJournalNoteAsyncFail()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
+            var context = new Mock<IHttpContextAccessor>();
+            var hc = new DefaultHttpContext();
+            hc.TraceIdentifier = Guid.NewGuid().ToString();
+            var claims = new List<Claim>()
+                        {
+                            new Claim("azp", Guid.NewGuid().ToString()),
+                        };
+            var identity = new ClaimsIdentity(claims, "JWT");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            hc.User = claimsPrincipal;
+
+            context.Setup(x => x.HttpContext).Returns(hc);
+            MeaCitizenJournalNoteRequestDocumentModel[] requestDocumentModel = { new MeaCitizenJournalNoteRequestDocumentModel() {
+                Content="testContent",
+                ContentType="testContentType",
+                Name="testDocumentName"
+            } };
+
+            var requestModel = new MeaCitizenJournalNoteRequestModel()
+            {
+                Cpr = "testCpr",
+                Body = "testBody",
+                Title = "testTitle",
+                Type = "testType",
+                Documents = requestDocumentModel
+            };
+
+            context.Setup(x => x.HttpContext).Returns(hc);
+
+
+            var _configuration = new Mock<IConfiguration>();
+            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
+
+            var error = new Error("123456", new string[] { "Some error occured when creating note" }, "MCA");
+
+            helperHttpClientMoq.Setup(x => x.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}journals/note"), "testCitizenId", requestModel))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
+
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
+
+            //Act
+            var result = await citizenService.CreateJournalNoteAsync("testCitizenId", requestModel).ConfigureAwait(false);
+
+            //Asert            
+            result.IsError.Should().BeTrue();
+            result.Error.Errors[0].Should().BeEquivalentTo("Some error occured when creating note");
         }
     }
 }

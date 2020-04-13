@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
 using Kmd.Momentum.Mea.Citizen.Model;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -106,27 +108,28 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
-            List<MeaCitizenJournalNoteRequestDocumentModel> _documentList = new List<MeaCitizenJournalNoteRequestDocumentModel>();
-            var _document = new MeaCitizenJournalNoteRequestDocumentModel() {
-                Content = "testFile",
-                ContentType = "application/octet-stream",
-                Name = "testName"
+            List<MeaCitizenJournalNoteRequestDocumentModel> documentList = new List<MeaCitizenJournalNoteRequestDocumentModel>()
+            {
+                new MeaCitizenJournalNoteRequestDocumentModel()
+                {
+                    Content = "testFile",
+                    ContentType = "application/octet-stream",
+                    Name = "testName"
+                }
             };
-            _documentList.Add(_document);
 
-            MeaCitizenJournalNoteRequestModel _mcaRequestModel = new MeaCitizenJournalNoteRequestModel()
+            MeaCitizenJournalNoteRequestModel mcaRequestModel = new MeaCitizenJournalNoteRequestModel()
             {
                 Cpr = "0101005402",
                 Title = "testTitle",
                 Body = "testBody",
                 Type = "SMS",
-                Documents = _documentList.ToArray()
+                Documents = documentList
             };
-            string _serializedRequest = JsonConvert.SerializeObject(_mcaRequestModel);
-            StringContent _stringContent = new StringContent(_serializedRequest, System.Text.Encoding.UTF8, "application/json");
+            string _serializedRequest = JsonConvert.SerializeObject(mcaRequestModel);
 
             //Act
-            var response = await client.PostAsync(requestUri, _stringContent).ConfigureAwait(false);
+            var response = await client.PostAsync(requestUri, new StringContent(_serializedRequest, Encoding.UTF8, "application/json"));
             var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var actualResponse = JsonConvert.DeserializeObject(responseBody);
 

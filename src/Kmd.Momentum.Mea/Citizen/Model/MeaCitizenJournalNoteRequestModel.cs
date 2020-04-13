@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Kmd.Momentum.Mea.Citizen.Model
 {
@@ -13,6 +14,6 @@ namespace Kmd.Momentum.Mea.Citizen.Model
         
         public string Body { get; set; }
 
-        public MeaCitizenJournalNoteRequestDocumentModel[] Documents { get; set; }
+        public IReadOnlyList<MeaCitizenJournalNoteRequestDocumentModel> Documents { get; set; }
     }
 }

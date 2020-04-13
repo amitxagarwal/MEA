@@ -1,32 +1,29 @@
 ﻿using Kmd.Momentum.Mea.Caseworker1.Model;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kmd.Momentum.Mea.Caseworker.Model
 {
     public class PUnitData
     {
-        [JsonProperty("referenceId")]
+        //[JsonProperty("referenceId")]
         public string ReferenceId { get; set; }
 
-        [JsonProperty("totalPages")]
+        //[JsonProperty("totalPages")]
         public int TotalPages { get; set; }
 
-        [JsonProperty("totalSearchCount")]
+        //[JsonProperty("totalSearchCount")]
         public int TotalSearchCount { get; set; }
 
-        [JsonProperty("page")]
+        //[JsonProperty("page")]
         public int Page { get; set; }
 
-        [JsonProperty("hasMore")]
+        //[JsonProperty("hasMore")]
         public bool HasMore { get; set; }
 
-        [JsonProperty("additionalValues")]
+        //[JsonProperty("additionalValues")]
         public string AdditionalValues { get; set; }
 
-        [JsonProperty("data")]
+        //[JsonProperty("data")]
         public CaseworkerDataResponseModel[] Data { get; set; }
 
     }

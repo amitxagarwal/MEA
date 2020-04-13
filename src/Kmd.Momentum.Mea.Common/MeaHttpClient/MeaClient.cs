@@ -21,6 +21,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             _config = config;
             _httpClient = httpClient;
         }
+
         public async Task<ResultOrHttpError<string, Error>> GetAsync(Uri url)
         {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
@@ -35,7 +36,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             {
                 var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
 
-                if(errorResponse == null || errorResponse.Errors == null || errorResponse.Errors.Length <= 0)
+                if (errorResponse == null || errorResponse.Errors == null || errorResponse.Errors.Length <= 0)
                 {
                     var error = new Error(Guid.NewGuid().ToString(), new string[] { "An error occured while fetching the record from Core Api" }, "MEA");
                     return new ResultOrHttpError<string, Error>(error, response.StatusCode);
@@ -43,7 +44,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
                 return new ResultOrHttpError<string, Error>(errorResponse, response.StatusCode);
             }
-            
+
             return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
@@ -57,8 +58,8 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             var content = new FormUrlEncodedContent(new[]
            {
                         new KeyValuePair<string, string>("grant_type","client_credentials"),
-                        new KeyValuePair<string, string>("client_id", _config["KMD_MOMENTUM_MEA_ClientId"]),
-                        new KeyValuePair<string, string>("client_secret", _config["KMD_MOMENTUM_MEA_ClientSecret"]),
+                        new KeyValuePair<string, string>("client_id", _config["KMD_MOMENTUM_MEA_McaClientId"]),
+                        new KeyValuePair<string, string>("client_secret", _config["KMD_MOMENTUM_MEA_McaClientSecret"]),
                         new KeyValuePair<string, string>("resource", "74b4f45c-4e9b-4be1-98f1-ea876d9edd11")
                     });
 

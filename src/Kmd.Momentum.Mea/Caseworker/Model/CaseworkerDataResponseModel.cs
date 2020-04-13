@@ -5,37 +5,37 @@ namespace Kmd.Momentum.Mea.Caseworker1.Model
 {
     public class CaseworkerDataResponseModel
     {
-        [JsonProperty("id")]
+        //[JsonProperty("id")]
         public string CaseworkerId { get; }
 
-        [JsonProperty("name")]
+        //[JsonProperty("name")]
         public string DisplayName { get; }
 
-        [JsonProperty("givenName")]
+        //[JsonProperty("givenName")]
         public string GivenName { get; }
 
-        [JsonProperty("middleName")]
+        //[JsonProperty("middleName")]
         public string MiddleName { get; }
 
-        [JsonProperty("initials")]
+        //[JsonProperty("initials")]
         public string Initials { get; }
 
-        [JsonProperty(PropertyName = "email/address")]
+        //[JsonProperty(PropertyName = "email/address")]
         public Email Email { get; }
 
-        [JsonProperty("number")]
+        //[JsonProperty("number")]
         public Phone Phone { get; }
 
-        [JsonProperty("caseworkerIdentifier")]
+        //[JsonProperty("caseworkerIdentifier")]
         public string CaseworkerIdentifier { get; }
 
-        [JsonProperty("description")]
+        //[JsonProperty("description")]
         public string Description { get; }
 
-        [JsonProperty("isBookable")]
+        //[JsonProperty("isBookable")]
         public bool IsBookable { get; }
 
-        [JsonProperty("isActive")]
+        //[JsonProperty("isActive")]
         public bool IsActive { get; }
 
         public CaseworkerDataResponseModel(string caseworkerId, string displayName, string givenName, string middleName, string initials, Email email, Phone phone,

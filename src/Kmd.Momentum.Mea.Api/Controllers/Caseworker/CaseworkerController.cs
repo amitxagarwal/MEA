@@ -1,11 +1,11 @@
-﻿using Kmd.Momentum.Mea.Caseworker.Model;
-using Kmd.Momentum.Mea.Caseworker1;
-using Kmd.Momentum.Mea.Caseworker1.Model;
+﻿using Kmd.Momentum.Mea.Caseworker;
+using Kmd.Momentum.Mea.Caseworker.Model;
 using Kmd.Momentum.Mea.Common.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
@@ -24,9 +24,9 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         }
 
         ///<summary>
-        ///Get all caseworkers in Momentum
+        ///Get all the caseworkers
         ///</summary>
-        ///<response code="200">All the caseworker data in momemtum is loaded successfully</response>
+        ///<response code="200">All the caseworkers data is loaded successfully</response>
         ///<response code="400">Bad request</response>
         ///<response code="404">The caseworker data is not found</response>
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
@@ -35,9 +35,19 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(401)]
-        public async Task<IReadOnlyList<ClaseworkerData>> GetAllCaseworkersInMomentum()
+        public async Task<ActionResult<IReadOnlyList<CaseworkerDataResponse>>> GetAllCaseworkers()
         {
-            return await _caseworkerService.GetAllCaseworkersInMomentumAsync().ConfigureAwait(false);
+            var result = await _caseworkerService.GetAllCaseworkersAsync().ConfigureAwait(false);
+
+            if (result.IsError)
+            {
+                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error.Errors);
+            }
+            else
+            {
+                return Ok(result.Result);
+            }
         }
     }
 }
+

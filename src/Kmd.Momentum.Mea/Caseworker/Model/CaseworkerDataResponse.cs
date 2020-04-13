@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Kmd.Momentum.Mea.Caseworker.Model
 {
-    public class ClaseworkerData
+    public class CaseworkerDataResponse
     {
         [JsonProperty("id")]
         public string CaseworkerId { get; }
@@ -40,9 +40,9 @@ namespace Kmd.Momentum.Mea.Caseworker.Model
         [JsonProperty("isActive")]
         public bool IsActive { get; }
 
-        public ClaseworkerData(string caseworkerId, string displayName, string givenName, string middleName, string initials, string email, string phone,
+        public CaseworkerDataResponse(string caseworkerId, string displayName, string givenName, string middleName, string initials,
            string caseworkerIdentifier, string description,
-           bool isActive = true, bool isBookable = true)
+           bool isActive = true, bool isBookable = true, string email = null, string phone = null)
         {
             CaseworkerId = caseworkerId;
             DisplayName = displayName;

@@ -106,16 +106,17 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
-            McaCitizenJournalNoteRequestModel _mcaRequestModel = new McaCitizenJournalNoteRequestModel()
+            MeaCitizenJournalNoteRequestModel _mcaRequestModel = new MeaCitizenJournalNoteRequestModel()
             {
-                Id = "0101005402",
-                OccurredAt = System.DateTime.UtcNow.GetDateTimeFormats()[102],
+                Cpr = "0101005402",
                 Title = "testTitle",
                 Body = "testBody",
-                Source = "Mea",
-                ReferenceId = "65cd9dba-96db-40b0-9f3b-d773881afc61",
-                JournalTypeId = "022.420.000",
-                Attachments = new McaCitizenJournalNoteRequestAttachmentModel[0] { }
+                Type = "SMS",
+                Documents = new MeaCitizenJournalNoteRequestDocumentModel[1] { new MeaCitizenJournalNoteRequestDocumentModel() {
+                Content= "tetsFile",
+                ContentType="application/octet-stream",
+                Name="testName"
+                } }
             };
             string _serializedRequest = JsonConvert.SerializeObject(_mcaRequestModel);
             StringContent _stringContent = new StringContent(_serializedRequest, System.Text.Encoding.UTF8, "application/json");

@@ -316,7 +316,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            helperHttpClientMoq.Setup(x => x.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}journals/note"), "testCitizenId", requestModel))
+            helperHttpClientMoq.Setup(x => x.CreateJournalNoteFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}journals/note"), "testCitizenId", requestModel))
                 .Returns(Task.FromResult(new ResultOrHttpError<string, Error>("")));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
@@ -371,7 +371,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             var error = new Error("123456", new string[] { "Some error occured when creating note" }, "MCA");
 
-            helperHttpClientMoq.Setup(x => x.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}journals/note"), "testCitizenId", requestModel))
+            helperHttpClientMoq.Setup(x => x.CreateJournalNoteFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}journals/note"), "testCitizenId", requestModel))
                 .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object, context.Object);

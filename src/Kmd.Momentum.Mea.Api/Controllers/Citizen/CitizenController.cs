@@ -109,11 +109,11 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         }
 
         ///<summary>
-        ///Create a Journal Note in Momentum with attachment
+        ///Create a Journal Note with attachment
         ///</summary>
-        ///<response code="200">The Journal Note created successfully</response>
+        ///<response code="200">The Journal Note is created successfully</response>
         ///<response code="400">Bad request</response>
-        ///<response code="404">The Create a Journal Note is not found</response>
+        ///<response code="404">The Journal Note to create is not found</response>
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
         [HttpPost]
         [ProducesResponseType(200)]

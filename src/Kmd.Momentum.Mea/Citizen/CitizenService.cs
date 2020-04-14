@@ -104,22 +104,24 @@ namespace Kmd.Momentum.Mea.Citizen
 
         public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsync(string momentumCitizenId, MeaCitizenJournalNoteRequestModel requestModel)
         {
-            var response = await _citizenHttpClient.CreateJournalNoteAsyncFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}journals/note"), momentumCitizenId, requestModel).ConfigureAwait(false);
+            var response = await _citizenHttpClient.CreateJournalNoteFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}journals/note"), momentumCitizenId, requestModel).ConfigureAwait(false);
 
             if (response.IsError)
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
+
                 Log.ForContext("CorrelationId", _correlationId)
-                    .ForContext("Client", _clientId)
+                    .ForContext("ClientId", _clientId)
                     .ForContext("CitizenId", momentumCitizenId)
                     .Error("An Error Occured while creating Journal Note" + error);
+
                 return new ResultOrHttpError<string, Error>(response.Error, response.StatusCode.Value);
             }
 
             Log.ForContext("CorrelationId", _correlationId)
-                .ForContext("Client", _clientId)
+                .ForContext("ClientId", _clientId)
                 .ForContext("CitizenId", momentumCitizenId)
-                .Information("Journal Note created successfully");
+                .Information("Journal Note is created successfully");
 
             return new ResultOrHttpError<string, Error>(response.Result);
         }

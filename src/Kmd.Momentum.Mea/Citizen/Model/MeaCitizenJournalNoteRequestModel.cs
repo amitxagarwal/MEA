@@ -1,11 +1,9 @@
-using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace Kmd.Momentum.Mea.Citizen.Model
 {
     public class MeaCitizenJournalNoteRequestModel
     {
-
         public string Cpr { get; set; }
 
         public string Title { get; set; }

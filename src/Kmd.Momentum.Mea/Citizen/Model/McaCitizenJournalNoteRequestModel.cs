@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Kmd.Momentum.Mea.Citizen.Model
 {
     public class McaCitizenJournalNoteRequestModel
     {
-
         public string Id { get; set; } //Map with CPR
 
         public string OccurredAt { get; set; }
@@ -21,6 +18,6 @@ namespace Kmd.Momentum.Mea.Citizen.Model
 
         public string JournalTypeId { get; set; } //sms(022.247.000) or other(022.420.000)
 
-        public McaCitizenJournalNoteRequestAttachmentModel[] Attachments { get; set; }
+        public IReadOnlyList<McaCitizenJournalNoteRequestAttachmentModel> Attachments { get; set; }
     }
 }

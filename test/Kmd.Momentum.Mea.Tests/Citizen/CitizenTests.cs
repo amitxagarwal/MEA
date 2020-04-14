@@ -19,10 +19,6 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 {
     public class CitizenTests
     {
-        public CitizenTests()
-        {
-
-        }
         [Fact]
         public async Task GetAllActiveCitizensSuccess()
         {

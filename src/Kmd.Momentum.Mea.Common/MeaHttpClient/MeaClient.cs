@@ -77,16 +77,20 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             var response = await _httpClient.PostAsync(uri, stringContent).ConfigureAwait(false);
 
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            if (!response.IsSuccessStatusCode)
             {
-                var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
-
-                if (errorResponse == null || errorResponse.Errors == null || errorResponse.Errors.Length <= 0)
+                if ((int)response.StatusCode >= (int)HttpStatusCode.BadRequest && (int)response.StatusCode < (int)HttpStatusCode.InternalServerError)
                 {
-                    var error = new Error(Guid.NewGuid().ToString(), new string[] { "An error occured while creating the record from Core Api" }, "MEA");
+                    var errorFromResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var error = new Error(_correlationId, new string[] { "An error occured while creating the record from Core Api" }, "MEA");
+                    Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while creating the data from Momentum Core System : {errorFromResponse}");
+
                     return new ResultOrHttpError<string, Error>(error, response.StatusCode);
                 }
 
+                var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+
+                Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while creating the data from Momentum Core System {errorResponse}");
                 return new ResultOrHttpError<string, Error>(errorResponse, response.StatusCode);
             }
 

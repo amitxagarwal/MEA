@@ -119,6 +119,7 @@ if ($VerbosePreference) {
     & dotnet --info
 }
 
+
 try{
    
     if($DbRequired -eq 'true')

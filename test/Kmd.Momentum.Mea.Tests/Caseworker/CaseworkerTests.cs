@@ -39,14 +39,14 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            var mockResponseData = new List<CaseworkerDataResponse>()
+            var mockResponseData = new List<CaseworkerDataResponseModel>()
             {
-                    new CaseworkerDataResponse(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-                    It.IsAny<string>(), It.IsAny<string>())
+                    new CaseworkerDataResponseModel(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())
             };
 
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers")))
-                    .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponse>, Error>(mockResponseData)));
+                    .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>(mockResponseData)));
 
             var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
 
@@ -83,15 +83,15 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
 
-            var mockResponseData = new List<CaseworkerDataResponse>()
+            var mockResponseData = new List<CaseworkerDataResponseModel>()
             {
-                    new CaseworkerDataResponse(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-                    It.IsAny<string>(), It.IsAny<string>())
+                    new CaseworkerDataResponseModel(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())
             };
             var error = new Error("123456", new string[] { "An Error Occured while retriving data of all caseworkers" }, "MCA");
 
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers")))
-                    .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponse>, Error>(error, HttpStatusCode.BadRequest)));
+                    .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>(error, HttpStatusCode.BadRequest)));
 
             var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
 

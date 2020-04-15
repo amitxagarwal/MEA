@@ -175,8 +175,8 @@ try
 		}
 	}
 }catch{
-	Write-Host "An error occurred:"
-	Write-Host $_
-	exit 1
+	Write-Error "An error occurred:"
+	Write-Error $_
+	exit
 }
 Pop-Location

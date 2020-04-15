@@ -100,8 +100,8 @@ try {
   Write-Host $_
 }
 
-$ErrorActionPreference = 'Stop'
-Set-StrictMode -Version 3
+#$ErrorActionPreference = 'Stop'
+#Set-StrictMode -Version 3
 
 function Format-ValidationOutput {
   param ($ValidationOutput, [int] $Depth = 0)

@@ -141,25 +141,30 @@ if ($MarkForAutoDelete) {
 }
 
 New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force
-
+Write-Output '----1'
 if ($ValidateOnly) {
+Write-Output '----2'
   $ErrorMessages = Format-ValidationOutput (Test-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName `
                                                                                 -TemplateFile $TemplateFile `
                                                                                 @TemplateParameters)
+Write-Output '----3'
   if ($ErrorMessages) {
       Write-Output '', 'Validation returned the following errors:', @($ErrorMessages), '', 'Template is invalid.'
   }
   else {
       Write-Output '', 'Template is valid.'
   }
+Write-Output '----4'
 }
 else {
+Write-Output '----5'
   New-AzResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
                                       -ResourceGroupName $ResourceGroupName `
                                       -TemplateFile $TemplateFile `
                                       @TemplateParameters `
                                       -Force -Verbose `
                                       -ErrorVariable ErrorMessages
+Write-Output '----6'
   if ($ErrorMessages) {
       Write-Output '', 'Template deployment returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
   }

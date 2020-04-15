@@ -47,11 +47,10 @@ jobs:
                 ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)' -ClientId '$(ClientId)' -ClientSecret '$(ClientSecret)' -Environment '$(Environment)' -DbRequired '$(isDbRequired)'
                 azurePowerShellVersion: 'LatestVersion'
                 failOnStderr: true
-                failOnStandardError: true
                 pwsh: true
 
             - task: AzurePowerShell@4
-              condition: eq(variables['isDbRequired'],'true')
+              condition: and(succeeded(),eq(variables['isDbRequired'],'true'))
               displayName: Deploy Database
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}
@@ -60,10 +59,10 @@ jobs:
                 ScriptArguments: -InstanceId '$(InstanceId)' -ArtifactPath '$(Pipeline.Workspace)'
                 azurePowerShellVersion: 'LatestVersion'
                 failOnStderr: true
-                failOnStandardError: true
                 pwsh: true
 
             - task: AzurePowerShell@4
+              condition: succeeded()
               displayName: Deploy webapp binaries
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}
@@ -72,5 +71,4 @@ jobs:
                 ScriptArguments: -PublishedArtifactsPath '$(Pipeline.Workspace)/Applications' -WebAppName '$(WebAppName)' -ResourceGroupName '$(ResourceGroupName)' -AutoSwapSlots:("${{ parameters.autoSwapSlots }}" -eq "true")
                 azurePowerShellVersion: 'LatestVersion'
                 failOnStderr: true
-                failOnStandardError: true
                 pwsh: true

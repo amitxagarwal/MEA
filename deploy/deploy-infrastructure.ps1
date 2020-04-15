@@ -179,7 +179,7 @@ try
 }catch{
 	Write-Host "An error occurred:"
 	Write-Host $_
-    Write-Host "##vso[task.LogIssue type=error;]" @(ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
+    Write-Host "##vso[task.complete result=Failed]", "##vso[task.LogIssue type=error;]" @(ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })    
 	exit 1
 }
 Pop-Location

@@ -94,7 +94,7 @@ $ResourceNamePrefix = "kmd-momentum-mea-$InstanceId"
 $TemplateFile = "azuredeploy.json"
 
 try {
-  [Microsoft.Azure.Common.Authentication.AzureSession]::ClientFactory.AddUserAgent("VSAzureTools-$UI$($host.name)".replace(' ','_'), '3.0.0')
+  #[Microsoft.Azure.Common.Authentication.AzureSession]::ClientFactory.AddUserAgent("VSAzureTools-$UI$($host.name)".replace(' ','_'), '3.0.0')
 } catch { 
   Write-Host "An error occurred:"
   Write-Host $_
@@ -179,7 +179,7 @@ try
 }catch{
 	Write-Host "An error occurred:"
 	Write-Host $_
-    Write-Host "##vso[task.LogIssue type=error;]$_"
+    Write-Host "##vso[task.LogIssue type=error;]" @(ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
 	exit 1
 }
 Pop-Location

@@ -14,7 +14,7 @@
 
         public string AdditionalValues { get; set; }
 
-        public CaseworkerDataResponseModel[] Data { get; set; }
+        public CaseworkerDataResponse[] Data { get; set; }
     }
 }
 

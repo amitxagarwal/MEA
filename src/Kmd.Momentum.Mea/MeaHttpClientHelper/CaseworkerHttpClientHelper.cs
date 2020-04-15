@@ -17,13 +17,13 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             _meaClient = meaClient ?? throw new ArgumentNullException(nameof(meaClient));
         }
 
-        public async Task<ResultOrHttpError<IReadOnlyList<CaseworkerDataResponse>, Error>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url)
+        public async Task<ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url)
         {
             var PageNumber = 0;
             var pageSize = 50;
             bool hasMore = true;
 
-            List<CaseworkerDataResponse> totalRecords = new List<CaseworkerDataResponse>();
+            List<CaseworkerDataResponseModel> totalRecords = new List<CaseworkerDataResponseModel>();
 
             while (hasMore)
             {
@@ -33,7 +33,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
                 if (response.IsError)
                 {
-                    return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponse>, Error>(response.Error, response.StatusCode.Value);
+                    return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>(response.Error, response.StatusCode.Value);
                 }
 
                 var content = response.Result;
@@ -42,19 +42,15 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
                 foreach (var item in records)
                 {
-                    var x = new CaseworkerDataResponse(item.CaseworkerId, item.DisplayName, item.GivenName, item.MiddleName, item.Initials,
-                    item.CaseworkerIdentifier, item.Description, item.IsActive, item.IsBookable, item.Email?.Address, item.Phone?.Number);
+                    var x = new CaseworkerDataResponseModel(item.Id, item.DisplayName, item.GivenName, item.MiddleName, item.Initials,
+                   item.Email?.Address, item.Phone?.Number, item.CaseworkerIdentifier, item.Description, item.IsActive, item.IsBookable);
                     totalRecords.Add(x);
                 }
 
                 hasMore = citizenDataObj.HasMore;
             }
 
-            return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponse>, Error>(totalRecords);
+            return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>(totalRecords);
         }
     }
 }
-
-
-
-

@@ -7,6 +7,6 @@ namespace Kmd.Momentum.Mea.Caseworker
 {
     public interface ICaseworkerService
     {
-        Task<ResultOrHttpError<IReadOnlyList<CaseworkerDataResponse>, Error>> GetAllCaseworkersAsync();
+        Task<ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>> GetAllCaseworkersAsync();
     }
 }

@@ -12,9 +12,9 @@
 
         public string Initials { get; }
 
-        public Email Email { get; }
+        public string Email { get; }
 
-        public Phone Phone { get; }
+        public string Phone { get; }
 
         public string CaseworkerIdentifier { get; }
 
@@ -24,7 +24,7 @@
 
         public bool IsActive { get; }
 
-        public CaseworkerDataResponseModel(string caseworkerId, string displayName, string givenName, string middleName, string initials, Email email, Phone phone,
+        public CaseworkerDataResponseModel(string caseworkerId, string displayName, string givenName, string middleName, string initials, string email, string phone,
            string caseworkerIdentifier, string description,
            bool isActive = true, bool isBookable = true)
         {

@@ -2,33 +2,33 @@
 {
     public class CaseworkerDataResponse
     {
-        public string CaseworkerId { get; }
+        public string Id { get; set; }
 
-        public string DisplayName { get; }
+        public string DisplayName { get; set; }
 
-        public string GivenName { get; }
+        public string GivenName { get; set; }
 
-        public string MiddleName { get; }
+        public string MiddleName { get; set; }
 
-        public string Initials { get; }
+        public string Initials { get; set; }
 
-        public string Email { get; }
+        public Email Email { get; set; }
 
-        public string Phone { get; }
+        public Phone Phone { get; set; }
 
-        public string CaseworkerIdentifier { get; }
+        public string CaseworkerIdentifier { get; set; }
 
-        public string Description { get; }
+        public string Description { get; set; }
 
-        public bool IsBookable { get; }
+        public bool IsBookable { get; set; }
 
         public bool IsActive { get; }
 
-        public CaseworkerDataResponse(string caseworkerId, string displayName, string givenName, string middleName, string initials,
+        public CaseworkerDataResponse(string id, string displayName, string givenName, string middleName, string initials,
            string caseworkerIdentifier, string description,
-           bool isActive = true, bool isBookable = true, string email = null, string phone = null)
+           bool isActive = true, bool isBookable = true, Email email = null, Phone phone = null)
         {
-            CaseworkerId = caseworkerId;
+            Id = id;
             DisplayName = displayName;
             GivenName = givenName;
             MiddleName = middleName;

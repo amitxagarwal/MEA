@@ -47,7 +47,7 @@ jobs:
                 ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)' -ClientId '$(ClientId)' -ClientSecret '$(ClientSecret)' -Environment '$(Environment)' -DbRequired '$(isDbRequired)'
                 azurePowerShellVersion: 'LatestVersion'
                 failOnStderr: true
-                writeError: true
+                errorActionPreference: 'stop' 
                 pwsh: true
 
             - task: AzurePowerShell@4
@@ -60,7 +60,7 @@ jobs:
                 ScriptArguments: -InstanceId '$(InstanceId)' -ArtifactPath '$(Pipeline.Workspace)'
                 azurePowerShellVersion: 'LatestVersion'
                 failOnStderr: true
-                writeError: true
+                errorActionPreference: 'stop'
                 pwsh: true
 
             - task: AzurePowerShell@4
@@ -72,5 +72,5 @@ jobs:
                 ScriptArguments: -PublishedArtifactsPath '$(Pipeline.Workspace)/Applications' -WebAppName '$(WebAppName)' -ResourceGroupName '$(ResourceGroupName)' -AutoSwapSlots:("${{ parameters.autoSwapSlots }}" -eq "true")
                 azurePowerShellVersion: 'LatestVersion'
                 failOnStderr: true
-                writeError: true
+                errorActionPreference: 'stop'
                 pwsh: true

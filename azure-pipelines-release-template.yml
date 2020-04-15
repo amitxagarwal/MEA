@@ -40,6 +40,7 @@ jobs:
 
             - task: AzurePowerShell@4
               displayName: Deploy azure infrastructure
+              failOnStderr: true
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'
@@ -51,6 +52,7 @@ jobs:
             - task: AzurePowerShell@4
               condition: eq(variables['isDbRequired'],'true')
               displayName: Deploy Database
+              failOnStderr: true
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'
@@ -61,6 +63,7 @@ jobs:
 
             - task: AzurePowerShell@4
               displayName: Deploy webapp binaries
+              failOnStderr: true
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'

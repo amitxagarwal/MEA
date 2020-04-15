@@ -129,7 +129,7 @@ $TemplateParameters = @{
   dbLoginPassword = $env:DbLoginPassword;
   dbName = $DbName;
   dbConnection = $DbConnection;
-  dbRequired = $true
+  dbRequired = $DbRequired
 }
 
 # Create or update the resource group using the specified template file and template parameter values

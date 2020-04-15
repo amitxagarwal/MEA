@@ -60,7 +60,7 @@ jobs:
                 ScriptArguments: -InstanceId '$(InstanceId)' -ArtifactPath '$(Pipeline.Workspace)'
                 azurePowerShellVersion: 'LatestVersion'
                 failOnStderr: true
-                failOnStandardError:true
+                failOnStandardError: true
                 pwsh: true
 
             - task: AzurePowerShell@4
@@ -72,5 +72,5 @@ jobs:
                 ScriptArguments: -PublishedArtifactsPath '$(Pipeline.Workspace)/Applications' -WebAppName '$(WebAppName)' -ResourceGroupName '$(ResourceGroupName)' -AutoSwapSlots:("${{ parameters.autoSwapSlots }}" -eq "true")
                 azurePowerShellVersion: 'LatestVersion'
                 failOnStderr: true
-                failOnStandardError:true
+                failOnStandardError: true
                 pwsh: true

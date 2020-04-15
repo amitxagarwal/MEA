@@ -373,8 +373,7 @@
       "type": "Microsoft.DBforPostgreSQL/servers",
       "resources": [
         {
-          "apiVersion": "2017-12-01-preview",
-          "condition": "[equals(parameters('dbRequired'),'true')]",
+          "apiVersion": "2017-12-01-preview",          
           "name": "[parameters('dbName')]",
           "type": "databases",
           "location": "[parameters('location')]",
@@ -383,8 +382,7 @@
           ]
         },
         {
-          "name": "defaultRule",
-          "condition": "[equals(parameters('dbRequired'),'true')]",
+          "name": "defaultRule",          
           "type": "firewallrules",
           "location": "[parameters('location')]",
           "apiVersion": "2017-12-01-preview",

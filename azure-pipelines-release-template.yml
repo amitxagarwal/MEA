@@ -46,7 +46,6 @@ jobs:
                 ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-infrastructure.ps1'
                 ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)' -ClientId '$(ClientId)' -ClientSecret '$(ClientSecret)' -Environment '$(Environment)' -DbRequired '$(isDbRequired)'
                 azurePowerShellVersion: 'LatestVersion'
-                failOnStderr: true
                 pwsh: true
 
             - task: AzurePowerShell@4
@@ -58,7 +57,6 @@ jobs:
                 ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-database.ps1'
                 ScriptArguments: -InstanceId '$(InstanceId)' -ArtifactPath '$(Pipeline.Workspace)'
                 azurePowerShellVersion: 'LatestVersion'
-                failOnStderr: true
                 pwsh: true
 
             - task: AzurePowerShell@4
@@ -70,5 +68,4 @@ jobs:
                 ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-webapps.ps1'
                 ScriptArguments: -PublishedArtifactsPath '$(Pipeline.Workspace)/Applications' -WebAppName '$(WebAppName)' -ResourceGroupName '$(ResourceGroupName)' -AutoSwapSlots:("${{ parameters.autoSwapSlots }}" -eq "true")
                 azurePowerShellVersion: 'LatestVersion'
-                failOnStderr: true
                 pwsh: true

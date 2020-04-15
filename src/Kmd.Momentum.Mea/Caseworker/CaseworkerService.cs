@@ -3,6 +3,8 @@ using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -47,6 +49,31 @@ namespace Kmd.Momentum.Mea.Caseworker
                 .Information("All the caseworkers data retrieved successfully");
 
             return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>(response.Result);
+        }
+
+       public async Task<ResultOrHttpError<CaseworkerDataResponseModel, Error>> GetCaseworkerByIdAsync(string caseworkerId)
+        {
+            var response = await _caseworkerHttpClient.GetCaseworkerDataByCaseworkerIdAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers") , caseworkerId).ConfigureAwait(false);
+
+            if (response.IsError)
+            {
+                var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
+                Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
+                 .ForContext("CitizenId", caseworkerId)
+                .Error("An error occured while retrieving citizen data by citizenID" + error);
+                return new ResultOrHttpError<CaseworkerDataResponseModel, Error>(response.Error, response.StatusCode.Value);
+            }
+
+            //var json = JObject.Parse(response.Result);
+            //var citizenData = JsonConvert.DeserializeObject<CaseworkerDataResponseModel>(json.ToString());
+
+            Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
+                .ForContext("CitizenId", caseworkerId)
+                .Information("The citizen details by CitizenId has been returned successfully");
+
+            return new ResultOrHttpError<CaseworkerDataResponseModel, Error>(response.Result);
         }
     }
 }

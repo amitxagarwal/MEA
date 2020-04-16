@@ -8,12 +8,6 @@
         "description": "Environment suffix to identify the environment"
       }
     },
-    "mcaApiUri": {
-      "type": "string",
-      "metadata": {
-        "description": "Base Uri for calling MCA API"
-      }
-    },
     "dbRequired": {
       "type": "string",
       "defaultValue": "false",
@@ -51,16 +45,22 @@
         "description": "Database Connection String"
       }
     },
+    "mcaApiUri": {
+      "type": "string",
+      "metadata": {
+        "description": "Base Uri for calling MCA API"
+      }
+    },
     "clientId": {
       "type": "string",
       "metadata": {
-        "description": "Client Id for authentication"
+        "description": "MCA client Id for authentication"
       }
     },
     "clientSecret": {
       "type": "string",
       "metadata": {
-        "description": "client Secret for authentication"
+        "description": "MCA client Secret for authentication"
       }
     },
     "instanceId": {
@@ -229,11 +229,11 @@
               "value": "[parameters('diagnosticSeqApiKey')]"
             },
             {
-              "name": "KMD_MOMENTUM_MEA_ClientId",
+              "name": "KMD_MOMENTUM_MEA_McaClientId",
               "value": "[parameters('clientId')]"
             },
             {
-              "name": "KMD_MOMENTUM_MEA_ClientSecret",
+              "name": "KMD_MOMENTUM_MEA_McaClientSecret",
               "value": "[parameters('clientSecret')]"
             },
             {
@@ -298,7 +298,7 @@
           "appSettings": [
             {
               "name": "SlotName",
-              "value": "staging"
+              "value": "production"
             },
             {
               "name": "KMD_MOMENTUM_MEA_EnvironmentInstanceId",
@@ -325,11 +325,11 @@
               "value": "[parameters('diagnosticSeqApiKey')]"
             },
             {
-              "name": "KMD_MOMENTUM_MEA_ClientId",
+              "name": "KMD_MOMENTUM_MEA_McaClientId",
               "value": "[parameters('clientId')]"
             },
             {
-              "name": "KMD_MOMENTUM_MEA_ClientSecret",
+              "name": "KMD_MOMENTUM_MEA_McaClientSecret",
               "value": "[parameters('clientSecret')]"
             },
             {

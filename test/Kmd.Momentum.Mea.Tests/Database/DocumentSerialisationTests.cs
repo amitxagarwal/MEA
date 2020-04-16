@@ -57,7 +57,7 @@ namespace Kmd.Momentum.Mea.Tests.Database
                 .And.BeDecoratedWith<Newtonsoft.Json.JsonPropertyAttribute>(a => a.PropertyName == "id");
         }
 
-        [Theory]
+        [Theory(Skip = "Db is not being used")]
         [MemberData(nameof(GetConcreteDocumentTypes))]
         public void HasPublicIdPropertyWithCorrectConventions(Type documentType)
         {
@@ -66,7 +66,7 @@ namespace Kmd.Momentum.Mea.Tests.Database
 #pragma warning restore CA1062 // Validate arguments of public methods
         }
 
-        [Theory]
+        [Theory(Skip = "Db is not being used")]
         [MemberData(nameof(GetConcreteDocumentTypes))]
         public void AllPublicPropertiesAreReadOnly(Type documentType)
         {
@@ -94,7 +94,7 @@ namespace Kmd.Momentum.Mea.Tests.Database
         /// works, and what kind of exception+message it will throw when an <see cref="IDocument"/>
         /// has a publicly writeable Id property.
         /// </summary>
-        [Fact]
+        [Fact(Skip = "Db is not being used")]
         public void AssertionThrowsIfConcreteDocumentTypeIdIsWriteable()
         {
             //Act
@@ -105,7 +105,7 @@ namespace Kmd.Momentum.Mea.Tests.Database
             act.Should().ThrowExactly<Xunit.Sdk.XunitException>().WithMessage(expectedMessage);
         }
 
-        [Fact]
+        [Fact(Skip = "Db is not being used")]
         public void DocumentMappableTestDiscoversAllTypes()
         {
             //Arrange
@@ -135,7 +135,7 @@ namespace Kmd.Momentum.Mea.Tests.Database
             seenTypes.Should().BeEquivalentTo(expectedTypes);
         }
 
-        [Theory]
+        [Theory(Skip = "Db is not being used")]
         [MemberData(nameof(GetConcreteDocumentTypes))]
         public void AllDocumentsAndReferencedClassesHaveDocumentMappableAttribute(Type documentType)
         {

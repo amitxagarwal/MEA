@@ -131,7 +131,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
             }
             else
             {
-                return Ok();
+                return Ok("OK");
             }
         }
     }

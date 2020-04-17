@@ -177,7 +177,7 @@
     "webAppStagingSlotName": "[concat(variables('webAppName'), '/', variables('stagingSlotName'))]",
     "hostingPlanName": "[concat(variables('resourceNamePrefixLower'),'-appsvcplan')]",
     "azureServicesAuthConnectionString": "RunAs=App",
-    "meaKeyVaultSecretStore": "Meafhhdfgter1234tkv",
+    "meaKeyVaultSecretStore": "[concat('Mea', uniqueString(resourceGroup().id, 'kv'))]",
     "meaKeyVaultUri": "[concat('https://', variables('meaKeyVaultSecretStore'), '.vault.azure.net/')]"
   },
   "resources": [
@@ -407,6 +407,21 @@
           {
             "tenantId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppName')), '2016-08-01', 'Full').identity.tenantid]",
             "objectId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppName')), '2016-08-01', 'Full').identity.principalId]",
+            "permissions": {
+              "keys": [
+                "all"
+              ],
+              "secrets": [
+                "all"
+              ],
+              "certificates": [
+                "all"
+              ]
+            }
+          },
+          {
+            "tenantId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppStagingSlotName')), '2016-08-01', 'Full').identity.tenantid]",
+            "objectId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppStagingSlotName')), '2016-08-01', 'Full').identity.principalId]",
             "permissions": {
               "keys": [
                 "all"

@@ -5,6 +5,7 @@ using Kmd.Momentum.Mea.Common.Authorization.Citizen;
 using Kmd.Momentum.Mea.Common.Authorization.Journal;
 using Kmd.Momentum.Mea.Common.Framework;
 using Kmd.Momentum.Mea.Common.Framework.PollyOptions;
+using Kmd.Momentum.Mea.Common.KeyVault;
 using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +28,8 @@ namespace Kmd.Momentum.Mea.Common.Modules
 
             services.AddCorrelationId();
             services.AddSingleton<IMeaCustomClaimsCheck, MeaCustomClaimsCheck>();
+            services.AddTransient<IMeaKeyVaultClientFactory, MeaKeyVaultClientFactory>();
+            services.AddTransient<IMeaSecretStore, MeaSecretStore>();
         }
     }
 }

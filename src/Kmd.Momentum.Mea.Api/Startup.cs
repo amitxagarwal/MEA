@@ -144,6 +144,7 @@ namespace Kmd.Momentum.Mea.Api
                 var securityRequirement = new OpenApiSecurityRequirement();
                 securityRequirement.Add(securityScheme, new[] { "Bearer" });
                 c.AddSecurityRequirement(securityRequirement);
+                c.EnableAnnotations();
 
                 //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);

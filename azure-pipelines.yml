@@ -81,7 +81,7 @@ stages:
 
 - stage: deploy_external
   dependsOn: deploy_phoenix
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], '152694-Add-Stage-in-pipeline-to-deploy-Production'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'ref/head/152694-Add-Stage-in-pipeline-to-deploy-Production'))
   jobs:
   - template: azure-pipelines-release-template.yml
     parameters:

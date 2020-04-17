@@ -51,7 +51,7 @@ stages:
       resourceGroupLocation: westeurope
       diagnosticSeqServerUrl: $(PhoenixDiagnosticSeqServerUrl)
       diagnosticSeqApiKey: $(PhoenixDiagnosticSeqApiKey)
-      webAppServicePlanSku: S1
+      webAppServicePlanSku: B1
       webAppConfigAlwaysOn: false
       autoSwapSlots: true
       clientId: $(McaClientId)

@@ -177,7 +177,7 @@
     "webAppStagingSlotName": "[concat(variables('webAppName'), '/', variables('stagingSlotName'))]",
     "hostingPlanName": "[concat(variables('resourceNamePrefixLower'),'-appsvcplan')]",
     "azureServicesAuthConnectionString": "RunAs=App",
-    "meaKeyVaultSecretStore": "AshishKeyVaultKmdMea",
+    "meaKeyVaultSecretStore": "[concat(variables('resourceNamePrefixLower'), 'kv']",
     "meaKeyVaultUri": "[concat('https://', variables('meaKeyVaultSecretStore'), '.vault.azure.net/')]"
   },
   "resources": [
@@ -208,8 +208,8 @@
         "tenantId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppName')), '2016-08-01', 'Full').identity.tenantid]",
         "accessPolicies": [
           {
-            "tenantId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppName')), '2018-02-01', 'Full').identity.tenantid]",
-            "objectId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppName')), '2018-02-01', 'Full').identity.principalId]",
+            "tenantId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppName')), '2016-08-01', 'Full').identity.tenantid]",
+            "objectId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppName')), '2016-08-01', 'Full').identity.principalId]",
             "permissions": {
               "keys": [
                 "all"
@@ -225,6 +225,34 @@
         ],
         "enabledForDeployment": true,
         "vaultUri": "[variables('meaKeyVaultUri')]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/accessPolicies",
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('meaKeyVaultSecretStore'))]",
+        "[concat('Microsoft.Web/sites/', variables('webAppStagingSlotName'))]"
+      ],
+      "name": "[concat(variables('meaKeyVaultSecretStore'), '/add')]",
+      "apiVersion": "2018-02-14",
+      "properties": {
+        "accessPolicies": [
+          {
+            "tenantId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppStagingSlotName')), '2016-08-01', 'Full').identity.tenantid]",
+            "objectId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppStagingSlotName')), '2016-08-01', 'Full').identity.principalId]",
+            "permissions": {
+              "keys": [
+                "all"
+              ],
+              "secrets": [
+                "all"
+              ],
+              "certificates": [
+                "all"
+              ]
+            }
+          }
+        ]
       }
     },
     {

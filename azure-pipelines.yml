@@ -60,7 +60,7 @@ stages:
 
 - stage: deploy_internal
   dependsOn: Build
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
+  condition: and(succeeded(), in(variables['Build.SourceBranch'], 'refs/heads/dev'))
   jobs:
   - template: azure-pipelines-release-template.yml
     parameters:
@@ -69,6 +69,27 @@ stages:
       environmentAutoDelete: false
       azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
       instanceId: internal
+      resourceGroupLocation: westeurope
+      diagnosticSeqServerUrl: $(ShareddevDiagnosticSeqAServerUrl)
+      diagnosticSeqApiKey: $(ShareddevDiagnosticSeqApiKey)
+      webAppServicePlanSku: S1
+      webAppConfigAlwaysOn: false
+      autoSwapSlots: true
+      clientId: $(McaClientId)
+      clientSecret: $(McaClientSecret)
+      isDbRequired: $(DbRequired)
+
+- stage: deploy_external
+  dependsOn: Build
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+  - template: azure-pipelines-release-template.yml
+    parameters:
+      environmentNameSuffix: external
+      environment: External
+      environmentAutoDelete: false
+      azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
+      instanceId: external
       resourceGroupLocation: westeurope
       diagnosticSeqServerUrl: $(ShareddevDiagnosticSeqAServerUrl)
       diagnosticSeqApiKey: $(ShareddevDiagnosticSeqApiKey)

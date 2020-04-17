@@ -177,7 +177,7 @@
     "webAppStagingSlotName": "[concat(variables('webAppName'), '/', variables('stagingSlotName'))]",
     "hostingPlanName": "[concat(variables('resourceNamePrefixLower'),'-appsvcplan')]",
     "azureServicesAuthConnectionString": "RunAs=App",
-    "meaKeyVaultSecretStore": "[concat('Mea', uniqueString(resourceGroup().id, 'kv'))]",
+    "meaKeyVaultSecretStore": "Meafhhdfgter1234t",
     "meaKeyVaultUri": "[concat('https://', variables('meaKeyVaultSecretStore'), '.vault.azure.net/')]"
   },
   "resources": [

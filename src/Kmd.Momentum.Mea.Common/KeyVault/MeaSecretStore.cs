@@ -22,7 +22,7 @@ namespace Kmd.Momentum.Mea.Common.KeyVault
         {
             get
             {
-                return _keyVaultClient ?? (_keyVaultClient = _meaKeyVaultClientFactory.CreateKeyVaultClient(_configuration.GetSection("AzureServicesAuthConnectionString").Value));
+                return _keyVaultClient ?? (_keyVaultClient = _meaKeyVaultClientFactory.CreateKeyVaultClient(_configuration.GetSection("MeaKeyVaultSecretStore:AzureServicesAuthConnectionString").Value));
             }
         }
 

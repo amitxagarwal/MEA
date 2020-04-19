@@ -3,6 +3,8 @@ using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -26,10 +28,10 @@ namespace Kmd.Momentum.Mea.Caseworker
             _clientId = httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == "azp").Value;
         }
 
-        public async Task<ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>> GetAllCaseworkersAsync()
+        public async Task<ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>> GetAllCaseworkersAsync(int pageNumber)
         {
             var response = await _caseworkerHttpClient.GetAllCaseworkerDataFromMomentumCoreAsync
-                (new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers")).ConfigureAwait(false);
+                (new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers"), pageNumber).ConfigureAwait(false);
 
             if (response.IsError)
             {
@@ -47,6 +49,45 @@ namespace Kmd.Momentum.Mea.Caseworker
                 .Information("All the caseworkers data retrieved successfully");
 
             return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>(response.Result);
+        }
+
+        public async Task<ResultOrHttpError<CaseworkerDataResponseModel, Error>> GetCaseworkerByIdAsync(string id)
+        {
+            var response = await _caseworkerHttpClient.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}employees/{id}")).ConfigureAwait(false);
+
+            if (response.IsError)
+            {
+                var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
+                Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
+                 .ForContext("CaseworkerId", id)
+                .Error("An error occured while retrieving caseworker data by CaseworkerId" + error);
+                return new ResultOrHttpError<CaseworkerDataResponseModel, Error>(response.Error, response.StatusCode.Value);
+            }
+
+            var content = response.Result;
+            var citizenDataObj = JsonConvert.DeserializeObject<CaseworkerDataResponse>(content);
+            var caseworkerData = new CaseworkerDataResponseModel()
+            {
+                CaseworkerId = citizenDataObj.Id,
+                DisplayName = citizenDataObj.DisplayName,
+                GivenName = citizenDataObj.GivenName,
+                MiddleName = citizenDataObj.MiddleName,
+                Initials = citizenDataObj.Initials,
+                Email = citizenDataObj.Email.Address,
+                Phone = citizenDataObj.Phone.Number,
+                CaseworkerIdentifier = citizenDataObj.CaseworkerIdentifier,
+                Description = citizenDataObj.Description,
+                IsActive = citizenDataObj.IsActive,
+                IsBookable = citizenDataObj.IsBookable
+            };
+
+            Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
+                .ForContext("CaseworkerId", citizenDataObj.Id)
+                .Information("The caseworker details by CaseworkerId has been returned successfully");
+
+            return new ResultOrHttpError<CaseworkerDataResponseModel, Error>(caseworkerData);
         }
     }
 }

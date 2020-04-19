@@ -17,40 +17,60 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             _meaClient = meaClient ?? throw new ArgumentNullException(nameof(meaClient));
         }
 
-        public async Task<ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url)
+        public async Task<ResultOrHttpError<IReadOnlyList<MeaBaseList>, Error>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url, int pageNumber)
         {
-            var PageNumber = 0;
+            
             var pageSize = 50;
-            bool hasMore = true;
+           
 
             List<CaseworkerDataResponseModel> totalRecords = new List<CaseworkerDataResponseModel>();
 
-            while (hasMore)
-            {
-                PageNumber++;
+            
+            
+                var PageNumber = pageNumber;
                 var queryStringParams = $"pagingInfo.pageNumber={PageNumber}&pagingInfo.pageSize={pageSize}";
                 var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
 
                 if (response.IsError)
                 {
-                    return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>(response.Error, response.StatusCode.Value);
+                    return new ResultOrHttpError<IReadOnlyList<MeaBaseList>, Error>(response.Error, response.StatusCode.Value);
                 }
 
                 var content = response.Result;
                 var citizenDataObj = JsonConvert.DeserializeObject<PUnitData>(content);
                 var records = citizenDataObj.Data;
+            var y = new MeaBaseList()
+            {
+                PageNo = PageNumber,
+                TotalNoOfPages = citizenDataObj.TotalPages,
+                TotalSearchCount = citizenDataObj.TotalSearchCount,
+                Result = totalRecords.ToArray()
+            };
 
-                foreach (var item in records)
+            foreach (var item in records)
                 {
                     var x = new CaseworkerDataResponseModel(item.Id, item.DisplayName, item.GivenName, item.MiddleName, item.Initials,
                    item.Email?.Address, item.Phone?.Number, item.CaseworkerIdentifier, item.Description, item.IsActive, item.IsBookable);
                     totalRecords.Add(x);
                 }
 
-                hasMore = citizenDataObj.HasMore;
+           
+
+
+            return new ResultOrHttpError<IReadOnlyList<MeaBaseList>, Error>(y);
+        }
+
+        public async Task<ResultOrHttpError<string, Error>> GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(Uri url)
+        {
+            var response = await _meaClient.GetAsync(url).ConfigureAwait(false);
+
+            if (response.IsError)
+            {
+                return new ResultOrHttpError<string, Error>(response.Error, response.StatusCode.Value);
             }
 
-            return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>(totalRecords);
+            var content = response.Result;
+            return new ResultOrHttpError<string, Error>(content);
         }
     }
 }

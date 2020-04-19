@@ -3,8 +3,10 @@ using Kmd.Momentum.Mea.Caseworker.Model;
 using Kmd.Momentum.Mea.Common.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -35,9 +37,37 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(401)]
-        public async Task<ActionResult<IReadOnlyList<CaseworkerDataResponse>>> GetAllCaseworkers()
+        public async Task<ActionResult<IReadOnlyList<CaseworkerDataResponse>>> GetAllCaseworkers([Required] [FromQuery] int pageNumber)
         {
-            var result = await _caseworkerService.GetAllCaseworkersAsync().ConfigureAwait(false);
+            var result = await _caseworkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
+
+            if (result.IsError)
+            {
+                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error.Errors);
+            }
+            else
+            {
+                return Ok(result.Result);
+            }
+        }
+
+        ///<summary>
+        ///Get caseworkers in Momentum with ID
+        ///</summary>
+        ///<response code="200">The caseworker detail by id is loaded successfully</response>
+        ///<response code="400">Bad request</response>
+        ///<response code="404">The caseworker detail by id is not found</response>
+        ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [Route("kss/{id}")]
+        [SwaggerOperation(OperationId = "getCaseworkerById")]
+        public async Task<ActionResult<CaseworkerDataResponse>> GetCaseworkerById([Required] [FromRoute] string id)
+        {
+            var result = await _caseworkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);
 
             if (result.IsError)
             {

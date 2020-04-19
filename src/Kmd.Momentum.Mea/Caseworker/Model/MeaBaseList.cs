@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Kmd.Momentum.Mea.Caseworker.Model
+{
+    public class MeaBaseList
+    {
+        public int TotalNoOfPages { get; set; }
+
+        public int TotalSearchCount { get; set; }
+        public int PageNo { get; set; }
+        public CaseworkerDataResponseModel[] Result { get; set; }
+    }
+}

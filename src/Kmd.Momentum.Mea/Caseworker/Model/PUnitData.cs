@@ -1,4 +1,6 @@
-﻿namespace Kmd.Momentum.Mea.Caseworker.Model
+﻿using System.Collections.Generic;
+
+namespace Kmd.Momentum.Mea.Caseworker.Model
 {
     public class PUnitData
     {
@@ -14,7 +16,7 @@
 
         public string AdditionalValues { get; set; }
 
-        public CaseworkerDataResponse[] Data { get; set; }
+        public IReadOnlyList<CaseworkerDataResponse> Data { get; set; }
     }
 }
 

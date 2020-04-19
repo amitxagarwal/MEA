@@ -28,7 +28,7 @@ namespace Kmd.Momentum.Mea.Caseworker
             _clientId = httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == "azp").Value;
         }
 
-        public async Task<ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>> GetAllCaseworkersAsync(int pageNumber)
+        public async Task<ResultOrHttpError<MeaBaseList, Error>> GetAllCaseworkersAsync(int pageNumber)
         {
             var response = await _caseworkerHttpClient.GetAllCaseworkerDataFromMomentumCoreAsync
                 (new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers"), pageNumber).ConfigureAwait(false);
@@ -41,14 +41,14 @@ namespace Kmd.Momentum.Mea.Caseworker
                    .ForContext("ClientId", _clientId)
                 .Error("An Error Occured while retrieving data of all the caseworkers" + error);
 
-                return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>(response.Error, response.StatusCode.Value);
+                return new ResultOrHttpError<MeaBaseList, Error> (response.Error, response.StatusCode.Value);
             }
 
             Log.ForContext("CorrelationId", _correlationId)
                .ForContext("ClientId", _clientId)
                 .Information("All the caseworkers data retrieved successfully");
 
-            return new ResultOrHttpError<IReadOnlyList<CaseworkerDataResponseModel>, Error>(response.Result);
+            return new ResultOrHttpError<MeaBaseList, Error>(response.Result);
         }
 
         public async Task<ResultOrHttpError<CaseworkerDataResponseModel, Error>> GetCaseworkerByIdAsync(string id)
@@ -67,21 +67,10 @@ namespace Kmd.Momentum.Mea.Caseworker
 
             var content = response.Result;
             var citizenDataObj = JsonConvert.DeserializeObject<CaseworkerDataResponse>(content);
-            var caseworkerData = new CaseworkerDataResponseModel()
-            {
-                CaseworkerId = citizenDataObj.Id,
-                DisplayName = citizenDataObj.DisplayName,
-                GivenName = citizenDataObj.GivenName,
-                MiddleName = citizenDataObj.MiddleName,
-                Initials = citizenDataObj.Initials,
-                Email = citizenDataObj.Email.Address,
-                Phone = citizenDataObj.Phone.Number,
-                CaseworkerIdentifier = citizenDataObj.CaseworkerIdentifier,
-                Description = citizenDataObj.Description,
-                IsActive = citizenDataObj.IsActive,
-                IsBookable = citizenDataObj.IsBookable
-            };
-
+            var caseworkerData = new CaseworkerDataResponseModel(citizenDataObj.Id, citizenDataObj.DisplayName, citizenDataObj.GivenName,
+                citizenDataObj.MiddleName, citizenDataObj.Initials, citizenDataObj.Email.Address, citizenDataObj.Phone.Number, citizenDataObj.CaseworkerIdentifier,
+                citizenDataObj.Description, citizenDataObj.IsActive, citizenDataObj.IsBookable);
+        
             Log.ForContext("CorrelationId", _correlationId)
                     .ForContext("Client", _clientId)
                 .ForContext("CaseworkerId", citizenDataObj.Id)

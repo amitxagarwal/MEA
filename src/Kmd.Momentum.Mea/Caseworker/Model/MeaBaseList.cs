@@ -10,6 +10,6 @@ namespace Kmd.Momentum.Mea.Caseworker.Model
 
         public int TotalSearchCount { get; set; }
         public int PageNo { get; set; }
-        public CaseworkerDataResponseModel[] Result { get; set; }
+        public IReadOnlyList<CaseworkerDataResponseModel> Result { get; set; }
     }
 }

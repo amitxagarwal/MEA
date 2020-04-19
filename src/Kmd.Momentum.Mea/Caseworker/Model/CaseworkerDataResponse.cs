@@ -2,25 +2,25 @@
 {
     public class CaseworkerDataResponse
     {
-        public string Id { get; set; }
+        public string Id { get; }
 
-        public string DisplayName { get; set; }
+        public string DisplayName { get; }
 
-        public string GivenName { get; set; }
+        public string GivenName { get; }
 
-        public string MiddleName { get; set; }
+        public string MiddleName { get; }
 
-        public string Initials { get; set; }
+        public string Initials { get; }
 
-        public Email Email { get; set; }
+        public Email Email { get; }
 
-        public Phone Phone { get; set; }
+        public Phone Phone { get; }
 
-        public string CaseworkerIdentifier { get; set; }
+        public string CaseworkerIdentifier { get; }
 
-        public string Description { get; set; }
+        public string Description { get; }
 
-        public bool IsBookable { get; set; }
+        public bool IsBookable { get; }
 
         public bool IsActive { get; }
 

@@ -17,7 +17,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             _meaClient = meaClient ?? throw new ArgumentNullException(nameof(meaClient));
         }
 
-        public async Task<ResultOrHttpError<IReadOnlyList<MeaBaseList>, Error>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url, int pageNumber)
+        public async Task<ResultOrHttpError<MeaBaseList, Error>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url, int pageNumber)
         {
             
             var pageSize = 50;
@@ -33,19 +33,12 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
                 if (response.IsError)
                 {
-                    return new ResultOrHttpError<IReadOnlyList<MeaBaseList>, Error>(response.Error, response.StatusCode.Value);
+                    return new ResultOrHttpError<MeaBaseList, Error>(response.Error, response.StatusCode.Value);
                 }
 
                 var content = response.Result;
                 var citizenDataObj = JsonConvert.DeserializeObject<PUnitData>(content);
                 var records = citizenDataObj.Data;
-            var y = new MeaBaseList()
-            {
-                PageNo = PageNumber,
-                TotalNoOfPages = citizenDataObj.TotalPages,
-                TotalSearchCount = citizenDataObj.TotalSearchCount,
-                Result = totalRecords.ToArray()
-            };
 
             foreach (var item in records)
                 {
@@ -54,10 +47,16 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                     totalRecords.Add(x);
                 }
 
-           
+            var y = new MeaBaseList()
+            {
+                PageNo = PageNumber,
+                TotalNoOfPages = citizenDataObj.TotalPages,
+                TotalSearchCount = citizenDataObj.TotalSearchCount,
+                Result = totalRecords
+            };
 
 
-            return new ResultOrHttpError<IReadOnlyList<MeaBaseList>, Error>(y);
+            return new ResultOrHttpError<MeaBaseList, Error>(y);
         }
 
         public async Task<ResultOrHttpError<string, Error>> GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(Uri url)

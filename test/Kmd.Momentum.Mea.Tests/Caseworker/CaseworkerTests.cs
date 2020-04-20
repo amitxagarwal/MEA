@@ -6,6 +6,7 @@ using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Moq;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -106,6 +107,48 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             result.Should().NotBeNull();
             result.IsError.Should().BeTrue();
             result.Error.Errors[0].Should().Be("An Error Occured while retriving data of all caseworkers");
+        }
+
+        [Fact]
+        public async Task GetCaseworkerByCaseworkerIdSuccess()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
+            var context = new Mock<IHttpContextAccessor>();
+            var _configuration = new Mock<IConfiguration>();
+            var id = "12345";
+
+            var hc = new DefaultHttpContext();
+            hc.TraceIdentifier = Guid.NewGuid().ToString();
+            context.Setup(x => x.HttpContext).Returns(hc);
+
+            var claims = new List<Claim>()
+                        {
+                            new Claim("azp", Guid.NewGuid().ToString()),
+                        };
+            var identity = new ClaimsIdentity(claims, "JWT");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+            hc.User = claimsPrincipal;
+
+            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
+
+            var citizenData = new CaseworkerDataResponseModel(id, "TestDisplay1", "givenname",
+                            "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true);
+            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(citizenData);
+
+            helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}employees/{id}")))
+                   .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(httpClientCitizenDataResponse)));
+
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
+
+            //Act
+            var result = await caseWorkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);
+
+            //Asert
+            result.Should().NotBeNull();
+            result.IsError.Should().BeFalse();
+            result.Result.Should().BeEquivalentTo(citizenData);
+
         }
 
     }

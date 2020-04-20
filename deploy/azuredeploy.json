@@ -15,13 +15,6 @@
         "description": "Flag for datbase required or not"
       }
     },
-    "keyVaultRequired": {
-      "type": "string",
-      "defaultValue": "false",
-      "metadata": {
-        "description": "Flag for datbase required or not"
-      }
-    },
     "dbServerName": {
       "type": "string",
       "metadata": {
@@ -50,6 +43,19 @@
       "type": "string",
       "metadata": {
         "description": "Database Connection String"
+      }
+    },
+    "keyVaultRequired": {
+      "type": "string",
+      "defaultValue": "false",
+      "metadata": {
+        "description": "Flag for datbase required or not"
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "metadata": {
+        "description": "KeyVaultName is required for keyVault"
       }
     },
     "mcaApiUri": {
@@ -184,7 +190,7 @@
     "webAppStagingSlotName": "[concat(variables('webAppName'), '/', variables('stagingSlotName'))]",
     "hostingPlanName": "[concat(variables('resourceNamePrefixLower'),'-appsvcplan')]",
     "azureServicesAuthConnectionString": "RunAs=App",
-    "meaKeyVaultSecretStore": "meakahdjgjdbd123e",
+    "meaKeyVaultSecretStore": "[tolower(parameters('keyVaultName'))]",
     "meaKeyVaultUri": "[concat('https://', variables('meaKeyVaultSecretStore'), '.vault.azure.net/')]"
   },
   "resources": [

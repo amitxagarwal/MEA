@@ -67,6 +67,7 @@ namespace Kmd.Momentum.Mea.Caseworker
 
             var content = response.Result;
             var citizenDataObj = JsonConvert.DeserializeObject<CaseworkerDataResponse>(content);
+
             var caseworkerData = new CaseworkerDataResponseModel(citizenDataObj.Id, citizenDataObj.DisplayName, citizenDataObj.GivenName,
                 citizenDataObj.MiddleName, citizenDataObj.Initials, citizenDataObj.Email !=null ? citizenDataObj.Email.Address :null, citizenDataObj.Phone != null ? citizenDataObj.Phone.Number :null, citizenDataObj.CaseworkerIdentifier,
                 citizenDataObj.Description, citizenDataObj.IsActive, citizenDataObj.IsBookable);

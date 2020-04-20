@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Kmd.Momentum.Mea.Caseworker.Model
 {
@@ -9,7 +7,9 @@ namespace Kmd.Momentum.Mea.Caseworker.Model
         public int TotalNoOfPages { get; set; }
 
         public int TotalSearchCount { get; set; }
+
         public int PageNo { get; set; }
+
         public IReadOnlyList<CaseworkerDataResponseModel> Result { get; set; }
     }
 }

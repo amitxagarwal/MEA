@@ -51,7 +51,7 @@ jobs:
                 pwsh: true
 
             - task: AzurePowerShell@4
-              condition: eq(variables['isDbRequired'],'true')
+              condition: and(succeeded(),eq(variables['isDbRequired'],'true'))
               displayName: Deploy Database
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}
@@ -62,6 +62,7 @@ jobs:
                 pwsh: true
 
             - task: AzurePowerShell@4
+              condition: succeeded()
               displayName: Deploy webapp binaries
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}

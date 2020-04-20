@@ -56,10 +56,9 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             var actualResponse = JsonConvert.DeserializeObject<List<CitizenDataResponseModel>>(result);
 
             //Assert
-            response.StatusCode.Should().NotBe(HttpStatusCode.OK);
-            actualResponse.Should().BeNullOrEmpty();
-            actualResponse.Should().BeNull();
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
             result.Should().BeNullOrEmpty();
+            actualResponse.Should().BeNullOrEmpty();            
         }
 
         [SkipLocalFact]
@@ -75,7 +74,6 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
@@ -108,7 +106,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             var error = "[\"An error occured while fetching the record(s) from Core Api\"]";
 
             //Assert
-            response.StatusCode.Should().NotBe(HttpStatusCode.OK);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             result.Should().BeEquivalentTo(error);
         }
 
@@ -158,7 +156,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             var error = "[\"An error occured while fetching the record(s) from Core Api\"]";
 
             //Assert
-            response.StatusCode.Should().NotBe(HttpStatusCode.OK);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             result.Should().BeEquivalentTo(error);
         }
     }

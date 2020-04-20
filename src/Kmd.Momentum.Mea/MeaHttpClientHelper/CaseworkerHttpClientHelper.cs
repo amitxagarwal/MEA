@@ -20,6 +20,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
         public async Task<ResultOrHttpError<MeaBaseList, Error>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url, int pageNumber)
         {
             var pageSize = 50;
+            pageNumber = pageNumber == 0 ? 1 : pageNumber;
 
             List<CaseworkerDataResponseModel> totalRecords = new List<CaseworkerDataResponseModel>();
 

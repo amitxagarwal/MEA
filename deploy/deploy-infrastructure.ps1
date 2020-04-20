@@ -98,8 +98,11 @@ $ResourceNamePrefix = "kmd-momentum-mea-$InstanceId"
 $TemplateFile = "azuredeploy.json"
 
 try {
-  [Microsoft.Azure.Common.Authentication.AzureSession]::ClientFactory.AddUserAgent("VSAzureTools-$UI$($host.name)".replace(' ','_'), '3.0.0')
-} catch { }
+  #[Microsoft.Azure.Common.Authentication.AzureSession]::ClientFactory.AddUserAgent("VSAzureTools-$UI$($host.name)".replace(' ','_'), '3.0.0')
+} catch { 
+  Write-Host "An error occurred:"
+  Write-Host $_
+}
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 3
@@ -148,34 +151,44 @@ $TemplateParameters = @{
 # Create or update the resource group using the specified template file and template parameter values
 $Tags = @{}
 if ($MarkForAutoDelete) {
-  $Tags["keep"] = "false";
+	$Tags["keep"] = "false";
 } else {
-  $Tags["important"] = "true";
+	$Tags["important"] = "true";
 }
 
-New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force
-
-if ($ValidateOnly) {
-  $ErrorMessages = Format-ValidationOutput (Test-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName `
+try
+{
+	New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force
+  
+	if ($ValidateOnly) {
+		$ErrorMessages = Format-ValidationOutput (Test-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName `
                                                                                 -TemplateFile $TemplateFile `
                                                                                 @TemplateParameters)
-  if ($ErrorMessages) {
-      Write-Output '', 'Validation returned the following errors:', @($ErrorMessages), '', 'Template is invalid.'
-  }
-  else {
-      Write-Output '', 'Template is valid.'
-  }
-}
-else {
-  New-AzResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
+
+		if ($ErrorMessages) {
+			Write-Output '', 'Validation returned the following errors:', @($ErrorMessages), '', 'Template is invalid.'
+			exit 1
+		}else {
+			Write-Output '', 'Template is valid.'
+		}
+
+	} else {
+		New-AzResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
                                       -ResourceGroupName $ResourceGroupName `
                                       -TemplateFile $TemplateFile `
                                       @TemplateParameters `
                                       -Force -Verbose `
                                       -ErrorVariable ErrorMessages
-  if ($ErrorMessages) {
-      Write-Output '', 'Template deployment returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
-  }
-}
 
+		if ($ErrorMessages) {
+			Write-Output '', 'Template deployment returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
+			exit 1
+		}
+	}
+}catch{
+	Write-Host "An error occurred:"
+	Write-Host $_
+    Write-Host "##vso[task.LogIssue type=error;]"$_, "##vso[task.complete result=Failed]"
+    exit 1
+}
 Pop-Location

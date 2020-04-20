@@ -4,6 +4,6 @@ namespace Kmd.Momentum.Mea.Common.KeyVault
 {
     public interface IMeaSecretStore
     {
-        Task<SecretModel> GetSecretValueByFullNameSecretKeyAsync(string secretKey);
+        Task<SecretModel> GetSecretValueBySecretKeyAsync(string secretKey);
     }
 }

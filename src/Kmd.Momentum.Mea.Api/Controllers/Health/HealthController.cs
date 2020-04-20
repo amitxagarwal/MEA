@@ -62,7 +62,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Health
         // [Authorize(Scopes.Access)]
         public async Task<ActionResult<string>> GetSecret([FromQuery] string secretIdentifier)
         {
-            var result = await _meaSecretStore.GetSecretValueByFullNameSecretKeyAsync(secretIdentifier).ConfigureAwait(false);
+            var result = await _meaSecretStore.GetSecretValueBySecretKeyAsync(secretIdentifier).ConfigureAwait(false);
 
             return Ok(result.SecretValue);
         }

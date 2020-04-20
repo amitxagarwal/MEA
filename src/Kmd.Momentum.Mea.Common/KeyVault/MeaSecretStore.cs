@@ -26,9 +26,9 @@ namespace Kmd.Momentum.Mea.Common.KeyVault
             }
         }
 
-        public async Task<SecretModel> GetSecretValueByFullNameSecretKeyAsync(string secretKey)
+        public async Task<SecretModel> GetSecretValueBySecretKeyAsync(string secretKey)
         {
-            var result = await KeyVaultClient.GetSecretAsync(secretKey).ConfigureAwait(false);
+            var result = await KeyVaultClient.GetSecretAsync(_configuration.GetSection("MeaKeyVaultSecretStore:KeyVaultUrl").Value, secretKey).ConfigureAwait(false);
             return new SecretModel(result.SecretIdentifier.Name, result.Value, result.SecretIdentifier.Identifier);
         }
     }

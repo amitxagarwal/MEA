@@ -287,6 +287,10 @@
             {
               "Name": "KMD_MOMENTUM_MEA_MeaKeyVaultSecretStore:AzureServicesAuthConnectionString",
               "value": "[variables('azureServicesAuthConnectionString')]"
+            },
+            {
+              "Name": "KMD_MOMENTUM_MEA_MeaKeyVaultSecretStore:KeyVaultUrl",
+              "value": "[variables('meaKeyVaultUri')]"
             }
           ]
         }
@@ -390,6 +394,10 @@
             {
               "Name": "KMD_MOMENTUM_MEA_MeaKeyVaultSecretStore:AzureServicesAuthConnectionString",
               "value": "[variables('azureServicesAuthConnectionString')]"
+            },
+            {
+              "Name": "KMD_MOMENTUM_MEA_MeaKeyVaultSecretStore:KeyVaultUrl",
+              "value": "[variables('meaKeyVaultUri')]"
             }
           ]
         }

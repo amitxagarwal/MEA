@@ -266,7 +266,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            var error = new Error("123456", new string[] { "Citizen with the supplied cpr no is not found" }, "MCA"); 
+            var error = new Error("123456", new string[] { "Citizen with the supplied citizenId is not found" }, "MCA"); 
 
             helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")))
                 .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
@@ -278,7 +278,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             //Asert
             result.IsError.Should().BeTrue();
-            result.Error.Errors[0].Should().Be("Citizen with the supplied cpr no is not found");
+            result.Error.Errors[0].Should().Be("Citizen with the supplied citizenId is not found");
         }
     }
 }

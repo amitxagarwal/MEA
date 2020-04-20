@@ -152,5 +152,47 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
 
         }
 
+        [Fact]
+        public async Task GetCaseworkerByCaseworkerIdFails()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
+            var context = new Mock<IHttpContextAccessor>();
+            var _configuration = new Mock<IConfiguration>();
+            var id = It.IsAny<string>();
+
+            var hc = new DefaultHttpContext();
+            hc.TraceIdentifier = Guid.NewGuid().ToString();
+            context.Setup(x => x.HttpContext).Returns(hc);
+
+            var claims = new List<Claim>()
+                        {
+                            new Claim("azp", Guid.NewGuid().ToString()),
+                        };
+            var identity = new ClaimsIdentity(claims, "JWT");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+            hc.User = claimsPrincipal;
+
+            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
+
+            var response = new CaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
+
+            var error = new Error("123456", new string[] { "Caseworker data with the supplied caseworkerId is not found" }, "MCA");
+
+            helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}employees/{id}")))
+                   .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
+
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
+
+            //Act
+            var result = await caseWorkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);
+
+            //Asert
+            result.IsError.Should().BeTrue();
+            result.Error.Errors[0].Should().Be("Caseworker data with the supplied caseworkerId is not found");
+
+        }
+
     }
 }

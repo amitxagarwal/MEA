@@ -118,6 +118,13 @@ $ApplicationInsightsName="$ResourceNamePrefix-ai";
 $DbServerName="$ResourceNamePrefix-dbsvr";
 $DbName="$ResourceNamePrefix-db";
 $DbConnection="Server=$($DbServerName).postgres.database.azure.com;Database=$($DbName);Port=5432;User Id=$($env:DbLoginId)@$($DbServerName);Password=$($env:DbLoginPassword);Ssl Mode=Require;"
+$KeyVaultName = "$($ResourceNamePrefix.replace('-',''))kv"
+
+if($KeyVaultName.length -gt 24)
+{
+    $KeyVaultName = $KeyVaultName.substring($KeyVaultName.length-24,24);
+}
+
 # Set ARM template parameter values
 $TemplateParameters = @{
   environment = $Environment;
@@ -137,7 +144,8 @@ $TemplateParameters = @{
   dbName = $DbName;
   dbConnection = $DbConnection;
   dbRequired = $DbRequired;
-  keyVaultRequired = $KeyVaultRequired
+  keyVaultRequired = $KeyVaultRequired;
+  keyVaultName = $KeyVaultName
 }
 
 # Create or update the resource group using the specified template file and template parameter values

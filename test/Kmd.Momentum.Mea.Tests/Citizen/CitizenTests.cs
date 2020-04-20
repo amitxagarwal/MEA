@@ -27,6 +27,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task GetAllActiveCitizensSuccess()
         {
             //Arrange
+            int pageNumber = 2;
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = new Mock<IHttpContextAccessor>();
             var hc = new DefaultHttpContext();
@@ -50,14 +51,16 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1","givenname","middlename","initials","test@email.com","1234567891","","description",true,true)));
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
 
-            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search")))
+            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync
+            (new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search"), pageNumber))
                 .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<string>, Error>(mockResponseData)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
             var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
 
             //Act
-            var result = await citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
+            var result = await citizenService.GetAllActiveCitizensAsync(pageNumber
+                ).ConfigureAwait(false);
             
             
             //Asert
@@ -70,6 +73,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task GetAllActiveCitizensFails()
         {
             //Arrange
+            int pageNumber = 1;
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = new Mock<IHttpContextAccessor>();
             var hc = new DefaultHttpContext();
@@ -96,14 +100,15 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var error = new Error("123456", new string[] { "An Error Occured while retriving data of all active citizens" }, "MCA");
 
 
-            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search")))
+            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync
+            (new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search"), pageNumber))
                 .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<string>, Error>(error, HttpStatusCode.BadRequest)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
             var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
 
             //Act
-            var result = await citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
+            var result = await citizenService.GetAllActiveCitizensAsync(pageNumber).ConfigureAwait(false);
 
 
             //Asert

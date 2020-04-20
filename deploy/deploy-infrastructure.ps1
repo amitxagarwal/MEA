@@ -120,10 +120,14 @@ $DbName = "$ResourceNamePrefix-db";
 $DbConnection = "Server=$($DbServerName).postgres.database.azure.com;Database=$($DbName);Port=5432;User Id=$($env:DbLoginId)@$($DbServerName);Password=$($env:DbLoginPassword);Ssl Mode=Require;"
 $KeyVaultName = "$ResourceNamePrefix.replace('-','')kv"
 
+Write-Output 'KeyVaultName', $KeyVaultName
+
 if($KeyVaultName.length -gt 24)
 {
 $KeyVaultName = $KeyVaultName.substring($KeyVaultName.length-24,24)
 }
+
+Write-Output 'KeyVaultName', $KeyVaultName
 
 # Set ARM template parameter values
 $TemplateParameters = @{

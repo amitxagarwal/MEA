@@ -84,7 +84,7 @@ Param
 
   [Parameter(Mandatory=$false)]
   [string]
-  $DbRequired = 'false'
+  $DbRequired = 'false',
 
   [Parameter(Mandatory=$false)]
   [string]

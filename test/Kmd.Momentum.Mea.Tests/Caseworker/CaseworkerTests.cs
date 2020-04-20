@@ -92,7 +92,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             hc.User = claimsPrincipal;
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
-           
+
             var error = new Error("123456", new string[] { "An Error Occured while retriving data of all caseworkers" }, "MCA");
 
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers"), pageNumber))
@@ -116,7 +116,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
             var context = new Mock<IHttpContextAccessor>();
             var _configuration = new Mock<IConfiguration>();
-            var id = "12345";
+            var id = It.IsAny<string>();
 
             var hc = new DefaultHttpContext();
             hc.TraceIdentifier = Guid.NewGuid().ToString();
@@ -132,13 +132,10 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            //var email = new Email(id = "id", address = "address");
-            
-            //var caseworkerData = new CaseworkerDataResponse(id, "TestDisplay1", "givenname",
-            //                "middlename", "initials", "", "description", true, true,null,null);
-            //var httpClientCaseworkerDataResponse = JsonConvert.SerializeObject(caseworkerData);
-            var responseData = new CaseworkerDataResponseModel("12345", "TestDisplay1", "givenname",
-                            "middlename", "initials", "testemail", "123456", "", "description", true, true);
+            var response = new CaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
+
+            var responseData = JsonConvert.SerializeObject(response);
 
             helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}employees/{id}")))
                    .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(responseData)));
@@ -151,7 +148,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             //Asert
             result.Should().NotBeNull();
             result.IsError.Should().BeFalse();
-            result.Result.Should().BeEquivalentTo(responseData);
+            result.Result.Should().BeEquivalentTo(response);
 
         }
 

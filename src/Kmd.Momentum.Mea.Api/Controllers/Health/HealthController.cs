@@ -1,6 +1,7 @@
 ﻿using Kmd.Momentum.Mea.Common.KeyVault;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -27,6 +28,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Health
         /// <response code="503">API is unhealthy or in degraded state</response>
         [HttpGet]
         [ProducesResponseType(typeof(HealthReport), (int)HttpStatusCode.OK)]
+        [SwaggerOperation(OperationId = "HealthReady")]
         // [Authorize(Scopes.Access)]
         public async Task<IActionResult> Ready()
         {
@@ -43,6 +45,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Health
         /// <response code="503">API is unhealthy or in degraded state</response>
         [HttpGet]
         [ProducesResponseType(typeof(HealthReport), (int)HttpStatusCode.OK)]
+        [SwaggerOperation(OperationId = "HealthLive")]
         // [Authorize(Scopes.Access)]
         public async Task<IActionResult> Live()
         {

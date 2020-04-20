@@ -20,17 +20,17 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             _meaClient = meaClient;
         }
 
-        public async Task<ResultOrHttpError<IReadOnlyList<string>, Error>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
+        public async Task<ResultOrHttpError<IReadOnlyList<string>, Error>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url, int pageNumber)
         {
             List<JToken> totalRecords = new List<JToken>();
             List<string> JsonStringList = new List<string>();
 
-            var size = 100;
-            var skip = 0;
-
+            var pageNo = pageNumber;
             int remainingRecords;
+            var size = 100;
+            var skip = (pageNo - 1) * size;            
 
-            do
+            if (pageNo >= 1)
             {
                 var queryStringParams = $"term=Citizen&size={size}&skip={skip}&isActive=true";
                 var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
@@ -42,34 +42,35 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
                 var content = response.Result;
                 var jsonArray = JArray.Parse(JObject.Parse(content)["results"].ToString());
-
                 var totalNoOfRecords = (int)JProperty.Parse(content)["totalCount"];
+
                 skip += size;
 
                 remainingRecords = totalNoOfRecords - skip;
 
                 totalRecords.AddRange(jsonArray.Children());
-
-            } while (remainingRecords > 0);
-
-            foreach (var item in totalRecords)
-            {
-                var jsonToReturn = JsonConvert.SerializeObject(new
+                if (remainingRecords > 0)
                 {
-                    citizenId = item["id"],
-                    displayName = item["name"],
-                    givenName = (string)null,
-                    middleName = (string)null,
-                    initials = (string)null,
-                    address = (string)null,
-                    number = (string)null,
-                    caseworkerIdentifier = (string)null,
-                    description = item["description"],
-                    isBookable = true,
-                    isActive = true
-                });
-                JsonStringList.Add(jsonToReturn);
 
+                    foreach (var item in totalRecords)
+                    {
+                        var jsonToReturn = JsonConvert.SerializeObject(new
+                        {
+                            citizenId = item["id"],
+                            displayName = item["name"],
+                            givenName = (string)null,
+                            middleName = (string)null,
+                            initials = (string)null,
+                            address = (string)null,
+                            number = (string)null,
+                            caseworkerIdentifier = (string)null,
+                            description = item["description"],
+                            isBookable = true,
+                            isActive = true
+                        });
+                        JsonStringList.Add(jsonToReturn);
+                    }
+                }
             }
             return new ResultOrHttpError<IReadOnlyList<string>, Error>(JsonStringList);
         }
@@ -85,7 +86,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             var content = response.Result;
             return new ResultOrHttpError<string, Error>(content);
-        }        
+        }
     }
 }
 

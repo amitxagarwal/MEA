@@ -60,7 +60,7 @@ stages:
 
 - stage: deploy_internal
   dependsOn: Build
-  condition: and(succeeded(), in(variables['Build.SourceBranch'], 'refs/heads/dev','refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
   jobs:
   - template: azure-pipelines-release-template.yml
     parameters:
@@ -80,7 +80,7 @@ stages:
       isDbRequired: $(DbRequired)
 
 - stage: deploy_external
-  dependsOn: deploy_internal
+  dependsOn: Build
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
   - template: azure-pipelines-release-template.yml

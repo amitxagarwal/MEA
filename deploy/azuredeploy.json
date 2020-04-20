@@ -15,6 +15,13 @@
         "description": "Flag for datbase required or not"
       }
     },
+    "keyVaultRequired": {
+      "type": "string",
+      "defaultValue": "false",
+      "metadata": {
+        "description": "Flag for datbase required or not"
+      }
+    },
     "dbServerName": {
       "type": "string",
       "metadata": {
@@ -193,6 +200,7 @@
     },
     {
       "type": "Microsoft.KeyVault/vaults",
+      "condition": "[equals(parameters('keyVaultRequired'),'true')]",
       "name": "[variables('meaKeyVaultSecretStore')]",
       "apiVersion": "2016-10-01",
       "location": "[parameters('location')]",

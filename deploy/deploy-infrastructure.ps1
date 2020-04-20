@@ -85,6 +85,10 @@ Param
   [Parameter(Mandatory=$false)]
   [string]
   $DbRequired = 'false'
+
+  [Parameter(Mandatory=$false)]
+  [string]
+  $KeyVaultRequired = 'false'
 )
 
 Push-Location $PSScriptRoot
@@ -129,7 +133,8 @@ $TemplateParameters = @{
   dbLoginPassword = $env:DbLoginPassword;
   dbName = $DbName;
   dbConnection = $DbConnection;
-  dbRequired = $DbRequired
+  dbRequired = $DbRequired;
+  keyVaultRequired = $KeyVaultRequired
 }
 
 # Create or update the resource group using the specified template file and template parameter values

@@ -56,7 +56,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
             var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<CaseworkerDataResponseModel>(responseBody);
+            var actualResponse = JsonConvert.DeserializeObject<MeaCaseworkerDataResponseModel>(responseBody);
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);

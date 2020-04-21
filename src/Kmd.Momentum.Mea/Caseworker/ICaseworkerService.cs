@@ -1,6 +1,5 @@
 ﻿using Kmd.Momentum.Mea.Caseworker.Model;
 using Kmd.Momentum.Mea.Common.Exceptions;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Caseworker
@@ -9,6 +8,6 @@ namespace Kmd.Momentum.Mea.Caseworker
     {
         Task<ResultOrHttpError<MeaBaseList, Error>> GetAllCaseworkersAsync(int pagenumber);
 
-        Task<ResultOrHttpError<CaseworkerDataResponseModel, Error>> GetCaseworkerByIdAsync(string id);
+        Task<ResultOrHttpError<MeaCaseworkerDataResponseModel, Error>> GetCaseworkerByIdAsync(string id);
     }
 }

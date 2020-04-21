@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
@@ -65,7 +64,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         [ProducesResponseType(401)]
         [Route("kss/{caseworkerId}")]
         [SwaggerOperation(OperationId = "getCaseworkerById")]
-        public async Task<ActionResult<CaseworkerDataResponse>> GetCaseworkerById([Required] [FromRoute] string caseworkerId)
+        public async Task<ActionResult<McaCaseworkerDataResponse>> GetCaseworkerById([Required] [FromRoute] string caseworkerId)
         {
             var result = await _caseworkerService.GetCaseworkerByIdAsync(caseworkerId).ConfigureAwait(false);
 

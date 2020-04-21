@@ -2,7 +2,7 @@
 
 namespace Kmd.Momentum.Mea.Caseworker.Model
 {
-    public class PUnitData
+    public class McaPUnitData
     {
         public string ReferenceId { get; set; }
 
@@ -16,7 +16,7 @@ namespace Kmd.Momentum.Mea.Caseworker.Model
 
         public string AdditionalValues { get; set; }
 
-        public IReadOnlyList<CaseworkerDataResponse> Data { get; set; }
+        public IReadOnlyList<McaCaseworkerDataResponse> Data { get; set; }
     }
 }
 

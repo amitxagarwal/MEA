@@ -21,8 +21,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
         {
             var pageSize = 50;
             pageNumber = pageNumber == 0 ? 1 : pageNumber;
-
-            List<CaseworkerDataResponseModel> totalRecords = new List<CaseworkerDataResponseModel>();
+            List<MeaCaseworkerDataResponseModel> totalRecords = new List<MeaCaseworkerDataResponseModel>();
 
             var queryStringParams = $"pagingInfo.pageNumber={pageNumber}&pagingInfo.pageSize={pageSize}";
 
@@ -34,21 +33,21 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             }
 
             var content = response.Result;
-            var citizenDataObj = JsonConvert.DeserializeObject<PUnitData>(content);
-            var records = citizenDataObj.Data;
+            var caseworkerDataObj = JsonConvert.DeserializeObject<McaPUnitData>(content);
+            var records = caseworkerDataObj.Data;
 
             foreach (var item in records)
             {
-                var x = new CaseworkerDataResponseModel(item.Id, item.DisplayName, item.GivenName, item.MiddleName, item.Initials,
+                var dataToReturn = new MeaCaseworkerDataResponseModel(item.Id, item.DisplayName, item.GivenName, item.MiddleName, item.Initials,
                item.Email?.Address, item.Phone?.Number, item.CaseworkerIdentifier, item.Description, item.IsActive, item.IsBookable);
-                totalRecords.Add(x);
+                totalRecords.Add(dataToReturn);
             }
 
             var responseData = new MeaBaseList()
             {
                 PageNo = pageNumber,
-                TotalNoOfPages = citizenDataObj.TotalPages,
-                TotalSearchCount = citizenDataObj.TotalSearchCount,
+                TotalNoOfPages = caseworkerDataObj.TotalPages,
+                TotalSearchCount = caseworkerDataObj.TotalSearchCount,
                 Result = totalRecords
             };
 

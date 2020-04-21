@@ -42,9 +42,9 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
 
-            var caseworkerData = new List<CaseworkerDataResponseModel>()
+            var caseworkerData = new List<MeaCaseworkerDataResponseModel>()
             {
-                new CaseworkerDataResponseModel(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                new MeaCaseworkerDataResponseModel(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())
             };
 
@@ -132,7 +132,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            var response = new CaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+            var response = new MeaCaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
 
             var responseData = JsonConvert.SerializeObject(response);
@@ -149,7 +149,6 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             result.Should().NotBeNull();
             result.IsError.Should().BeFalse();
             result.Result.Should().BeEquivalentTo(response);
-
         }
 
         [Fact]
@@ -175,7 +174,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            var response = new CaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+            var response = new MeaCaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
 
             var error = new Error("123456", new string[] { "Caseworker data with the supplied caseworkerId is not found" }, "MCA");
@@ -191,7 +190,6 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             //Asert
             result.IsError.Should().BeTrue();
             result.Error.Errors[0].Should().Be("Caseworker data with the supplied caseworkerId is not found");
-
         }
 
     }

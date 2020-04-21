@@ -156,7 +156,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             var error = "[\"An error occured while fetching the record(s) from Core Api\"]";
 
             //Assert
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
             result.Should().BeEquivalentTo(error);
         }
     }

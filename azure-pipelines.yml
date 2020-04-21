@@ -79,3 +79,4 @@ stages:
       clientId: $(McaClientId)
       clientSecret: $(McaClientSecret)
       isDbRequired: $(DbRequired)
+      isKeyVaultRequired: 'true'

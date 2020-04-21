@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Kmd.Momentum.Mea.Citizen;
 using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.Authorization;
 using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Microsoft.AspNetCore.Http;
@@ -32,9 +33,11 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var hc = new DefaultHttpContext();
             var mcaApiUri = "http://google.com";
             hc.TraceIdentifier = Guid.NewGuid().ToString();
+            
             var claims = new List<Claim>()
                         {
                             new Claim("azp", Guid.NewGuid().ToString()),
+                            new Claim("tenant", "123")
                         };
             var identity = new ClaimsIdentity(claims, "JWT");
             var claimsPrincipal = new ClaimsPrincipal(identity);
@@ -44,7 +47,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             context.Setup(x => x.HttpContext).Returns(hc);
 
             var _configuration = new Mock<IConfiguration>();
-            //_configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
+            _configuration.SetupGet(x => x.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(y => y.KommuneId == "123").KommuneUrl).Returns(It.IsAny<string>());
 
             var mockResponseData = new List<string>();
 

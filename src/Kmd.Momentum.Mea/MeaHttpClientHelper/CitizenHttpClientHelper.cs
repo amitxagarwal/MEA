@@ -25,10 +25,10 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             List<JToken> totalRecords = new List<JToken>();
             List<string> JsonStringList = new List<string>();
 
-            var pageNo = pageNumber;
+            var pageNo = pageNumber == 0 ? 1 : pageNumber;
             int remainingRecords;
             var size = 100;
-            var skip = (pageNo - 1) * size;            
+            var skip = (pageNo - 1) * size;
 
             if (pageNo >= 1)
             {
@@ -51,7 +51,6 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 totalRecords.AddRange(jsonArray.Children());
                 if (remainingRecords > 0)
                 {
-
                     foreach (var item in totalRecords)
                     {
                         var jsonToReturn = JsonConvert.SerializeObject(new

@@ -1,6 +1,6 @@
 ﻿namespace Kmd.Momentum.Mea.Common.Authorization
 {
-    public class Authorization
+    public class MeaAuthorization
     {
         /// <summary>
         /// Kommunes of momentum core system
@@ -13,8 +13,13 @@
         public string KommuneUrl { get; set; }
 
         /// <summary>
-        /// Scopes used to authorize to momentum core system
+        /// kommune client Id of momentum core system
         /// </summary>     
-        public Scope Scopes { get; set; }
+        public string KommuneClientId { get; set; }
+
+        /// <summary>
+        /// kommune client secret value identifier from key vault
+        /// </summary>     
+        public string KommuneAccessIdentifier { get; set; }
     }
 }

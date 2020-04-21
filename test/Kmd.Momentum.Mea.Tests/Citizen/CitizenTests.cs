@@ -30,6 +30,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = new Mock<IHttpContextAccessor>();
             var hc = new DefaultHttpContext();
+            var mcaApiUri = "http://google.com";
             hc.TraceIdentifier = Guid.NewGuid().ToString();
             var claims = new List<Claim>()
                         {
@@ -43,14 +44,14 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             context.Setup(x => x.HttpContext).Returns(hc);
 
             var _configuration = new Mock<IConfiguration>();
-            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
+            //_configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
             var mockResponseData = new List<string>();
 
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1","givenname","middlename","initials","test@email.com","1234567891","","description",true,true)));
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
 
-            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search")))
+            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{mcaApiUri}/search")))
                 .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<string>, Error>(mockResponseData)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, _configuration.Object, context.Object);

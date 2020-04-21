@@ -22,14 +22,14 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         {
             //Arrange       
             var clientMoq = _factory.CreateClient();
-
+            var pageNumber = 2;
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
             clientMoq.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
-            var response = await clientMoq.GetAsync($"/citizens").ConfigureAwait(false);
+            var response = await clientMoq.GetAsync($"/citizens?pagenumber={pageNumber}").ConfigureAwait(false);
             var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var actualResponse = JsonConvert.DeserializeObject<List<CitizenDataResponseModel>>(result);
 

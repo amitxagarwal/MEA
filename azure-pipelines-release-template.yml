@@ -13,6 +13,7 @@ parameters:
   clientId: <secret>
   clientSecret: <secret>
   isDbRequired: 'false'
+  isKeyVaultRequired: 'false'
 
 jobs:
   - deployment: deploy_momentum_mea_${{ parameters.environmentNameSuffix }}
@@ -31,6 +32,7 @@ jobs:
       ClientId: ${{ parameters.clientId }}
       ClientSecret: ${{ parameters.clientSecret }}
       isDbRequired: ${{ parameters.isDbRequired }}
+      isKeyVaultRequired: ${{ parameters.isKeyVaultRequired }}
 
     strategy:
       runOnce:
@@ -44,12 +46,12 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'
                 ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-infrastructure.ps1'
-                ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)' -ClientId '$(ClientId)' -ClientSecret '$(ClientSecret)' -Environment '$(Environment)' -DbRequired '$(isDbRequired)'
+                ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)' -ClientId '$(ClientId)' -ClientSecret '$(ClientSecret)' -Environment '$(Environment)' -DbRequired '$(isDbRequired)' -KeyVaultRequired '$(isKeyVaultRequired)'
                 azurePowerShellVersion: 'LatestVersion'
                 pwsh: true
 
             - task: AzurePowerShell@4
-              condition: eq(variables['isDbRequired'],'true')
+              condition: and(succeeded(),eq(variables['isDbRequired'],'true'))
               displayName: Deploy Database
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}
@@ -60,6 +62,7 @@ jobs:
                 pwsh: true
 
             - task: AzurePowerShell@4
+              condition: succeeded()
               displayName: Deploy webapp binaries
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}

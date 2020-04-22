@@ -21,5 +21,10 @@
         /// kommune client secret value identifier from key vault
         /// </summary>     
         public string KommuneAccessIdentifier { get; set; }
+
+        /// <summary>
+        /// kommune Resource Id for getting token
+        /// </summary>     
+        public string KommuneResource { get; set; }
     }
 }

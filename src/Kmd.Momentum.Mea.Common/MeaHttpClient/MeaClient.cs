@@ -100,7 +100,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
                         new KeyValuePair<string, string>("grant_type","client_credentials"),
                         new KeyValuePair<string, string>("client_id", _mcaConfig.KommuneClientId),
                         new KeyValuePair<string, string>("client_secret", mcaClientSecret.SecretValue),
-                        new KeyValuePair<string, string>("resource", "74b4f45c-4e9b-4be1-98f1-ea876d9edd11")
+                        new KeyValuePair<string, string>("resource", _mcaConfig.KommuneResource)
                });
 
                 var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"), content).ConfigureAwait(false);

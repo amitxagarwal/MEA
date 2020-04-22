@@ -63,6 +63,17 @@ jobs:
 
             - task: AzurePowerShell@4
               condition: succeeded()
+              displayName: Store secrets
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                ScriptType: 'FilePath'
+                ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-secrets.ps1'
+                ScriptArguments: -InstanceId '$(InstanceId)'
+                azurePowerShellVersion: 'LatestVersion'
+                pwsh: true
+
+            - task: AzurePowerShell@4
+              condition: succeeded()
               displayName: Deploy webapp binaries
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}

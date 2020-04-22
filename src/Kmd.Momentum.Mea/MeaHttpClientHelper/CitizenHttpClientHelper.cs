@@ -14,6 +14,8 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
     public class CitizenHttpClientHelper : ICitizenHttpClientHelper
     {
         private readonly IMeaClient _meaClient;
+        private readonly string _correlationId;
+        private readonly string _clientId;
 
         public CitizenHttpClientHelper(IMeaClient meaClient)
         {
@@ -29,43 +31,49 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             var size = 100;
             var skip = (pageNo - 1) * size;
 
-            if (pageNo >= 1)
+            var queryStringParams = $"term=Citizen&size={size}&skip={skip}&isActive=true";
+            var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
+
+            if (response.IsError)
             {
-                var queryStringParams = $"term=Citizen&size={size}&skip={skip}&isActive=true";
-                var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
-
-                if (response.IsError)
-                {
-                    return new ResultOrHttpError<IReadOnlyList<string>, Error>(response.Error, response.StatusCode.Value);
-                }
-
-                var content = response.Result;
-                var jsonArray = JArray.Parse(JObject.Parse(content)["results"].ToString());
-
-                totalRecords.AddRange(jsonArray.Children());
-
-                if (totalRecords.Count <= 100)
-                {
-                    foreach (var item in totalRecords)
-                    {
-                        var jsonToReturn = JsonConvert.SerializeObject(new
-                        {
-                            citizenId = item["id"],
-                            displayName = item["name"],
-                            givenName = (string)null,
-                            middleName = (string)null,
-                            initials = (string)null,
-                            address = (string)null,
-                            number = (string)null,
-                            caseworkerIdentifier = (string)null,
-                            description = item["description"],
-                            isBookable = true,
-                            isActive = true
-                        });
-                        JsonStringList.Add(jsonToReturn);
-                    }
-                }
+                return new ResultOrHttpError<IReadOnlyList<string>, Error>(response.Error, response.StatusCode.Value);
             }
+
+            var content = response.Result;
+            int.TryParse(JObject.Parse(content)["totalCount"].ToString(), out int totalCount);
+
+            if (pageNumber >= (totalCount / size) + 1)
+            {
+                var error = new Error(_correlationId, new[] { "No Records are available for entered page number" }, "MEA");
+                Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
+                .Error("No Records are available for entered page number");
+                return new ResultOrHttpError<IReadOnlyList<string>, Error>(error, HttpStatusCode.BadRequest);
+            }
+
+            var jsonArray = JArray.Parse(JObject.Parse(content)["results"].ToString());            
+
+            totalRecords.AddRange(jsonArray.Children());
+
+            foreach (var item in totalRecords)
+            {
+                var jsonToReturn = JsonConvert.SerializeObject(new
+                {
+                    citizenId = item["id"],
+                    displayName = item["name"],
+                    givenName = (string)null,
+                    middleName = (string)null,
+                    initials = (string)null,
+                    address = (string)null,
+                    number = (string)null,
+                    caseworkerIdentifier = (string)null,
+                    description = item["description"],
+                    isBookable = true,
+                    isActive = true
+                });
+                JsonStringList.Add(jsonToReturn);
+            }
+
             return new ResultOrHttpError<IReadOnlyList<string>, Error>(JsonStringList);
         }
 

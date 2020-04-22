@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Kmd.Momentum.Mea.Citizen.Model
 {
-    public class CitizenJournalNoteResponseModel
+    public class JournalNoteResponseModel
     {
         public string Cpr { get; set; }
 
@@ -12,6 +12,6 @@ namespace Kmd.Momentum.Mea.Citizen.Model
         
         public string Body { get; set; }
 
-        public IReadOnlyList<CitizenJournalNoteDocumentResponseModel> Documents { get; set; }
+        public IReadOnlyList<JournalNoteDocumentResponseModel> Documents { get; set; }
     }
 }

@@ -228,13 +228,13 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = GetContext();
 
-            CitizenJournalNoteDocumentResponseModel[] requestDocumentModel = { new CitizenJournalNoteDocumentResponseModel() {
+            JournalNoteDocumentResponseModel[] requestDocumentModel = { new JournalNoteDocumentResponseModel() {
                 Content="testContent",
                 ContentType="testContentType",
                 Name="testDocumentName"
             } };
 
-            var requestModel = new CitizenJournalNoteResponseModel()
+            var requestModel = new JournalNoteResponseModel()
             {
                 Cpr = "testCpr",
                 Body = "testBody",
@@ -268,13 +268,13 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = GetContext();
 
-            CitizenJournalNoteDocumentResponseModel[] requestDocumentModel = { new CitizenJournalNoteDocumentResponseModel() {
+            JournalNoteDocumentResponseModel[] requestDocumentModel = { new JournalNoteDocumentResponseModel() {
                 Content="testContent",
                 ContentType="testContentType",
                 Name="testDocumentName"
             } };
 
-            var requestModel = new CitizenJournalNoteResponseModel()
+            var requestModel = new JournalNoteResponseModel()
             {
                 Cpr = "testCpr",
                 Body = "testBody",

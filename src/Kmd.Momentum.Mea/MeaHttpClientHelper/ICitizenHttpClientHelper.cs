@@ -12,6 +12,6 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
         Task<ResultOrHttpError<string, Error>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url);
 
-        Task<ResultOrHttpError<string, Error>> CreateJournalNoteInMomentumCoreAsync(Uri url, string momentumCitizenId, CitizenJournalNoteResponseModel requestModel);
+        Task<ResultOrHttpError<string, Error>> CreateJournalNoteInMomentumCoreAsync(Uri url, string momentumCitizenId, JournalNoteResponseModel requestModel);
     }
 }

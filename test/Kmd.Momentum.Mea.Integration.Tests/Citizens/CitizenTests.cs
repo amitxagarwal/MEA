@@ -108,9 +108,9 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
-            List<CitizenJournalNoteDocumentResponseModel> documentList = new List<CitizenJournalNoteDocumentResponseModel>()
+            List<JournalNoteDocumentResponseModel> documentList = new List<JournalNoteDocumentResponseModel>()
             {
-                new CitizenJournalNoteDocumentResponseModel()
+                new JournalNoteDocumentResponseModel()
                 {
                     Content = "testContent",
                     ContentType = "application/octet-stream",
@@ -118,7 +118,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
                 }
             };
 
-            CitizenJournalNoteResponseModel mcaRequestModel = new CitizenJournalNoteResponseModel()
+            JournalNoteResponseModel mcaRequestModel = new JournalNoteResponseModel()
             {
                 Cpr = "0101005402",
                 Title = "testTitle",

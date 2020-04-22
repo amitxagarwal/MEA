@@ -87,13 +87,13 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             return new ResultOrHttpError<string, Error>(content);
         }
 
-        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteInMomentumCoreAsync(Uri url, string momentumCitizenId, CitizenJournalNoteResponseModel requestModel)
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteInMomentumCoreAsync(Uri url, string momentumCitizenId, JournalNoteResponseModel requestModel)
         {
-            List<CitizenJournalNoteAttachmentModel> attachmentList = new List<CitizenJournalNoteAttachmentModel>();
+            List<JournalNoteAttachmentModel> attachmentList = new List<JournalNoteAttachmentModel>();
 
             foreach (var doc in requestModel.Documents)
             {
-                var attachemnt = new CitizenJournalNoteAttachmentModel()
+                var attachemnt = new JournalNoteAttachmentModel()
                 {
                     ContentType = doc.ContentType,
                     Document = doc.Content,
@@ -102,7 +102,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 attachmentList.Add(attachemnt);
             }
 
-            CitizenJournalNoteModel mcaRequestModel = new CitizenJournalNoteModel()
+            JournalNoteModel mcaRequestModel = new JournalNoteModel()
             {
                 Id = requestModel.Cpr,
                 OccurredAt = DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.ff'Z'"),

@@ -61,7 +61,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
             result.Should().BeNullOrEmpty();
-            actualResponse.Should().BeNullOrEmpty();            
+            actualResponse.Should().BeNullOrEmpty();
         }
 
         [SkipLocalFact]
@@ -112,7 +112,6 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             result.Should().BeEquivalentTo(error);
         }
-
 
         [SkipLocalFact]
         public async Task GetCitizenByCitizenIdSuccess()

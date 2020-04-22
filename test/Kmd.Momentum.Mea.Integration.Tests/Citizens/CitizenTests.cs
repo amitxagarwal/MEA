@@ -17,7 +17,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             _factory = factory;
         }
 
-        [SkipLocalFact]
+        [Fact]
         public async Task GetActiveCitizensSuccess()
         {
             //Arrange       
@@ -35,8 +35,8 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            actualResponse.Should().NotBeNullOrEmpty();
-            actualResponse.Count.Should().BeGreaterThan(0);
+            result.Should().NotBeNullOrEmpty();
+            actualResponse.Count.Should().BeLessOrEqualTo(100);
         }
 
         [SkipLocalFact]

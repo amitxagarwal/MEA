@@ -26,7 +26,6 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             List<string> JsonStringList = new List<string>();
 
             var pageNo = pageNumber == 0 ? 1 : pageNumber;
-            int remainingRecords;
             var size = 100;
             var skip = (pageNo - 1) * size;
 
@@ -42,14 +41,10 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
                 var content = response.Result;
                 var jsonArray = JArray.Parse(JObject.Parse(content)["results"].ToString());
-                var totalNoOfRecords = (int)JProperty.Parse(content)["totalCount"];
-
-                skip += size;
-
-                remainingRecords = totalNoOfRecords - skip;
 
                 totalRecords.AddRange(jsonArray.Children());
-                if (remainingRecords > 0)
+
+                if (totalRecords.Count <= 100)
                 {
                     foreach (var item in totalRecords)
                     {

@@ -21,14 +21,6 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
     {
         private Mock<IHttpContextAccessor> GetContext()
         {
-                
-        }
-        [Fact]
-        public async Task GetAllActiveCitizensSuccess()
-        {
-            //Arrange
-            int pageNumber = 2;
-            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = new Mock<IHttpContextAccessor>();
             var hc = new DefaultHttpContext();
             hc.TraceIdentifier = Guid.NewGuid().ToString();
@@ -49,6 +41,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         public async Task GetAllActiveCitizensSuccess()
         {
             //Arrange
+            int pageNumber = 2;
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = GetContext();
             var _configuration = new Mock<IConfiguration>();
@@ -67,8 +60,8 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
 
             //Act
-            var result = await citizenService.GetAllActiveCitizensAsync(pageNumber).ConfigureAwait(false);            
-            
+            var result = await citizenService.GetAllActiveCitizensAsync(pageNumber).ConfigureAwait(false);
+
             //Asert
             result.Should().NotBeNull();
             result.IsError.Should().BeFalse();

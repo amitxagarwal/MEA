@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Kmd.Momentum.Mea.Citizen.Model;
 using System.Net.Http;
 using System.Text;
+using System.Net;
+using Serilog;
 
 namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 {

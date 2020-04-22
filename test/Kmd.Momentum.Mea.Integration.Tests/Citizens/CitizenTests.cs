@@ -20,7 +20,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             _factory = factory;
         }
 
-        [SkipLocalFact]
+        [SkipLocalFact(Skip = "")]
         public async Task GetActiveCitizensSuccess()
         {
             //Arrange       
@@ -42,7 +42,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             actualResponse.Count.Should().BeGreaterThan(0);
         }
 
-        [SkipLocalFact]
+        [SkipLocalFact(Skip = "")]
         public async Task GetActiveCitizensFails()
         {
             //Arrange       
@@ -64,7 +64,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             actualResponse.Should().BeNullOrEmpty();
         }
 
-        [SkipLocalFact]
+        [SkipLocalFact(Skip = "")]
         public async Task GetCitizenByCprNoSuccess()
         {
             //Arrange
@@ -89,7 +89,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             actualResponse.CitizenId.Should().NotBeNullOrEmpty();
         }
 
-        [SkipLocalFact]
+        [SkipLocalFact(Skip = "")]
         public async Task GetCitizenByCprNoFails()
         {
             //Arrange
@@ -113,7 +113,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             result.Should().BeEquivalentTo(error);
         }
 
-        [SkipLocalFact]
+        [SkipLocalFact(Skip = "")]
         public async Task GetCitizenByCitizenIdSuccess()
         {
             //Arrange
@@ -138,7 +138,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             actualResponse.CitizenId.Should().BeEquivalentTo(citizenId);
         }
 
-        [SkipLocalFact]
+        [SkipLocalFact(Skip = "")]
         public async Task CreateJournalNoteAsyncSuccess()
         {
             //Arrange

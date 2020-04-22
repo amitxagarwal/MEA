@@ -43,6 +43,28 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         }
 
         [SkipLocalFact]
+        public async Task GetActiveCitizensFails()
+        {
+            //Arrange       
+            var clientMoq = _factory.CreateClient();
+
+            var tokenHelper = new TokenGenerator();
+            var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
+
+            clientMoq.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+            //Act
+            var response = await clientMoq.GetAsync($"/citizen").ConfigureAwait(false);
+            var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualResponse = JsonConvert.DeserializeObject<List<CitizenDataResponseModel>>(result);
+
+            //Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            result.Should().BeNullOrEmpty();
+            actualResponse.Should().BeNullOrEmpty();            
+        }
+
+        [SkipLocalFact]
         public async Task GetCitizenByCprNoSuccess()
         {
             //Arrange
@@ -56,7 +78,6 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
-
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
             var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -66,6 +87,30 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             actualResponse.Should().NotBeNull();
             actualResponse.CitizenId.Should().NotBeNullOrEmpty();
+        }
+
+        [SkipLocalFact]
+        public async Task GetCitizenByCprNoFails()
+        {
+            //Arrange
+            var cprNumber = "1234567890";
+            var requestUri = $"/citizens/cpr/{cprNumber}";
+
+            var client = _factory.CreateClient();
+
+            var tokenHelper = new TokenGenerator();
+            var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+            //Act
+            var response = await client.GetAsync(requestUri).ConfigureAwait(false);
+            var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var error = "[\"An error occured while fetching the record(s) from Core Api\"]";
+
+            //Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            result.Should().BeEquivalentTo(error);
         }
 
 

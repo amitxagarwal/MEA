@@ -8,18 +8,18 @@ namespace Kmd.Momentum.Mea.Common.Authorization
     {
         public MeaTokenClaimResponse FetchClaims(AuthorizationHandlerContext context, string audience, string tenant, string scope)
         {
-            var clientId = context.User.Claims.FirstOrDefault(x => x.Type == "azp").Value;
-
             // If user does not have the audience, tenant and scope claim, get out of here
             if ((!context.User.HasClaim(c => c.Type == audience)) &&
                 (!context.User.HasClaim(c => c.Type == tenant)) &&
-                (!context.User.HasClaim(c => c.Type == scope)) is true)
+                (!context.User.HasClaim(c => c.Type == scope)) &&
+                (!context.User.HasClaim(c => c.Type == "azp")) is true)
             {
-                Log.ForContext("ClientId", clientId)
-                    .Error("The token to access the MEA does not contains all the relevant claims");
+                Log.Error("The token to access the MEA does not contains all the relevant claims");
 
                 return null;
             }
+
+            var clientId = context.User.Claims.FirstOrDefault(x => x.Type == "azp").Value;
 
             Log.ForContext("ClientId", clientId)
                 .Information("The token to access the MEA contains all the relevant claims");

@@ -57,6 +57,7 @@ stages:
       clientId: $(McaClientId)
       clientSecret: $(McaClientSecret)
       isDbRequired: $(DbRequired)
+      isKeyVaultRequired: 'true'
 
 - stage: deploy_internal
   dependsOn: Build
@@ -78,3 +79,4 @@ stages:
       clientId: $(McaClientId)
       clientSecret: $(McaClientSecret)
       isDbRequired: $(DbRequired)
+      isKeyVaultRequired: 'true'

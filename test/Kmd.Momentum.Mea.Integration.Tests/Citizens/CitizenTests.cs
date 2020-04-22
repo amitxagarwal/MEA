@@ -1,8 +1,11 @@
 ﻿using FluentAssertions;
 using Kmd.Momentum.Mea.Citizen.Model;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -58,7 +61,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
             result.Should().BeNullOrEmpty();
-            actualResponse.Should().BeNullOrEmpty();            
+            actualResponse.Should().BeNullOrEmpty();
         }
 
         [SkipLocalFact]
@@ -110,7 +113,6 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             result.Should().BeEquivalentTo(error);
         }
 
-
         [SkipLocalFact]
         public async Task GetCitizenByCitizenIdSuccess()
         {
@@ -137,11 +139,11 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         }
 
         [SkipLocalFact]
-        public async Task GetCitizenByCitizenIFails()
+        public async Task CreateJournalNoteAsyncSuccess()
         {
             //Arrange
-            var citizenId = "c07e1933-1074-4cb7-82a6-baa62fb909a1";
-            var requestUri = $"/citizens/kss/{citizenId}";
+            var momentumCitizenId = "65cd9dba-96db-40b0-9f3b-d773881afc61";
+            var requestUri = $"/citizens/journal/{momentumCitizenId}";
 
             var client = _factory.CreateClient();
 
@@ -150,14 +152,34 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
+            List<JournalNoteDocumentResponseModel> documentList = new List<JournalNoteDocumentResponseModel>()
+            {
+                new JournalNoteDocumentResponseModel()
+                {
+                    Content = "testContent",
+                    ContentType = "application/octet-stream",
+                    Name = "TestName.pdf"
+                }
+            };
+
+            JournalNoteResponseModel mcaRequestModel = new JournalNoteResponseModel()
+            {
+                Cpr = "0101005402",
+                Title = "testTitle",
+                Body = "testBody",
+                Type = "SMS",
+                Documents = documentList
+            };
+            string _serializedRequest = JsonConvert.SerializeObject(mcaRequestModel);
+
             //Act
-            var response = await client.GetAsync(requestUri).ConfigureAwait(false);
-            var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var error = "[\"An error occured while fetching the record(s) from Core Api\"]";
+            var response = await client.PostAsync(requestUri, new StringContent(_serializedRequest, Encoding.UTF8, "application/json"));
+            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualResponse = JsonConvert.DeserializeObject(responseBody);
 
             //Assert
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-            result.Should().BeEquivalentTo(error);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            actualResponse.Should().BeEquivalentTo("OK");
         }
     }
 }

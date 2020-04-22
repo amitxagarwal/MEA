@@ -19,7 +19,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
     public class CitizenController : ControllerBase
     {
         private readonly ICitizenService _citizenService;
-        
+
         public CitizenController(ICitizenService citizenService)
         {
             _citizenService = citizenService ?? throw new ArgumentNullException(nameof(citizenService));
@@ -74,7 +74,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
             {
                 return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error.Errors);
             }
-            else 
+            else
             {
                 return Ok(result.Result);
             }
@@ -91,7 +91,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(401)]        
+        [ProducesResponseType(401)]
         [Route("kss/{citizenId}")]
         [SwaggerOperation(OperationId = "GetCitizenById")]
         public async Task<ActionResult<CitizenDataResponseModel>> GetCitizenById([Required] [FromRoute] string citizenId)
@@ -105,6 +105,33 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
             else
             {
                 return Ok(result.Result);
+            }
+        }
+
+        ///<summary>
+        ///Create a Journal Note with attachment
+        ///</summary>
+        ///<response code="200">The Journal Note is created successfully</response>
+        ///<response code="400">Bad request</response>
+        ///<response code="404">The Journal Note to create is not found</response>
+        ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [Route("journal/{momentumCitizenId}")]
+        public async Task<ActionResult> CreateJournalNote([Required] [FromRoute] string momentumCitizenId, [Required] [FromBody] JournalNoteResponseModel requestModel)
+        {
+            var result = await _citizenService.CreateJournalNoteAsync(momentumCitizenId, requestModel).ConfigureAwait(false);
+
+            if (result.IsError)
+            {
+                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error.Errors);
+            }
+            else
+            {
+                return Ok("OK");
             }
         }
     }

@@ -1,13 +1,13 @@
 ﻿using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.Common.MeaHttpClient;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
+using Kmd.Momentum.Mea.Citizen.Model;
+using System.Net.Http;
+using System.Text;
 
 namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 {
@@ -89,6 +89,47 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             var content = response.Result;
             return new ResultOrHttpError<string, Error>(content);
         }
+
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteInMomentumCoreAsync(Uri url, string momentumCitizenId, JournalNoteResponseModel requestModel)
+        {
+            List<JournalNoteAttachmentModel> attachmentList = new List<JournalNoteAttachmentModel>();
+
+            foreach (var doc in requestModel.Documents)
+            {
+                var attachemnt = new JournalNoteAttachmentModel()
+                {
+                    ContentType = doc.ContentType,
+                    Document = doc.Content,
+                    Title = doc.Name
+                };
+                attachmentList.Add(attachemnt);
+            }
+
+            JournalNoteModel mcaRequestModel = new JournalNoteModel()
+            {
+                Id = requestModel.Cpr,
+                OccurredAt = DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.ff'Z'"),
+                Title = requestModel.Title,
+                Body = requestModel.Body,
+                Source = "Mea",
+                ReferenceId = momentumCitizenId,
+                JournalTypeId = requestModel.Type.ToLower() == "sms" ? "022.247.000" : "022.420.000",
+                Attachments = attachmentList
+            };
+
+            string serializedRequest = JsonConvert.SerializeObject(mcaRequestModel);
+            StringContent stringContent = new StringContent(serializedRequest, Encoding.UTF8, "application/json");
+
+            var response = await _meaClient.PostAsync(url, stringContent).ConfigureAwait(false);
+
+            if (response.IsError)
+            {
+                return new ResultOrHttpError<string, Error>(response.Error, response.StatusCode.Value);
+            }
+
+            var content = response.Result;
+
+            return new ResultOrHttpError<string, Error>(content);
+        }
     }
 }
-

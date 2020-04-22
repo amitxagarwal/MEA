@@ -110,5 +110,29 @@ namespace Kmd.Momentum.Mea.Citizen
 
             return new ResultOrHttpError<CitizenDataResponseModel, Error>(citizenData);
         }
+
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsync(string momentumCitizenId, JournalNoteResponseModel requestModel)
+        {
+            var response = await _citizenHttpClient.CreateJournalNoteInMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}journals/note"), momentumCitizenId, requestModel).ConfigureAwait(false);
+
+            if (response.IsError)
+            {
+                var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
+
+                Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("ClientId", _clientId)
+                    .ForContext("CitizenId", momentumCitizenId)
+                    .Error("An Error Occured while creating Journal Note" + error);
+
+                return new ResultOrHttpError<string, Error>(response.Error, response.StatusCode.Value);
+            }
+
+            Log.ForContext("CorrelationId", _correlationId)
+                .ForContext("ClientId", _clientId)
+                .ForContext("CitizenId", momentumCitizenId)
+                .Information("Journal Note is created successfully");
+
+            return new ResultOrHttpError<string, Error>(response.Result);
+        }
     }
 }

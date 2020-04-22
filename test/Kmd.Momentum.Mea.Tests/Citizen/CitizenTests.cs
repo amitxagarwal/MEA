@@ -47,7 +47,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             context.Setup(x => x.HttpContext).Returns(hc);
 
             var _configuration = new Mock<IConfiguration>();
-            _configuration.SetupGet(x => x.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(y => y.KommuneId == "123").KommuneUrl).Returns(It.IsAny<string>());
+            //_configuration.SetupGet(x => x.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(y => y.KommuneId == "123").KommuneUrl).Returns(It.IsAny<string>());
 
             var mockResponseData = new List<string>();
 

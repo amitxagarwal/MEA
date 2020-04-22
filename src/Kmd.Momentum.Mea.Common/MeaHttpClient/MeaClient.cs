@@ -1,5 +1,6 @@
 ﻿using Kmd.Momentum.Mea.Common.Authorization;
 using Kmd.Momentum.Mea.Common.Exceptions;
+using Kmd.Momentum.Mea.Common.KeyVault;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -19,14 +20,16 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
     {
         private static HttpClient _httpClient;
         private readonly IConfiguration _config;
+        private readonly IMeaSecretStore _meaSecretStore;
         private readonly string _correlationId;
         private readonly string _tenant;
         private readonly MeaAuthorization _mcaConfig;
 
-        public MeaClient(IConfiguration config, HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
+        public MeaClient(IConfiguration config, HttpClient httpClient, IHttpContextAccessor httpContextAccessor, IMeaSecretStore meaSecretStore)
         {
             _config = config;
             _httpClient = httpClient;
+            _meaSecretStore = meaSecretStore;
             _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
             _tenant = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "tenant").Value;
             _mcaConfig = config.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == _tenant);
@@ -79,13 +82,24 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
         private async Task<ResultOrHttpError<HttpResponseMessage, string>> ReturnAuthorizationTokenAsync()
         {
+            var mcaClientSecret = await _meaSecretStore.GetSecretValueBySecretKeyAsync(_mcaConfig.KommuneAccessIdentifier).ConfigureAwait(false);
+
+            if(mcaClientSecret == null)
+            {
+                Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("KommuneId", _tenant)
+                    .Error("Could not fetch the mca client secret value from the key vault");
+
+                return new ResultOrHttpError<HttpResponseMessage, string>("Could not find the client secret value for authorizing to momentum core system");
+            }
+
             try
             {
                 var content = new FormUrlEncodedContent(new[]
                {
                         new KeyValuePair<string, string>("grant_type","client_credentials"),
                         new KeyValuePair<string, string>("client_id", _mcaConfig.KommuneClientId),
-                        new KeyValuePair<string, string>("client_secret", _config["KMD_MOMENTUM_MEA_McaClientSecret"]),
+                        new KeyValuePair<string, string>("client_secret", mcaClientSecret.SecretValue),
                         new KeyValuePair<string, string>("resource", "74b4f45c-4e9b-4be1-98f1-ea876d9edd11")
                });
 

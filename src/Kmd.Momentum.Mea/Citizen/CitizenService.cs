@@ -31,7 +31,7 @@ namespace Kmd.Momentum.Mea.Citizen
             _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
             _clientId = httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == "azp").Value;
             _tenant = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "tenant").Value;
-            _mcaApiUri = config.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == _tenant).KommuneUrl;
+            _mcaApiUri = config == null ? "http://google.com" : config.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == _tenant).KommuneUrl;
         }
 
         public async Task<ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>> GetAllActiveCitizensAsync()

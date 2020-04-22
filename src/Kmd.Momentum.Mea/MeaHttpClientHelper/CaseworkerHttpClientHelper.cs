@@ -17,11 +17,11 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             _meaClient = meaClient ?? throw new ArgumentNullException(nameof(meaClient));
         }
 
-        public async Task<ResultOrHttpError<MeaBaseList, Error>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url, int pageNumber)
+        public async Task<ResultOrHttpError<CaseworkerList, Error>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url, int pageNumber)
         {
-            var pageSize = 50;
+            var pageSize = 100;
             pageNumber = pageNumber == 0 ? 1 : pageNumber;
-            List<MeaCaseworkerDataResponseModel> totalRecords = new List<MeaCaseworkerDataResponseModel>();
+            List<CaseworkerDataResponseModel> totalRecords = new List<CaseworkerDataResponseModel>();
 
             var queryStringParams = $"pagingInfo.pageNumber={pageNumber}&pagingInfo.pageSize={pageSize}";
 
@@ -29,21 +29,21 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             if (response.IsError)
             {
-                return new ResultOrHttpError<MeaBaseList, Error>(response.Error, response.StatusCode.Value);
+                return new ResultOrHttpError<CaseworkerList, Error>(response.Error, response.StatusCode.Value);
             }
 
             var content = response.Result;
-            var caseworkerDataObj = JsonConvert.DeserializeObject<McaPUnitData>(content);
+            var caseworkerDataObj = JsonConvert.DeserializeObject<PUnitData>(content);
             var records = caseworkerDataObj.Data;
 
             foreach (var item in records)
             {
-                var dataToReturn = new MeaCaseworkerDataResponseModel(item.Id, item.DisplayName, item.GivenName, item.MiddleName, item.Initials,
+                var dataToReturn = new CaseworkerDataResponseModel(item.Id, item.DisplayName, item.GivenName, item.MiddleName, item.Initials,
                item.Email?.Address, item.Phone?.Number, item.CaseworkerIdentifier, item.Description, item.IsActive, item.IsBookable);
                 totalRecords.Add(dataToReturn);
             }
 
-            var responseData = new MeaBaseList()
+            var responseData = new CaseworkerList()
             {
                 PageNo = pageNumber,
                 TotalNoOfPages = caseworkerDataObj.TotalPages,
@@ -51,7 +51,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 Result = totalRecords
             };
 
-            return new ResultOrHttpError<MeaBaseList, Error>(responseData);
+            return new ResultOrHttpError<CaseworkerList, Error>(responseData);
         }
 
         public async Task<ResultOrHttpError<string, Error>> GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(Uri url)

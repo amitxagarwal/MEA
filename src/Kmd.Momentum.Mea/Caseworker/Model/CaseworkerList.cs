@@ -2,7 +2,7 @@
 
 namespace Kmd.Momentum.Mea.Caseworker.Model
 {
-    public class MeaBaseList
+    public class CaseworkerList
     {
         public int TotalNoOfPages { get; set; }
 
@@ -10,6 +10,6 @@ namespace Kmd.Momentum.Mea.Caseworker.Model
 
         public int PageNo { get; set; }
 
-        public IReadOnlyList<MeaCaseworkerDataResponseModel> Result { get; set; }
+        public IReadOnlyList<CaseworkerDataResponseModel> Result { get; set; }
     }
 }

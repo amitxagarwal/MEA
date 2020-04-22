@@ -24,19 +24,40 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             var requestUri = "/caseworkers?pageNumber=1";
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
-            //var pageNumber = 1;
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
             var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<MeaBaseList>(responseBody);
+            var actualResponse = JsonConvert.DeserializeObject<CaseworkerList>(responseBody);
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             actualResponse.Should().NotBeNull();
             actualResponse.Result.Count.Should().BeGreaterThan(0);
+        }
+
+        [SkipLocalFact]
+        public async Task GetAllCaseworkersFails()
+        {
+            //Arrange       
+            var client = _factory.CreateClient();
+            var requestUri = "/caseworker?pageNumber=1";
+            var tokenHelper = new TokenGenerator();
+            var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+            //Act
+            var response = await client.GetAsync(requestUri).ConfigureAwait(false);
+            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualResponse = JsonConvert.DeserializeObject<CaseworkerList>(responseBody);
+
+            //Assert
+            response.StatusCode.Should().Be((HttpStatusCode.NotFound));
+            responseBody.Should().BeNullOrEmpty();
+            actualResponse.Should().BeNull();
         }
 
         [SkipLocalFact]
@@ -56,12 +77,36 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
             var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<MeaCaseworkerDataResponseModel>(responseBody);
+            var actualResponse = JsonConvert.DeserializeObject<CaseworkerDataResponseModel>(responseBody);
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             actualResponse.Should().NotBeNull();
             actualResponse.CaseworkerId.Should().BeEquivalentTo(caseworkerId);
+        }
+
+        [SkipLocalFact]
+        public async Task GetCaseworkerByCaseworkerIdFails()
+        {
+            //Arrange
+            var caseworkerId = "70375a2b-14d2-4774-a9a2-ab123ebd2ff6";
+            var requestUri = $"/caseworkers/kss/{caseworkerId}";
+
+            var client = _factory.CreateClient();
+
+            var tokenHelper = new TokenGenerator();
+            var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+            //Act
+            var response = await client.GetAsync(requestUri).ConfigureAwait(false);
+            var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var error = "[\"An error occured while fetching the record(s) from Core Api\"]";
+
+            //Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            result.Should().BeEquivalentTo(error);
         }
     }
 }

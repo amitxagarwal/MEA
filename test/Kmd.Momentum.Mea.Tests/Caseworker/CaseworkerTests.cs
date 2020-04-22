@@ -18,19 +18,12 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
 {
     public class CaseworkerTests
     {
-        [Fact]
-        public async Task GetAllCaseworkersSuccess()
-        {
-            //Arrange
-            var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var context = new Mock<IHttpContextAccessor>();
-            var _configuration = new Mock<IConfiguration>();
-            var pageNumber = 1;
 
+        private Mock<IHttpContextAccessor> GetContext()
+        {
+            var context = new Mock<IHttpContextAccessor>();
             var hc = new DefaultHttpContext();
             hc.TraceIdentifier = Guid.NewGuid().ToString();
-            context.Setup(x => x.HttpContext).Returns(hc);
-
             var claims = new List<Claim>()
                         {
                             new Claim("azp", Guid.NewGuid().ToString()),
@@ -38,17 +31,28 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             var identity = new ClaimsIdentity(claims, "JWT");
             var claimsPrincipal = new ClaimsPrincipal(identity);
             hc.User = claimsPrincipal;
+            context.Setup(x => x.HttpContext).Returns(hc);
+            return context;
+        }
+
+        [Fact]
+        public async Task GetAllCaseworkersSuccess()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
+            var _configuration = new Mock<IConfiguration>();
+            var pageNumber = 1;
+            var context = GetContext();
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-
-            var caseworkerData = new List<MeaCaseworkerDataResponseModel>()
+            var caseworkerData = new List<CaseworkerDataResponseModel>()
             {
-                new MeaCaseworkerDataResponseModel(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                new CaseworkerDataResponseModel(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())
             };
 
-            var responseData = new MeaBaseList()
+            var responseData = new CaseworkerList()
             {
                 TotalNoOfPages = 1,
                 TotalSearchCount = 1,
@@ -57,7 +61,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             };
 
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers"), pageNumber))
-                    .Returns(Task.FromResult(new ResultOrHttpError<MeaBaseList, Error>(responseData)));
+                    .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(responseData)));
 
             var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
 
@@ -75,28 +79,16 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var context = new Mock<IHttpContextAccessor>();
             var _configuration = new Mock<IConfiguration>();
             var pageNumber = 0;
-
-            var hc = new DefaultHttpContext();
-            hc.TraceIdentifier = Guid.NewGuid().ToString();
-            context.Setup(x => x.HttpContext).Returns(hc);
-
-            var claims = new List<Claim>()
-                        {
-                            new Claim("azp", Guid.NewGuid().ToString()),
-                        };
-            var identity = new ClaimsIdentity(claims, "JWT");
-            var claimsPrincipal = new ClaimsPrincipal(identity);
-            hc.User = claimsPrincipal;
+            var context = GetContext();
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
             var error = new Error("123456", new string[] { "An Error Occured while retriving data of all caseworkers" }, "MCA");
 
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers"), pageNumber))
-                    .Returns(Task.FromResult(new ResultOrHttpError<MeaBaseList, Error>(error, HttpStatusCode.BadRequest)));
+                    .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(error, HttpStatusCode.BadRequest)));
 
             var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
 
@@ -114,25 +106,13 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var context = new Mock<IHttpContextAccessor>();
             var _configuration = new Mock<IConfiguration>();
             var id = It.IsAny<string>();
-
-            var hc = new DefaultHttpContext();
-            hc.TraceIdentifier = Guid.NewGuid().ToString();
-            context.Setup(x => x.HttpContext).Returns(hc);
-
-            var claims = new List<Claim>()
-                        {
-                            new Claim("azp", Guid.NewGuid().ToString()),
-                        };
-            var identity = new ClaimsIdentity(claims, "JWT");
-            var claimsPrincipal = new ClaimsPrincipal(identity);
-            hc.User = claimsPrincipal;
+            var context = GetContext();
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            var response = new MeaCaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+            var response = new CaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
 
             var responseData = JsonConvert.SerializeObject(response);
@@ -156,25 +136,13 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var context = new Mock<IHttpContextAccessor>();
             var _configuration = new Mock<IConfiguration>();
             var id = It.IsAny<string>();
-
-            var hc = new DefaultHttpContext();
-            hc.TraceIdentifier = Guid.NewGuid().ToString();
-            context.Setup(x => x.HttpContext).Returns(hc);
-
-            var claims = new List<Claim>()
-                        {
-                            new Claim("azp", Guid.NewGuid().ToString()),
-                        };
-            var identity = new ClaimsIdentity(claims, "JWT");
-            var claimsPrincipal = new ClaimsPrincipal(identity);
-            hc.User = claimsPrincipal;
+            var context = GetContext();
 
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
-            var response = new MeaCaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+            var response = new CaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
 
             var error = new Error("123456", new string[] { "Caseworker data with the supplied caseworkerId is not found" }, "MCA");

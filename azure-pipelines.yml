@@ -79,6 +79,7 @@ stages:
       clientId: $(McaClientId)
       clientSecret: $(McaClientSecret)
       isDbRequired: $(DbRequired)
+      isKeyVaultRequired: 'true'
 
 - stage: deploy_external
   dependsOn: Build

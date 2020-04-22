@@ -36,7 +36,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(401)]
-        public async Task<ActionResult<CaseworkerList>> GetAllCaseworkers([Required] [FromQuery] int pageNumber = 0)
+        public async Task<ActionResult<CaseworkerList>> GetAllCaseworkers([FromQuery] int pageNumber = 0)
         {
             var result = await _caseworkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
 

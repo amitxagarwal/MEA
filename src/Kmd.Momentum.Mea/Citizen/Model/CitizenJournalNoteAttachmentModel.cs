@@ -1,6 +1,6 @@
 ﻿namespace Kmd.Momentum.Mea.Citizen.Model
 {
-    public class McaCitizenJournalNoteRequestAttachmentModel
+    public class CitizenJournalNoteAttachmentModel
     {
         public string Title { get; set; }
 

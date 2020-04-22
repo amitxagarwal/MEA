@@ -2,7 +2,7 @@
 
 namespace Kmd.Momentum.Mea.Citizen.Model
 {
-    public class McaCitizenJournalNoteRequestModel
+    public class CitizenJournalNoteModel
     {
         public string Id { get; set; } //Map with CPR
 
@@ -18,6 +18,6 @@ namespace Kmd.Momentum.Mea.Citizen.Model
 
         public string JournalTypeId { get; set; } //sms(022.247.000) or other(022.420.000)
 
-        public IReadOnlyList<McaCitizenJournalNoteRequestAttachmentModel> Attachments { get; set; }
+        public IReadOnlyList<CitizenJournalNoteAttachmentModel> Attachments { get; set; }
     }
 }

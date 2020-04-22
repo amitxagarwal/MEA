@@ -26,9 +26,9 @@ Param
   $InstanceId
 )
 
-$ResourceNamePrefix = "kmd-momentum-mea-$InstanceId";
-$KeyVaultName = "$($ResourceNamePrefix.replace('-',''))kv";
+$ResourceNamePrefix = "kmd-momentum-mea-$InstanceId"
+$KeyVaultName = "$($ResourceNamePrefix.replace('-',''))kv"
 
 Write-Host "Storing the client secret in '$key'"
 
-Set-AzureKeyVaultSecret -VaultName $KeyVaultName -Name $ResourceNamePrefix -SecretValue (ConvertTo-SecureString -String $env:$McaClientSecret -AsPlainText -Force)
+Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $ResourceNamePrefix -SecretValue (ConvertTo-SecureString -String $env:$McaClientSecret -AsPlainText -Force)

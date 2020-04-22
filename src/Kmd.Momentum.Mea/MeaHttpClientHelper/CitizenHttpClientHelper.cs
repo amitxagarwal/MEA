@@ -42,7 +42,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             var content = response.Result;
             int.TryParse(JObject.Parse(content)["totalCount"].ToString(), out int totalCount);
 
-            if (pageNumber >= (totalCount / size) + 1)
+            if (pageNumber > (totalCount / size) + 1)
             {
                 var error = new Error(_correlationId, new[] { "No Records are available for entered page number" }, "MEA");
                 Log.ForContext("CorrelationId", _correlationId)

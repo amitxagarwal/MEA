@@ -39,21 +39,23 @@ try{
 
     
     $SecretName = $ResourceNamePrefix
-    $SecretValue = $($env:McaClientSecret)
+    $SecretValue = '$($env:McaClientSecret)'
+    
+    Write-Host "Storing the client secret in '$SecretName'"
 
-    Write-Host "test 1 '$(DbLoginId)'"
+    Write-Host "Storing the client secret '$SecretValue'"
+
+    $SecretValue = "$(SecretValue)" | ConvertTo-SecureString -AsPlainText -Force
+
+    Write-Host "Storing the client secret -1- '$SecretValue'"
+
     Write-Host "test 2 '$($env:DbLoginId)'"
     Write-Host "test 3 '$env:DbLoginId'"
     Write-Host "test 4 '$DbLoginId'"
     
-    Write-Host "test 1 '$(McaClientSecret)'"
     Write-Host "test 2 '$($env:McaClientSecret)'"
     Write-Host "test 3 '$env:McaClientSecret'"
     Write-Host "test 4 '$McaClientSecret'"
-
-    Write-Host "Storing the client secret in '$SecretName'"
-
-    Write-Host "Storing the client secret '$SecretValue'"
 
     Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue (ConvertTo-SecureString $SecretValue -AsPlainText -Force)
 

@@ -103,7 +103,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         }
 
         [Fact]
-        public async Task GetAllActiveCitizensFailsWhenPageNoIsLessThan0()
+        public async Task GetAllActiveCitizensFailsWhenPageNoIsLessThanOrEqualTo0()
         {
             //Arrange
             int pageNumber = -1;
@@ -130,7 +130,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
             mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
 
-            var error = new Error("123456", new string[] { "PageNumber cannot be less than zero" }, "MEA");
+            var error = new Error("123456", new string[] { "PageNumber cannot be less than or equal to zero" }, "MEA");
 
             helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync
             (new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/search"), pageNumber))
@@ -145,7 +145,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             //Asert
             result.Should().NotBeNull();
             result.IsError.Should().BeTrue();
-            result.Error.Errors[0].Should().Be("PageNumber cannot be less than zero");
+            result.Error.Errors[0].Should().Be("PageNumber cannot be less than or equal to zero");
         }
 
         [Fact]

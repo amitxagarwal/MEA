@@ -31,12 +31,12 @@ namespace Kmd.Momentum.Mea.Citizen
 
         public async Task<ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>> GetAllActiveCitizensAsync(int pageNumber)
         {
-            if (pageNumber < 0)
+            if (pageNumber <= 0)
             {
-                var error = new Error(_correlationId, new []{ "PageNumber cannot be less than zero" }, "Mea");
+                var error = new Error(_correlationId, new []{ "PageNumber cannot be less than or equal to zero" }, "Mea");
                 Log.ForContext("CorrelationId", _correlationId)
                     .ForContext("Client", _clientId)
-                .Error("PageNumber is less than zero");
+                .Error("PageNumber is less than or equal to zero");
                 return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>(error, System.Net.HttpStatusCode.BadRequest);
             }
 

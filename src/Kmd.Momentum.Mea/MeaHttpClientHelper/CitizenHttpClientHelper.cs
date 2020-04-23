@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Net;
 using Serilog;
+using Microsoft.AspNetCore.Http;
 
 namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 {
@@ -17,11 +18,11 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
     {
         private readonly IMeaClient _meaClient;
         private readonly string _correlationId;
-        private readonly string _clientId;
 
-        public CitizenHttpClientHelper(IMeaClient meaClient)
+        public CitizenHttpClientHelper(IMeaClient meaClient, IHttpContextAccessor httpContextAccessor)
         {
             _meaClient = meaClient;
+            _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
         }
 
         public async Task<ResultOrHttpError<IReadOnlyList<string>, Error>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url, int pageNumber)
@@ -46,10 +47,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             if (pageNumber > (totalCount / size) + 1)
             {
-                var error = new Error(_correlationId, new[] { "No Records are available for entered page number" }, "MEA");
-                Log.ForContext("CorrelationId", _correlationId)
-                    .ForContext("Client", _clientId)
-                .Error("No Records are available for entered page number");
+                var error = new Error(_correlationId, new[] { "No Records are available for entered page number" }, "MEA");                
                 return new ResultOrHttpError<IReadOnlyList<string>, Error>(error, HttpStatusCode.BadRequest);
             }
 

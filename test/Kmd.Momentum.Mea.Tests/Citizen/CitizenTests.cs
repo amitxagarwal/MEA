@@ -1,315 +1,315 @@
-﻿//using FluentAssertions;
-//using Kmd.Momentum.Mea.Citizen;
-//using Kmd.Momentum.Mea.Citizen.Model;
-//using Kmd.Momentum.Mea.Common.Authorization;
-//using Kmd.Momentum.Mea.Common.Exceptions;
-//using Kmd.Momentum.Mea.MeaHttpClientHelper;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.Extensions.Configuration;
-//using Moq;
-//using Newtonsoft.Json;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Net;
-//using System.Security.Claims;
-//using System.Threading.Tasks;
-//using Xunit;
-
-//namespace Kmd.Momentum.Mea.Tests.Citizen
-//{
-//    public class CitizenTests
-//    { 
-//        private Mock<IHttpContextAccessor> GetContext()
-//        {
-//            var context = new Mock<IHttpContextAccessor>();
-//            var hc = new DefaultHttpContext();
-//            hc.TraceIdentifier = Guid.NewGuid().ToString();
-//            var claims = new List<Claim>()
-//                        {
-//                            new Claim("azp", Guid.NewGuid().ToString()),
-//                            new Claim("tenant", "159")
-//                        };
-//            var identity = new ClaimsIdentity(claims, "JWT");
-//            var claimsPrincipal = new ClaimsPrincipal(identity);
-
-//            hc.User = claimsPrincipal;
-
-//            context.Setup(x => x.HttpContext).Returns(hc);
-//            return context;
-//        }
-
-//        private IConfiguration GetConfiguration()
-//        {
-//            IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-//            configurationBuilder.AddJsonFile("appSettings.json");
-//            IConfiguration configuration = configurationBuilder.Build();
-//            return configuration;
-//        }
-
-//        [Fact]
-//        public async Task GetAllActiveCitizensSuccess()
-//        {
-//            //Arrange
-//            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
-//            var context = GetContext();
-
-//            var configuration = GetConfiguration();
-//            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
-
-//            var mockResponseData = new List<string>();
-
-//            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
-//            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
-
-//            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_mcaApiUri}/search")))
-//                .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<string>, Error>(mockResponseData)));
-
-//            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
-//            var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
-
-//            //Act
-//            var result = await citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
-
-
-//            //Asert
-//            result.Should().NotBeNull();
-//            result.IsError.Should().BeFalse();
-//            result.Result.Should().BeEquivalentTo(responseData);
-//        }
-
-//        [Fact]
-//        public async Task GetAllActiveCitizensFails()
-//        {
-//            //Arrange
-//            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
-//            var context = GetContext();
-
-//            var configuration = GetConfiguration();
-//            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
-
-//            var mockResponseData = new List<string>();
-
-//            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
-//            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
-
-//            var error = new Error("123456", new string[] { "An Error Occured while retriving data of all active citizens" }, "MCA");
-
-
-//            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_mcaApiUri}/search")))
-//                .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<string>, Error>(error, HttpStatusCode.BadRequest)));
-
-//            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
-//            var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
+﻿using FluentAssertions;
+using Kmd.Momentum.Mea.Citizen;
+using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.Authorization;
+using Kmd.Momentum.Mea.Common.Exceptions;
+using Kmd.Momentum.Mea.MeaHttpClientHelper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Moq;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Xunit;
+
+namespace Kmd.Momentum.Mea.Tests.Citizen
+{
+    public class CitizenTests
+    {
+        private Mock<IHttpContextAccessor> GetContext()
+        {
+            var context = new Mock<IHttpContextAccessor>();
+            var hc = new DefaultHttpContext();
+            hc.TraceIdentifier = Guid.NewGuid().ToString();
+            var claims = new List<Claim>()
+                        {
+                            new Claim("azp", Guid.NewGuid().ToString()),
+                            new Claim("tenant", "159")
+                        };
+            var identity = new ClaimsIdentity(claims, "JWT");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            hc.User = claimsPrincipal;
+
+            context.Setup(x => x.HttpContext).Returns(hc);
+            return context;
+        }
+
+        private IConfiguration GetConfiguration()
+        {
+            IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            configurationBuilder.AddJsonFile("appSettings.json");
+            IConfiguration configuration = configurationBuilder.Build();
+            return configuration;
+        }
+
+        [Fact]
+        public async Task GetAllActiveCitizensSuccess()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
+            var context = GetContext();
+
+            var configuration = GetConfiguration();
+            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
+
+            var mockResponseData = new List<string>();
+
+            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
+            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
+
+            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_mcaApiUri}/search")))
+                .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<string>, Error>(mockResponseData)));
+
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
+            var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
+
+            //Act
+            var result = await citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
+
+
+            //Asert
+            result.Should().NotBeNull();
+            result.IsError.Should().BeFalse();
+            result.Result.Should().BeEquivalentTo(responseData);
+        }
+
+        [Fact]
+        public async Task GetAllActiveCitizensFails()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
+            var context = GetContext();
+
+            var configuration = GetConfiguration();
+            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
+
+            var mockResponseData = new List<string>();
+
+            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId1", "TestDisplay1", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
+            mockResponseData.Add(JsonConvert.SerializeObject(new CitizenDataResponseModel("testId2", "TestDisplay2", "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true)));
+
+            var error = new Error("123456", new string[] { "An Error Occured while retriving data of all active citizens" }, "MCA");
+
+
+            helperHttpClientMoq.Setup(x => x.GetAllActiveCitizenDataFromMomentumCoreAsync(new Uri($"{_mcaApiUri}/search")))
+                .Returns(Task.FromResult(new ResultOrHttpError<IReadOnlyList<string>, Error>(error, HttpStatusCode.BadRequest)));
+
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
+            var responseData = mockResponseData.Select(x => JsonConvert.DeserializeObject<CitizenDataResponseModel>(x)).ToList();
 
-//            //Act
-//            var result = await citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
+            //Act
+            var result = await citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);
 
 
-//            //Asert
-//            result.Should().NotBeNull();
-//            result.IsError.Should().BeTrue();
-//            result.Error.Errors[0].Should().Be("An Error Occured while retriving data of all active citizens");
-//        }
+            //Asert
+            result.Should().NotBeNull();
+            result.IsError.Should().BeTrue();
+            result.Error.Errors[0].Should().Be("An Error Occured while retriving data of all active citizens");
+        }
 
-//        [Fact]
-//        public async Task GetCitizenByCprSuccess()
-//        {
-//            //Arrange
-//            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
-//            var context = GetContext();
-//            var cpr = "1234567890";
+        [Fact]
+        public async Task GetCitizenByCprSuccess()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
+            var context = GetContext();
+            var cpr = "1234567890";
 
-//            var configuration = GetConfiguration();
-//            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
+            var configuration = GetConfiguration();
+            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
 
-//            var citizenData = new CitizenDataResponseModel("testId1", "TestDisplay1",
-//                "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true);
+            var citizenData = new CitizenDataResponseModel("testId1", "TestDisplay1",
+                "givenname", "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true);
 
-//            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(citizenData);
+            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(citizenData);
 
 
-//            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_mcaApiUri}citizens/{cpr}")))
-//                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(httpClientCitizenDataResponse)));
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_mcaApiUri}citizens/{cpr}")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(httpClientCitizenDataResponse)));
 
-//            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
 
-//            //Act
-//            var result = await citizenService.GetCitizenByCprAsync(cpr).ConfigureAwait(false);
+            //Act
+            var result = await citizenService.GetCitizenByCprAsync(cpr).ConfigureAwait(false);
 
-//            //Asert
-//            result.Should().NotBeNull();
-//            result.IsError.Should().BeFalse();
-//            result.Result.Should().BeEquivalentTo(citizenData);
-//        }
+            //Asert
+            result.Should().NotBeNull();
+            result.IsError.Should().BeFalse();
+            result.Result.Should().BeEquivalentTo(citizenData);
+        }
 
-//        [Fact]
-//        public async Task GetCitizenDataByCprFails()
-//        {
-//            //Arrange
-//            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
-//            var context = GetContext();
-//            var cpr = "1234567890";
+        [Fact]
+        public async Task GetCitizenDataByCprFails()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
+            var context = GetContext();
+            var cpr = "1234567890";
 
-//            var configuration = GetConfiguration();
-//            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
+            var configuration = GetConfiguration();
+            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
 
-//            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name",
-//                "", "", "", "test@test.com", "+99999999", "", "");
+            var citizenDataResponse = new CitizenDataResponseModel("test-test-test-test-test", "test display name",
+                "", "", "", "test@test.com", "+99999999", "", "");
 
-            
-//            var error = new Error("123456", new string[] { "Citizen with the supplied cpr no is not found" }, "MCA");
 
-//            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_mcaApiUri}citizens/{cpr}")))
-//                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
+            var error = new Error("123456", new string[] { "Citizen with the supplied cpr no is not found" }, "MCA");
 
-//            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_mcaApiUri}citizens/{cpr}")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
 
-//            //Act
-//            var result = await citizenService.GetCitizenByCprAsync(cpr).ConfigureAwait(false);
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
 
-//            //Asert
-//            result.IsError.Should().BeTrue();
-//            result.Error.Errors[0].Should().Be("Citizen with the supplied cpr no is not found");
-//        }
+            //Act
+            var result = await citizenService.GetCitizenByCprAsync(cpr).ConfigureAwait(false);
 
-//        [Fact]
-//        public async Task GetCitizenByCitizenIdSuccess()
-//        {
-//            //Arrange
-//            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
-//            var context = GetContext();
-//            var citizenId = "1234567890";
+            //Asert
+            result.IsError.Should().BeTrue();
+            result.Error.Errors[0].Should().Be("Citizen with the supplied cpr no is not found");
+        }
 
-//            var configuration = GetConfiguration();
-//            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
+        [Fact]
+        public async Task GetCitizenByCitizenIdSuccess()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
+            var context = GetContext();
+            var citizenId = "1234567890";
 
-//            var citizenData = new CitizenDataResponseModel(citizenId, "TestDisplay1", "givenname",
-//                "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true);
-//            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(citizenData);
+            var configuration = GetConfiguration();
+            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
 
-//            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_mcaApiUri}citizens/{citizenId}")))
-//                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(httpClientCitizenDataResponse)));
+            var citizenData = new CitizenDataResponseModel(citizenId, "TestDisplay1", "givenname",
+                "middlename", "initials", "test@email.com", "1234567891", "", "description", true, true);
+            var httpClientCitizenDataResponse = JsonConvert.SerializeObject(citizenData);
 
-//            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_mcaApiUri}citizens/{citizenId}")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(httpClientCitizenDataResponse)));
 
-//            //Act
-//            var result = await citizenService.GetCitizenByIdAsync(citizenId).ConfigureAwait(false);
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
 
-//            //Asert
-//            result.Should().NotBeNull();
-//            result.IsError.Should().BeFalse();
-//            result.Result.Should().BeEquivalentTo(citizenData);
-//        }
+            //Act
+            var result = await citizenService.GetCitizenByIdAsync(citizenId).ConfigureAwait(false);
 
+            //Asert
+            result.Should().NotBeNull();
+            result.IsError.Should().BeFalse();
+            result.Result.Should().BeEquivalentTo(citizenData);
+        }
 
-//        [Fact]
-//        public async Task GetCitizenByCitizenIdFails()
-//        {
-//            //Arrange
-//            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
-//            var context = GetContext();
-//            var citizenId = "1234567890";
 
-//            var configuration = GetConfiguration();
-//            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
+        [Fact]
+        public async Task GetCitizenByCitizenIdFails()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
+            var context = GetContext();
+            var citizenId = "1234567890";
 
-//            var citizenDataResponse = new CitizenDataResponseModel(citizenId, "test display name",
-//                "", "", "", "test@test.com", "+99999999", "", "");
+            var configuration = GetConfiguration();
+            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
 
-//            var error = new Error("123456", new string[] { "Citizen with the supplied cpr no is not found" }, "MCA");
+            var citizenDataResponse = new CitizenDataResponseModel(citizenId, "test display name",
+                "", "", "", "test@test.com", "+99999999", "", "");
 
-//            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_mcaApiUri}citizens/{citizenId}")))
-//                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
+            var error = new Error("123456", new string[] { "Citizen with the supplied cpr no is not found" }, "MCA");
 
-//            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
+            helperHttpClientMoq.Setup(x => x.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_mcaApiUri}citizens/{citizenId}")))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
 
-//            //Act
-//            var result = await citizenService.GetCitizenByIdAsync(citizenId).ConfigureAwait(false);
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
 
-//            //Asert
-//            result.IsError.Should().BeTrue();
-//            result.Error.Errors[0].Should().Be("Citizen with the supplied cpr no is not found");
-//        }
+            //Act
+            var result = await citizenService.GetCitizenByIdAsync(citizenId).ConfigureAwait(false);
 
-//        [Fact]
-//        public async Task CreateJournalNoteAsyncSuccess()
-//        {
-//            //Arrange
-//            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
-//            var context = GetContext();
+            //Asert
+            result.IsError.Should().BeTrue();
+            result.Error.Errors[0].Should().Be("Citizen with the supplied cpr no is not found");
+        }
 
-//            JournalNoteDocumentResponseModel[] requestDocumentModel = { new JournalNoteDocumentResponseModel() {
-//                Content="testContent",
-//                ContentType="testContentType",
-//                Name="testDocumentName"
-//            } };
+        [Fact]
+        public async Task CreateJournalNoteAsyncSuccess()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
+            var context = GetContext();
 
-//            var requestModel = new JournalNoteResponseModel()
-//            {
-//                Cpr = "testCpr",
-//                Body = "testBody",
-//                Title = "testTitle",
-//                Type = "testType",
-//                Documents = requestDocumentModel
-//            };
+            JournalNoteDocumentResponseModel[] requestDocumentModel = { new JournalNoteDocumentResponseModel() {
+                Content="testContent",
+                ContentType="testContentType",
+                Name="testDocumentName"
+            } };
 
+            var requestModel = new JournalNoteResponseModel()
+            {
+                Cpr = "testCpr",
+                Body = "testBody",
+                Title = "testTitle",
+                Type = "testType",
+                Documents = requestDocumentModel
+            };
 
-//            var configuration = GetConfiguration();
-//            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
 
-//            helperHttpClientMoq.Setup(x => x.CreateJournalNoteInMomentumCoreAsync(new Uri($"{_mcaApiUri}journals/note"), "testCitizenId", requestModel))
-//                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>("")));
+            var configuration = GetConfiguration();
+            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
 
-//            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
+            helperHttpClientMoq.Setup(x => x.CreateJournalNoteInMomentumCoreAsync(new Uri($"{_mcaApiUri}journals/note"), "testCitizenId", requestModel))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>("")));
 
-//            //Act
-//            var result = await citizenService.CreateJournalNoteAsync("testCitizenId", requestModel).ConfigureAwait(false);
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
 
-//            //Asert
-//            result.Should().NotBeNull();
-//            result.IsError.Should().BeFalse();
-//            result.Result.Should().BeEquivalentTo("");
-//        }
+            //Act
+            var result = await citizenService.CreateJournalNoteAsync("testCitizenId", requestModel).ConfigureAwait(false);
 
-//        [Fact]
-//        public async Task CreateJournalNoteAsyncFail()
-//        {
-//            //Arrange
-//            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
-//            var context = GetContext();
+            //Asert
+            result.Should().NotBeNull();
+            result.IsError.Should().BeFalse();
+            result.Result.Should().BeEquivalentTo("");
+        }
 
-//            JournalNoteDocumentResponseModel[] requestDocumentModel = { new JournalNoteDocumentResponseModel() {
-//                Content="testContent",
-//                ContentType="testContentType",
-//                Name="testDocumentName"
-//            } };
+        [Fact]
+        public async Task CreateJournalNoteAsyncFail()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
+            var context = GetContext();
 
-//            var requestModel = new JournalNoteResponseModel()
-//            {
-//                Cpr = "testCpr",
-//                Body = "testBody",
-//                Title = "testTitle",
-//                Type = "testType",
-//                Documents = requestDocumentModel
-//            };
+            JournalNoteDocumentResponseModel[] requestDocumentModel = { new JournalNoteDocumentResponseModel() {
+                Content="testContent",
+                ContentType="testContentType",
+                Name="testDocumentName"
+            } };
 
-//            var configuration = GetConfiguration();
-//            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
+            var requestModel = new JournalNoteResponseModel()
+            {
+                Cpr = "testCpr",
+                Body = "testBody",
+                Title = "testTitle",
+                Type = "testType",
+                Documents = requestDocumentModel
+            };
 
-//            var error = new Error("123456", new string[] { "Some error occured when creating note" }, "MCA");
+            var configuration = GetConfiguration();
+            var _mcaApiUri = configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == "159").KommuneUrl;
 
-//            helperHttpClientMoq.Setup(x => x.CreateJournalNoteInMomentumCoreAsync(new Uri($"{_mcaApiUri}journals/note"), "testCitizenId", requestModel))
-//                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
+            var error = new Error("123456", new string[] { "Some error occured when creating note" }, "MCA");
 
-//            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
+            helperHttpClientMoq.Setup(x => x.CreateJournalNoteInMomentumCoreAsync(new Uri($"{_mcaApiUri}journals/note"), "testCitizenId", requestModel))
+                .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
 
-//            //Act
-//            var result = await citizenService.CreateJournalNoteAsync("testCitizenId", requestModel).ConfigureAwait(false);
+            var citizenService = new CitizenService(helperHttpClientMoq.Object, configuration, context.Object);
 
-//            //Asert            
-//            result.IsError.Should().BeTrue();
-//            result.Error.Errors[0].Should().BeEquivalentTo("Some error occured when creating note");
-//        }
-//    }
-//}
+            //Act
+            var result = await citizenService.CreateJournalNoteAsync("testCitizenId", requestModel).ConfigureAwait(false);
+
+            //Asert            
+            result.IsError.Should().BeTrue();
+            result.Error.Errors[0].Should().BeEquivalentTo("Some error occured when creating note");
+        }
+    }
+}

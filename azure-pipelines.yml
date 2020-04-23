@@ -90,7 +90,7 @@ stages:
       environmentNameSuffix: external
       environment: External
       environmentAutoDelete: false
-      azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
+      azureSubscription: 'KMD Momentum External (a2928298-838a-4035-aeb2-7cd779f86089)'
       instanceId: external
       resourceGroupLocation: westeurope
       diagnosticSeqServerUrl: $(ShareddevDiagnosticSeqAServerUrl)

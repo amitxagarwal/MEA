@@ -37,15 +37,22 @@ try{
         $KeyVaultName = $KeyVaultName.substring($KeyVaultName.length-24,24);
     }
 
-    Write-Host "Storing the client secret in '$key'"
+    
+    $SecretName = $ResourceNamePrefix
+    $SecretValue = $env:McaClientSecret
 
-    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $ResourceNamePrefix -SecretValue (ConvertTo-SecureString -String $($env:McaClientSecret) -AsPlainText -Force)
+    Write-Host "Storing the client secret in '$SecretName'"
+
+    Write-Host "Storing the client secret in '$SecretValue'"
+
+    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue (ConvertTo-SecureString -String $SecretValue -AsPlainText -Force)
 
 }catch{
 
 	Write-Host "An error occurred:"
 	Write-Host $_
-    Write-Host "##vso[task.LogIssue type=error;]"$_, "##vso[task.complete result=Failed]"
+    Write-Host "##vso[task.LogIssue type=error;]"$_
+    Write-Host "##vso[task.complete result=Failed]"
     exit 1
 
 }

@@ -15,7 +15,6 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
     [ApiController]
     [Route("citizens")]
     [Produces("application/json", "text/json")]
-    [Authorize(MeaCustomClaimAttributes.CitizenRole)]
     public class CitizenController : ControllerBase
     {
         private readonly ICitizenService _citizenService;
@@ -32,6 +31,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="400">Bad request</response>
         ///<response code="404">The active citizen data is not found</response>
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
+        [Authorize(MeaCustomClaimAttributes.CitizenRole)]
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -59,6 +59,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="400">Bad request</response>
         ///<response code="404">The citizen detail by CPR no is not found</response>
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
+        [Authorize(MeaCustomClaimAttributes.CitizenRole)]
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -87,6 +88,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="400">Bad request</response>
         ///<response code="404">The citizen detail by id is not found</response>
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
+        [Authorize(MeaCustomClaimAttributes.CitizenRole)]
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -115,6 +117,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="400">Bad request</response>
         ///<response code="404">The Journal Note to create is not found</response>
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
+        [Authorize(MeaCustomClaimAttributes.JournalRole)]
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]

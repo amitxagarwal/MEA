@@ -71,14 +71,3 @@ jobs:
                 ScriptArguments: -PublishedArtifactsPath '$(Pipeline.Workspace)/Applications' -WebAppName '$(WebAppName)' -ResourceGroupName '$(ResourceGroupName)' -AutoSwapSlots:("${{ parameters.autoSwapSlots }}" -eq "true")
                 azurePowerShellVersion: 'LatestVersion'
                 pwsh: true
-
-            - task: AzurePowerShell@4
-              condition: and(succeeded(),eq(variables['isKeyVaultRequired'],'true'))
-              displayName: Store secrets
-              inputs:
-                azureSubscription: ${{ parameters.azureSubscription }}
-                ScriptType: 'FilePath'
-                ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-secrets.ps1'
-                ScriptArguments: -InstanceId '$(InstanceId)' -ClientSecret '$(ClientSecret)'
-                azurePowerShellVersion: 'LatestVersion'
-                pwsh: true

@@ -39,11 +39,11 @@ try{
 
     
     $SecretName = $ResourceNamePrefix
-    $SecretValue = $($env:McaClientSecret)
+    $SecretValue = $($McaClientSecret)
 
     Write-Host "Storing the client secret in '$SecretName'"
 
-    Write-Host "Storing the client secret in '$SecretValue'"
+    Write-Host "Storing the client secret '$SecretValue'"
 
     Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue (ConvertTo-SecureString $SecretValue -AsPlainText -Force)
 

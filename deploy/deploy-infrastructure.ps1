@@ -187,7 +187,7 @@ try
 	}
     $SecretValue = $ClientSecret
 
-    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue (ConvertTo-SecureString -String $SecretValue -AsPlainText -Force -Verbose) -Verbose -ErrorVariable ErrorMessages
+    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $ResourceNamePrefix -SecretValue (ConvertTo-SecureString -String $SecretValue -AsPlainText -Force -Verbose) -Verbose -ErrorVariable ErrorMessages
 
     if ($ErrorMessages) {
 			Write-Output '', 'Returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
@@ -198,7 +198,8 @@ try
 }catch{
 	Write-Host "An error occurred:"
 	Write-Host $_
-    Write-Host "##vso[task.LogIssue type=error;]"$_, "##vso[task.complete result=Failed]"
+    Write-Host "##vso[task.LogIssue type=error;]"$_
+    Write-Host "##vso[task.complete result=Failed]"
     exit 1
 }
 Pop-Location

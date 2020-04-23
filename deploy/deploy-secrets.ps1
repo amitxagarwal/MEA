@@ -39,7 +39,7 @@ try{
 
     
     $SecretName = $ResourceNamePrefix
-    $SecretValue = $env:McaClientSecret
+    $SecretValue = $($env:McaClientSecret)
 
     Write-Host "Storing the client secret in '$SecretName'"
 

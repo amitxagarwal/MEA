@@ -53,6 +53,7 @@ try{
 
     Write-Host "Storing the client secret '$SecretValue'"
  
+    #Set-AzKeyVaultAccessPolicy -VaultName $keyVaultName -ResourceGroupName $resourceGroupName -ServicePrincipalName 'd1ffad2e-4c86-4236-95ea-925eef5cdc3e' -PermissionsToSecrets set
 
     Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue (ConvertTo-SecureString -String $SecretValue -AsPlainText -Force -Verbose) -Verbose -ErrorVariable ErrorMessages
     

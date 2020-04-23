@@ -185,6 +185,16 @@ try
 			exit 1
 		}
 	}
+    $SecretValue = $ClientSecret
+
+    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue (ConvertTo-SecureString -String $SecretValue -AsPlainText -Force -Verbose) -Verbose -ErrorVariable ErrorMessages
+
+    if ($ErrorMessages) {
+			Write-Output '', 'Returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
+            Write-Host "##vso[task.LogIssue type=error;]" @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
+            Write-Host "##vso[task.complete result=Failed]"
+			exit 1
+	}
 }catch{
 	Write-Host "An error occurred:"
 	Write-Host $_

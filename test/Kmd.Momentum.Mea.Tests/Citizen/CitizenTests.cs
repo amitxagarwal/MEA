@@ -42,7 +42,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         private IConfiguration GetConfiguration()
         {
             IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.AddJsonFile("appSettings.json");
+            configurationBuilder.AddJsonFile("appsettings.json");
             IConfiguration configuration = configurationBuilder.Build();
             return configuration;
         }

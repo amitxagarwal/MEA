@@ -45,7 +45,7 @@ try{
 
     Write-Host "Storing the client secret in '$SecretValue'"
 
-    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue (ConvertTo-SecureString -String $SecretValue -AsPlainText -Force)
+    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue (ConvertTo-SecureString $SecretValue -AsPlainText -Force)
 
 }catch{
 

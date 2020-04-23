@@ -26,9 +26,24 @@ Param
   $InstanceId
 )
 
-$ResourceNamePrefix = "kmd-momentum-mea-$InstanceId"
-$KeyVaultName = "$($ResourceNamePrefix.replace('-',''))kv"
+try{
+    $ResourceNamePrefix = "kmd-momentum-mea-$InstanceId"
+    $KeyVaultName = "$($ResourceNamePrefix.replace('-',''))kv"
 
-Write-Host "Storing the client secret in '$key'"
+    if($KeyVaultName.length -gt 24)
+    {
+        $KeyVaultName = $KeyVaultName.substring($KeyVaultName.length-24,24);
+    }
 
-Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $ResourceNamePrefix -SecretValue (ConvertTo-SecureString -String $env:$McaClientSecret -AsPlainText -Force)
+    Write-Host "Storing the client secret in '$key'"
+
+    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $ResourceNamePrefix -SecretValue (ConvertTo-SecureString -String $env:$McaClientSecret -AsPlainText -Force)
+
+}catch{
+
+	Write-Host "An error occurred:"
+	Write-Host $_
+    Write-Host "##vso[task.LogIssue type=error;]"$_, "##vso[task.complete result=Failed]"
+    exit 1
+
+}

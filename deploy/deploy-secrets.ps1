@@ -26,6 +26,8 @@ Param
   $InstanceId
 )
 
+$ErrorActionPreference = 'Stop'
+
 try{
     $ResourceNamePrefix = "kmd-momentum-mea-$InstanceId"
     $KeyVaultName = "$($ResourceNamePrefix.replace('-',''))kv"
@@ -37,7 +39,7 @@ try{
 
     Write-Host "Storing the client secret in '$key'"
 
-    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $ResourceNamePrefix -SecretValue (ConvertTo-SecureString -String ($env:McaClientSecret) -AsPlainText -Force)
+    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $ResourceNamePrefix -SecretValue (ConvertTo-SecureString -String $($env:McaClientSecret) -AsPlainText -Force)
 
 }catch{
 

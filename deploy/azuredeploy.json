@@ -191,7 +191,9 @@
     "hostingPlanName": "[concat(variables('resourceNamePrefixLower'),'-appsvcplan')]",
     "azureServicesAuthConnectionString": "RunAs=App",
     "meaKeyVaultSecretStore": "[tolower(parameters('keyVaultName'))]",
-    "meaKeyVaultUri": "[concat('https://', variables('meaKeyVaultSecretStore'), '.vault.azure.net/')]"
+    "meaKeyVaultUri": "[concat('https://', variables('meaKeyVaultSecretStore'), '.vault.azure.net/')]",
+    "secretName": "ClientSecret",
+    "secretValue": "[parameters('clientSecret')]"
   },
   "resources": [
     {
@@ -420,6 +422,8 @@
         "[concat('Microsoft.Web/sites/', variables('webAppName'))]"
       ],
       "properties": {
+        "enabledForDeployment": true,
+        "enabledForTemplateDeployment": true,
         "sku": {
           "family": "A",
           "name": "[parameters('vaultSku')]"
@@ -438,6 +442,18 @@
         ],
         "enabledForDeployment": true,
         "vaultUri": "[variables('meaKeyVaultUri')]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "name": "[concat(variables('meaKeyVaultSecretStore'), '/', variables('secretName'))]",
+      "apiVersion": "2018-02-14",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('meaKeyVaultSecretStore'))]"
+      ],
+      "properties": {
+        "value": "[variables('secretValue')]"
       }
     },
     {

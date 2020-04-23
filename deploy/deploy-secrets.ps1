@@ -23,7 +23,11 @@ Param
 (
   [Parameter(Mandatory=$true)]
   [string]
-  $InstanceId
+  $InstanceId,
+
+  [Parameter(Mandatory=$true)]
+  [string]
+  $ClientSecret
 )
 
 $ErrorActionPreference = 'Stop'
@@ -39,15 +43,15 @@ try{
 
     
     $SecretName = $ResourceNamePrefix
-    $SecretValue = '$($env:McaClientSecret)'
+    $SecretValue = $ClientSecret
     
     Write-Host "Storing the client secret in '$SecretName'"
 
     Write-Host "Storing the client secret '$SecretValue'"
 
-    $SecretValue = "$(SecretValue)" | ConvertTo-SecureString -AsPlainText -Force
+    $SecretValue1 = "$($env:McaClientSecret)" | ConvertTo-SecureString -AsPlainText -Force
 
-    Write-Host "Storing the client secret -1- '$SecretValue'"
+    Write-Host "Storing the client secret -1- '$SecretValue1'"
 
     Write-Host "test 2 '$($env:DbLoginId)'"
     Write-Host "test 3 '$env:DbLoginId'"
@@ -58,6 +62,10 @@ try{
     Write-Host "test 4 '$McaClientSecret'"
 
     Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue (ConvertTo-SecureString $SecretValue -AsPlainText -Force)
+
+    Write-Host "test 5"
+
+    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue $SecretValue1
 
 }catch{
 

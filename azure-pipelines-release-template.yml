@@ -79,6 +79,6 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'
                 ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-secrets.ps1'
-                ScriptArguments: -InstanceId '$(InstanceId)'
+                ScriptArguments: -InstanceId '$(InstanceId)' -ClientSecret '$(ClientSecret)'
                 azurePowerShellVersion: 'LatestVersion'
                 pwsh: true

@@ -49,7 +49,7 @@ try{
 
     Write-Host "Storing the client secret '$SecretValue'"
 
-    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue (ConvertTo-SecureString -string $SecretValue -AsPlainText -Force)
+    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue (ConvertTo-SecureString -String $SecretValue -AsPlainText -Force)
 
     Write-Host "test 5"
 

@@ -49,9 +49,11 @@ try{
 
     Write-Host "Storing the client secret '$SecretValue'"
 
-    $SecretValue1 = "$($env:McaClientSecret)" | ConvertTo-SecureString -AsPlainText -Force
+    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue (ConvertTo-SecureString $SecretValue -AsPlainText -Force)
 
-    Write-Host "Storing the client secret -1- '$SecretValue1'"
+    Write-Host "test 5"
+
+    
 
     Write-Host "test 2 '$($env:DbLoginId)'"
     Write-Host "test 3 '$env:DbLoginId'"
@@ -61,11 +63,9 @@ try{
     Write-Host "test 3 '$env:McaClientSecret'"
     Write-Host "test 4 '$McaClientSecret'"
 
-    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue (ConvertTo-SecureString $SecretValue -AsPlainText -Force)
+    
 
-    Write-Host "test 5"
-
-    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue $SecretValue1
+    
 
 }catch{
 

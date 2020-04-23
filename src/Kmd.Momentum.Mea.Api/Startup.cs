@@ -4,9 +4,6 @@ using Kmd.Momentum.Mea.Common.Authorization.Caseworker;
 using Kmd.Momentum.Mea.Common.Authorization.Citizen;
 using Kmd.Momentum.Mea.Common.Authorization.Journal;
 using Kmd.Momentum.Mea.Common.DatabaseStore;
-using Kmd.Momentum.Mea.Common.Framework;
-using Kmd.Momentum.Mea.Common.Framework.PollyOptions;
-using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Kmd.Momentum.Mea.Common.Modules;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -23,6 +20,7 @@ using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
@@ -122,6 +120,7 @@ namespace Kmd.Momentum.Mea.Api
 
             services.AddSwaggerGen(c =>
             {
+                c.DescribeAllParametersInCamelCase();
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
@@ -146,9 +145,9 @@ namespace Kmd.Momentum.Mea.Api
                 c.AddSecurityRequirement(securityRequirement);
                 c.EnableAnnotations();
 
-                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                //c.IncludeXmlComments(xmlPath);
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
 
             services.AddHealthChecks().AddCheck("basic_readiness_check", () => new HealthCheckResult(status: HealthStatus.Healthy), new[] { "ready" });

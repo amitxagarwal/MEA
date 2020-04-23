@@ -37,14 +37,14 @@ namespace Kmd.Momentum.Mea.Caseworker
 
                 Log.ForContext("CorrelationId", _correlationId)
                    .ForContext("ClientId", _clientId)
-                .Error("An Error Occured while retrieving data of all the caseworkers" + error);
+                   .Error("An Error Occured while retrieving data of all the caseworkers" + error);
 
                 return new ResultOrHttpError<CaseworkerList, Error>(response.Error, response.StatusCode.Value);
             }
 
             Log.ForContext("CorrelationId", _correlationId)
                .ForContext("ClientId", _clientId)
-                .Information("All the caseworkers data retrieved successfully");
+               .Information("All the caseworkers data retrieved successfully");
 
             return new ResultOrHttpError<CaseworkerList, Error>(response.Result);
         }
@@ -57,9 +57,9 @@ namespace Kmd.Momentum.Mea.Caseworker
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
                 Log.ForContext("CorrelationId", _correlationId)
-                    .ForContext("Client", _clientId)
-                 .ForContext("CaseworkerId", id)
-                .Error("An error occured while retrieving caseworker data by CaseworkerId" + error);
+                   .ForContext("Client", _clientId)
+                   .ForContext("CaseworkerId", id)
+                   .Error("An error occured while retrieving caseworker data by CaseworkerId" + error);
                 return new ResultOrHttpError<CaseworkerDataResponseModel, Error>(response.Error, response.StatusCode.Value);
             }
 
@@ -71,7 +71,7 @@ namespace Kmd.Momentum.Mea.Caseworker
                 caseworkerDataObj.Description, caseworkerDataObj.IsActive, caseworkerDataObj.IsBookable);
 
             Log.ForContext("CorrelationId", _correlationId)
-                    .ForContext("Client", _clientId)
+                .ForContext("Client", _clientId)
                 .ForContext("CaseworkerId", caseworkerDataObj.Id)
                 .Information("The caseworker details by CaseworkerId has been returned successfully");
 

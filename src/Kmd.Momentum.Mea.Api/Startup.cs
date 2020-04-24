@@ -158,10 +158,13 @@ namespace Kmd.Momentum.Mea.Api
                 securityRequirement.Add(securityScheme, new[] { "Bearer" });
                 c.AddSecurityRequirement(securityRequirement);
                 c.EnableAnnotations();
+                
+                var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                //var commentsFileName = Assembly.GetExecutingAssembly().GetName().Name + ".XML";
+                var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlFile = Path.Combine(baseDirectory, xmlFileName);
 
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
+                c.IncludeXmlComments(xmlFile);                
             });
 
             services.AddHealthChecks().AddCheck("basic_readiness_check", () => new HealthCheckResult(status: HealthStatus.Healthy), new[] { "ready" });

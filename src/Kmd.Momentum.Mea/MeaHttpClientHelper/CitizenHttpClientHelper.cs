@@ -20,7 +20,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             _meaClient = meaClient;
         }
 
-        public async Task<ResultOrHttpError<IReadOnlyList<string>, Error>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url)
+        public async Task<ResultOrHttpError<IReadOnlyList<string>, Error>> GetAllActiveCitizenDataFromMomentumCoreAsync(string path)
         {
             List<JToken> totalRecords = new List<JToken>();
             List<string> JsonStringList = new List<string>();
@@ -33,7 +33,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             do
             {
                 var queryStringParams = $"term=Citizen&size={size}&skip={skip}&isActive=true";
-                var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
+                var response = await _meaClient.GetAsync(path + "?" + queryStringParams).ConfigureAwait(false);
 
                 if (response.IsError)
                 {
@@ -74,9 +74,9 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             return new ResultOrHttpError<IReadOnlyList<string>, Error>(JsonStringList);
         }
 
-        public async Task<ResultOrHttpError<string, Error>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url)
+        public async Task<ResultOrHttpError<string, Error>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(string path)
         {
-            var response = await _meaClient.GetAsync(url).ConfigureAwait(false);
+            var response = await _meaClient.GetAsync(path).ConfigureAwait(false);
 
             if (response.IsError)
             {
@@ -87,7 +87,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             return new ResultOrHttpError<string, Error>(content);
         }
 
-        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteInMomentumCoreAsync(Uri url, string momentumCitizenId, JournalNoteResponseModel requestModel)
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteInMomentumCoreAsync(string path, string momentumCitizenId, JournalNoteResponseModel requestModel)
         {
             List<JournalNoteAttachmentModel> attachmentList = new List<JournalNoteAttachmentModel>();
 
@@ -117,7 +117,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             string serializedRequest = JsonConvert.SerializeObject(mcaRequestModel);
             StringContent stringContent = new StringContent(serializedRequest, Encoding.UTF8, "application/json");
 
-            var response = await _meaClient.PostAsync(url, stringContent).ConfigureAwait(false);
+            var response = await _meaClient.PostAsync(path, stringContent).ConfigureAwait(false);
 
             if (response.IsError)
             {

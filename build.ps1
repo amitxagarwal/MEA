@@ -240,7 +240,7 @@ try {
 
     if($LASTEXITCODE -ne 0) {
     
-        Write-Host "build again to fix dependencies if exist"
+        Write-Host "build: Build again to fix dependencies if exist"
         
         & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
     }
@@ -249,7 +249,7 @@ try {
 
     if ($PublishArtifactsToAzureDevOps) {
 
-        Write-Host '', "Publish is started for Application"
+        Write-Host "build: Publish is started for Application"
         
         $PublishedApplications = $(
             "Kmd.Momentum.Mea.Api"
@@ -259,7 +259,7 @@ try {
             try {
             
                 Push-Location "./src/$srcProjectName"
-                Write-Host "build: publishing output of '$srcProjectName' into '$ArtifactsStagingPath/$srcProjectName'"
+                Write-Host "build: Publishing output of '$srcProjectName' into '$ArtifactsStagingPath/$srcProjectName'"
 
                 if ($suffix) {
                     & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName" --version-suffix "$suffix"
@@ -270,13 +270,17 @@ try {
                 
                 if($LASTEXITCODE -ne 0) { exit 1 }
 
-                Write-Host '', "Publish: Compression is started for Application"
+                Write-Host "build: Compression is started for Application"
                 
                 $compressedArtifactFileName = Compress-Directory "$ArtifactsStagingPath/$srcProjectName"
                 
-                Write-Host '', "Publish: Uploading is started for Application"
+                Write-Host "build: Compression is completed for Application"
+
+                Write-Host "build: Uploading artifact is started for Application"
 
                 Write-Host "##vso[artifact.upload artifactname=Applications;]$compressedArtifactFileName"
+
+                Write-Host "build: Uploading artifact is completed for Application"
                 
             }
             catch{
@@ -326,10 +330,13 @@ try {
     }
 
     if($PublishArtifactsToAzureDevOps) {
+
+        Write-Host "build: Publish is started for deploy scripts"
+
         $deployScriptSourcePath = "$PSScriptRoot/deploy"
         $artifactsOutputPath = "$ArtifactsStagingPath/deploy"
         
-        Write-Host "build: publishing files from '$deployScriptSourcePath' to '$artifactsOutputPath'"
+        Write-Host "build: Publishing files from '$deployScriptSourcePath' to '$artifactsOutputPath'"
         
         If(!(test-path $artifactsOutputPath)) {
             Write-Host "build: creating folder '$artifactsOutputPath'"
@@ -347,6 +354,8 @@ try {
         if($LASTEXITCODE -ne 0) { exit 1 }
         
         Write-Host "##vso[artifact.upload containerfolder=deploy;artifactname=deploy;]$resolvedArtifactsOutputPath"
+
+        Write-Host "build: Publish is completed for deploy scripts"
     }
 }
 catch{

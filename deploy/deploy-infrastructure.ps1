@@ -112,59 +112,72 @@ function Format-ValidationOutput {
     Set-StrictMode -Off
     return @($ValidationOutput | Where-Object { $_ -ne $null } | ForEach-Object { @('  ' * $Depth + ': ' + $_.Message) + @(Format-ValidationOutput @($_.Details) ($Depth + 1)) })
 }
-
-$ResourceGroupName = "$ResourceNamePrefix-rg"
-$ApplicationInsightsName="$ResourceNamePrefix-ai";
-$DbServerName="$ResourceNamePrefix-dbsvr";
-$DbName="$ResourceNamePrefix-db";
-$DbConnection="Server=$($DbServerName).postgres.database.azure.com;Database=$($DbName);Port=5432;User Id=$($env:DbLoginId)@$($DbServerName);Password=$($env:DbLoginPassword);Ssl Mode=Require;"
-$KeyVaultName = "$($ResourceNamePrefix.replace('-',''))kv"
-
-if($KeyVaultName.length -gt 24){
-
-    $KeyVaultName = $KeyVaultName.substring($KeyVaultName.length-24,24);
-}
-
-if($LASTEXITCODE -ne 0) { exit 1 }
-
-# Set ARM template parameter values
-$TemplateParameters = @{
-  environment = $Environment;
-  instanceId = $InstanceId;
-  resourceNamePrefix = $ResourceNamePrefix;
-  applicationInsightsName = $ApplicationInsightsName;
-  diagnosticSeqServerUrl = $DiagnosticSeqServerUrl;
-  diagnosticSeqApiKey = $DiagnosticSeqApiKey;
-  webAppServicePlanSku = $WebAppServicePlanSku;
-  webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
-  clientId = $ClientId;
-  clientSecret = $ClientSecret;
-  mcaApiUri = $env:McaApiUri;
-  dbServerName = $DbServerName;
-  dbLoginId = $env:DbLoginId;
-  dbLoginPassword = $env:DbLoginPassword;
-  dbName = $DbName;
-  dbConnection = $DbConnection;
-  dbRequired = $DbRequired;
-  keyVaultRequired = $KeyVaultRequired;
-  keyVaultName = $KeyVaultName
-}
-
-# Create or update the resource group using the specified template file and template parameter values
-$Tags = @{}
-if ($MarkForAutoDelete) {
-	$Tags["keep"] = "false";
-} else {
-	$Tags["important"] = "true";
-}
-
-if($LASTEXITCODE -ne 0) { exit 1 }
-
 try
 {
-    Write-Host '',"Creating resource group '$ResourceGroupName'"
+    Write-Host "Setting variables"
+
+    $ResourceGroupName = "$ResourceNamePrefix-rg"
+    $ApplicationInsightsName="$ResourceNamePrefix-ai";
+    $DbServerName="$ResourceNamePrefix-dbsvr";
+    $DbName="$ResourceNamePrefix-db";
+    $DbConnection="Server=$($DbServerName).postgres.database.azure.com;Database=$($DbName);Port=5432;User Id=$($env:DbLoginId)@$($DbServerName);Password=$($env:DbLoginPassword);Ssl Mode=Require;"
+    $KeyVaultName = "$($ResourceNamePrefix.replace('-',''))kv"
+
+    Write-Host "Checking KeyVault Name Length"
+
+    if($KeyVaultName.length -gt 24){
+
+        Write-Host "Managing KeyVault Name Length"
+
+        $KeyVaultName = $KeyVaultName.substring($KeyVaultName.length-24,24);
+
+        Write-Host "Managing KeyVault Name Length completed"
+    }
+
+    if($LASTEXITCODE -ne 0) { exit 1 }
+
+    Write-Host "Setting ARM Template parameters"
+
+    # Set ARM template parameter values
+    $TemplateParameters = @{
+    environment = $Environment;
+    instanceId = $InstanceId;
+    resourceNamePrefix = $ResourceNamePrefix;
+    applicationInsightsName = $ApplicationInsightsName;
+    diagnosticSeqServerUrl = $DiagnosticSeqServerUrl;
+    diagnosticSeqApiKey = $DiagnosticSeqApiKey;
+    webAppServicePlanSku = $WebAppServicePlanSku;
+    webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
+    clientId = $ClientId;
+    clientSecret = $ClientSecret;
+    mcaApiUri = $env:McaApiUri;
+    dbServerName = $DbServerName;
+    dbLoginId = $env:DbLoginId;
+    dbLoginPassword = $env:DbLoginPassword;
+    dbName = $DbName;
+    dbConnection = $DbConnection;
+    dbRequired = $DbRequired;
+    keyVaultRequired = $KeyVaultRequired;
+    keyVaultName = $KeyVaultName
+    }
+
+    Write-Host "Create or update ResourceGroup Tag"
+
+    # Create or update the resource group using the specified template file and template parameter values
+    $Tags = @{}
+    if ($MarkForAutoDelete) {
+	    $Tags["keep"] = "false";
+    } else {
+	    $Tags["important"] = "true";
+    }
+
+    if($LASTEXITCODE -ne 0) { exit 1 }
+
+    Write-Host "Creating resource group '$ResourceGroupName'"
 
 	New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force -ErrorVariable ErrorMessages
+
+    Write-Host "Resource group '$ResourceGroupName' created successfully"
 
     if ($ErrorMessages) {
     
@@ -199,7 +212,7 @@ try
 
 	} else {
 
-        Write-Host '', 'Deploying resources.'
+        Write-Host "Deploying resources."
 
 		New-AzResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
                                       -ResourceGroupName $ResourceGroupName `
@@ -207,6 +220,8 @@ try
                                       @TemplateParameters `
                                       -Force -Verbose `
                                       -ErrorVariable ErrorMessages
+
+        Write-Host "Deploying of resources completed."
 
 		if ($ErrorMessages) {
             $ErrMsg =  @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })

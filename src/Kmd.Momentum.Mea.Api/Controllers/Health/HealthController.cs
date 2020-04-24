@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Controllers.Health
 {
+    /// <summary>
+    /// Health Controller
+    /// </summary>
     [Route("[controller]/[action]")]
     //[Authorize]
     public class HealthController : Controller
@@ -14,6 +17,11 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Health
         private readonly HealthCheckService _healthCheckService;
         private readonly IMeaSecretStore _meaSecretStore;
 
+        /// <summary>
+        /// Health Controller Constructor
+        /// </summary>
+        /// <param name="healthCheckService"></param>
+        /// <param name="meaSecretStore"></param>
         public HealthController(HealthCheckService healthCheckService, IMeaSecretStore meaSecretStore)
         {
             _healthCheckService = healthCheckService;

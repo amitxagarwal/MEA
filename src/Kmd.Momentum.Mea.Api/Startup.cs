@@ -29,10 +29,17 @@ using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api
 {
+    /// <summary>
+    /// startup to configure the asp.net core pipeline and services.
+    /// </summary>
     public class Startup
     {
         private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// Constructor for startup
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration) => this._configuration = configuration;
 
         /// <summary>
@@ -50,11 +57,18 @@ namespace Kmd.Momentum.Mea.Api
                 (typeof(Kmd.Momentum.Mea.Modules.MeaAssemblyPart).Assembly, productPathName: "Mea", openApiProductName: "Mea", new Version("0.0.1"))
             };
 
+        /// <summary>
+        /// Discovers all the assemblies and add to this collection.
+        /// </summary>
         public static MeaAssemblyDiscoverer MeaAssemblyDiscoverer { get; } =
             new MeaAssemblyDiscoverer(MeaAssemblyParts);
 
 #pragma warning disable CA1822
         // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// Configure services for this API
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc()
@@ -190,6 +204,11 @@ namespace Kmd.Momentum.Mea.Api
             return await configManager.GetConfigurationAsync().ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Configuring the Asp.Net pipeline
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCorrelationId(new CorrelationIdOptions()

@@ -10,7 +10,9 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Health
     /// <summary>
     /// Health Controller
     /// </summary>
+    [ApiController]
     [Route("[controller]/[action]")]
+    [Produces("application/json", "text/json")]
     //[Authorize]
     public class HealthController : Controller
     {

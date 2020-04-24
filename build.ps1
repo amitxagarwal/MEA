@@ -202,12 +202,10 @@ try{
     }
 }
 catch{
-
     Write-Host "An error occurred:"
 	Write-Host $_
     Write-Host "##vso[task.LogIssue type=error;]"$_
     Write-Host "##vso[task.complete result=Failed]"
-
     exit 1
 }
 

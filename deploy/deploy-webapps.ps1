@@ -76,8 +76,18 @@ try {
     exit -1
 }
 
-if ($AutoSwapSlots) {
-    Write-Host "Auto-swapping slots..."    
-    $ScriptToRun = $PSScriptRoot+"\deploy-swapslots.ps1"
-    & $ScriptToRun -ResourceGroupName $ResourceGroupName -WebAppName $WebAppName
+try{
+    if ($AutoSwapSlots) {
+        Write-Host "Auto-swapping slots..."
+        $ScriptToRun = $PSScriptRoot+"\deploy-swapslots.ps1"
+        & $ScriptToRun -ResourceGroupName $ResourceGroupName -WebAppName $WebAppName
+    }
 }
+catch{
+    Write-Host '',"An error occurred:"
+    Write-Host '',$_
+    Write-Host '',"##vso[task.LogIssue type=error;]"$_
+    Write-Host '',"##vso[task.complete result=Failed]"
+    exit 1
+}
+

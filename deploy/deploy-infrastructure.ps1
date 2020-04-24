@@ -98,19 +98,19 @@ $ResourceNamePrefix = "kmd-momentum-mea-$InstanceId"
 $TemplateFile = "azuredeploy.json"
 
 try {
-  #[Microsoft.Azure.Common.Authentication.AzureSession]::ClientFactory.AddUserAgent("VSAzureTools-$UI$($host.name)".replace(' ','_'), '3.0.0')
-} catch { 
-  Write-Host "An error occurred:"
-  Write-Host $_
+    #[Microsoft.Azure.Common.Authentication.AzureSession]::ClientFactory.AddUserAgent("VSAzureTools-$UI$($host.name)".replace(' ','_'), '3.0.0')
+} catch {
+    Write-Host '',"An error occurred:"
+    Write-Host '',$_
 }
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 3
 
 function Format-ValidationOutput {
-  param ($ValidationOutput, [int] $Depth = 0)
-  Set-StrictMode -Off
-  return @($ValidationOutput | Where-Object { $_ -ne $null } | ForEach-Object { @('  ' * $Depth + ': ' + $_.Message) + @(Format-ValidationOutput @($_.Details) ($Depth + 1)) })
+    param ($ValidationOutput, [int] $Depth = 0)
+    Set-StrictMode -Off
+    return @($ValidationOutput | Where-Object { $_ -ne $null } | ForEach-Object { @('  ' * $Depth + ': ' + $_.Message) + @(Format-ValidationOutput @($_.Details) ($Depth + 1)) })
 }
 
 $ResourceGroupName = "$ResourceNamePrefix-rg"
@@ -120,10 +120,12 @@ $DbName="$ResourceNamePrefix-db";
 $DbConnection="Server=$($DbServerName).postgres.database.azure.com;Database=$($DbName);Port=5432;User Id=$($env:DbLoginId)@$($DbServerName);Password=$($env:DbLoginPassword);Ssl Mode=Require;"
 $KeyVaultName = "$($ResourceNamePrefix.replace('-',''))kv"
 
-if($KeyVaultName.length -gt 24)
-{
+if($KeyVaultName.length -gt 24){
+
     $KeyVaultName = $KeyVaultName.substring($KeyVaultName.length-24,24);
 }
+
+if($LASTEXITCODE -ne 0) { exit 1 }
 
 # Set ARM template parameter values
 $TemplateParameters = @{
@@ -156,23 +158,49 @@ if ($MarkForAutoDelete) {
 	$Tags["important"] = "true";
 }
 
+if($LASTEXITCODE -ne 0) { exit 1 }
+
 try
 {
-	New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force
-  
+    Write-Host '',"Creating resource group '$ResourceGroupName'"
+
+	New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force -ErrorVariable ErrorMessages
+
+    if ($ErrorMessages) {
+    
+        $ErrMsg =  @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
+		Write-Host '', "Error on creating resource group '$ResourceGroupName'", $ErrMsg
+        Write-Host '',"##vso[task.LogIssue type=error;]"$ErrMsg
+        Write-Host '',"##vso[task.complete result=Failed]"
+		exit 1
+    }
+
+    if($LASTEXITCODE -ne 0) { exit 1 }
+    
 	if ($ValidateOnly) {
+        Write-Host '', 'Validating deployment Template.'
+
 		$ErrorMessages = Format-ValidationOutput (Test-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName `
                                                                                 -TemplateFile $TemplateFile `
                                                                                 @TemplateParameters)
 
-		if ($ErrorMessages) {
-			Write-Output '', 'Validation returned the following errors:', @($ErrorMessages), '', 'Template is invalid.'
+		if ($ErrorMessages) {            
+
+			Write-Host '', 'Validation returned the following errors:', $ErrorMessages, '', 'Template is invalid.'
+            Write-Host '',"##vso[task.LogIssue type=error;]"$ErrorMessages
+            Write-Host '',"##vso[task.complete result=Failed]"
 			exit 1
+
 		}else {
-			Write-Output '', 'Template is valid.'
+			Write-Host '', 'Template is valid.'
 		}
+        
+        if($LASTEXITCODE -ne 0) { exit 1 }
 
 	} else {
+
+        Write-Host '', 'Deploying resources.'
+
 		New-AzResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
                                       -ResourceGroupName $ResourceGroupName `
                                       -TemplateFile $TemplateFile `
@@ -181,14 +209,20 @@ try
                                       -ErrorVariable ErrorMessages
 
 		if ($ErrorMessages) {
-			Write-Output '', 'Template deployment returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
+            $ErrMsg =  @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
+			Write-Host '', 'Template deployment returned the following errors:', $ErrMsg
+            Write-Host '',"##vso[task.LogIssue type=error;]"$ErrMsg
+            Write-Host '',"##vso[task.complete result=Failed]"
 			exit 1
 		}
+        
+        if($LASTEXITCODE -ne 0) { exit 1 }
 	}
 }catch{
-	Write-Host "An error occurred:"
-	Write-Host $_
-    Write-Host "##vso[task.LogIssue type=error;]"$_, "##vso[task.complete result=Failed]"
+	Write-Host '',"An error occurred:"
+	Write-Host '',$_
+    Write-Host '',"##vso[task.LogIssue type=error;]"$_
+    Write-Host '',"##vso[task.complete result=Failed]"
     exit 1
 }
 Pop-Location

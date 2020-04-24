@@ -1,0 +1,67 @@
+schedules:
+  - cron: "0 * * * *"
+    branches:
+      include:
+      - dev
+    always: true
+trigger: none
+pool:
+  vmImage: 'windows-2019'
+steps:
+- checkout: none
+- task: AzurePowerShell@4
+  inputs:
+    azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
+    scriptType: InlineScript
+    inline: |
+
+      # Function to check the last deploy time. If it's within an hour, return false, else true.
+      # This indicates the RG hasn't recently deployed and we can remove it.
+      function Get-WasNotDeployedRecently($resourceGroupName)
+      {
+        $lastDeploy = Get-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName
+        if (!$lastDeploy) {
+          Write-Verbose -Verbose "Resource group has zero deployments ever: $resourceGroupName"
+          return $false
+        }
+
+        $timeSpan = New-TimeSpan -Start $lastDeploy[0].Timestamp -End ((GET-DATE).ToUniversalTime())
+        if ($timeSpan.Hours -ge 1) {
+          return $true
+        }
+        else
+        {
+          return $false
+        }
+      }
+      
+      try 
+      {  
+        # check for resourcegroups in the subscription where name like kmd-momentum-mea-phoenix*
+        $resourceGroups = Get-AzResourceGroup | Where-Object {($_.ResourceGroupName -like "*kmd-momentum-mea-phoenix*") -and (($_.Tags).keep -ne "true") -and (($_.Tags).important -ne "true")}
+
+      }
+      catch 
+      {
+        Write-Verbose -Verbose "[ERR] Unable to get resourcegroups! $($_.Exception.Message)"
+        exit 1
+      }
+
+      # Do the work
+      foreach ($rg in $resourceGroups)
+      {
+        Write-Output "Checking resourceGroup Name - $($rg.resourcegroupname) for last deployment time."
+
+        # Check last deploy time
+        $rgHasNotBeenDeployedRecently = Get-WasNotDeployedRecently -resourceGroupName $rg.ResourceGroupName
+        if ($rgHasNotBeenDeployedRecently)
+        {
+          Write-Verbose -Verbose "[INF] Removing RG $($rg.ResourceGroupName) asynchronously"
+          
+          # Use -asjob here so we dont need to wait for the resource group to be torn down before moving to the next
+          Remove-AzResourceGroup -name $($rg.ResourceGroupName) -Force -AsJob
+        }
+      }
+    failOnStandardError: true
+    azurePowerShellVersion: 'LatestVersion'
+    pwsh: true

@@ -1,6 +1,8 @@
+using Kmd.Momentum.Mea.Common.DatabaseStore;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
@@ -15,7 +17,7 @@ namespace Kmd.Momentum.Mea.Api
 
         public static void Main(string[] args)
         {
-            var config = new ConfigurationBuilder().AddEnvironmentVariables(prefix: "KMD_MOMENTUM_MEA_").AddCommandLine(args).Build();
+            var config = new ConfigurationBuilder().AddEnvironmentVariables(prefix: "KMD_MOMENTUM_MEA_").AddCommandLine(args).AddUserSecrets<Startup>().Build();
             var consoleMinLevel = config.GetValue("ConsoleLoggingMinLevel", defaultValue: LogEventLevel.Debug);
             var aspnetCoreLevel = config.GetValue("AspNetCoreLevel", defaultValue: LogEventLevel.Information);
             var seqServerUrl = config.GetValue("DiagnosticSeqServerUrl", defaultValue: "http://localhost:5341/");
@@ -40,11 +42,24 @@ namespace Kmd.Momentum.Mea.Api
             {
                 Log.Information("Starting up");
                 using var host = CreateConfigurableHostBuilder(args, config).Build();
+
+                var generateSchemaPath = config.GetValue<string>("generateschema");
+                if (!string.IsNullOrEmpty(generateSchemaPath))
+                {
+                    Log.Information("Executing generateschema Command");
+                    using (var scope = host.Services.CreateScope())
+                    {
+                        var store = scope.ServiceProvider.GetRequiredService<IScopedDocumentStore>();
+                        var actions = new DbActions(store);
+                        actions.GenerateSchema(generateSchemaPath);
+                    }
+                }
+
                 host.Run();
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "A fatal exception was encoutered");
+                Log.Fatal(ex, "A fatal exception was encountered");
                 throw;
             }
             finally

@@ -3,12 +3,12 @@
   Deploys the Azure resources for Momentum External API. This requires you to login to Azure first.
 .DESCRIPTION
   Deploys the Azure resources for invoicing. If you haven't already logged in, execute `Connect-AzAccount`
-  and `Select-AzSubscription -Subscription "LoGIC DEV"'. Depending on your account, you might need to use something
-  like `Connect-AzAccount -Subscription "LoGIC DEV" -TenantId "1aaaea9d-df3e-4ce7-a55d-43de56e79442"`.
+  and `Select-AzSubscription -Subscription "KMD Momentum Internal"'. Depending on your account, you might need to use something
+  like `Connect-AzAccount -Subscription "KMD Momentum Internal" -TenantId "1aaaea9d-df3e-4ce7-a55d-43de56e79442"`.
 .PARAMETER $MarkForAutoDelete
   When $true, the resource group will be tagged for auto-deletion. Useful for temporary personal or phoenix environments.
 .PARAMETER $InstanceId
-  The unique instance identifier (e.g. "shareddev" or "udvdev" or "prod") which will be used to name the azure resources.
+  The unique instance identifier (e.g. "internal" or "external") which will be used to name the azure resources.
 .PARAMETER $ResourceGroupLocation
   The azure location of the created resource group (e.g. "australiaeast" or "centralindia" or "westeurope").
 .PARAMETER $ApplicationInsightsName
@@ -27,9 +27,9 @@
   none
 .NOTES
   Version:        1.0
-  Author:         Adam Chester
-  Creation Date:  22 Nov 2019
-  Purpose/Change: Deploy sts bridge azure infrastructure.
+  Author:         Ajay Aggarwal
+  Creation Date:  02 March 2020
+  Purpose/Change: Deploys momentum mea azure infrastructure.
 
 .EXAMPLE
   ./deploy-infrastructure.ps1 -InstanceId udvdev -DiagnosticSeqServerUrl "https://xxx.kmdlogic.io/" -DiagnosticSeqApiKey "xxx" -MarkForAutoDelete -ResourceGroupLocation "australiaeast" -ApplicationInsightsName "kmd-momentum-mea-udvdev-ai" -ApplicationInsightsResourceGroup "kmd-momentum-mea-udvdev-rg" -WebAppServicePlanSku P1V2 -WebAppConfigAlwaysOn $true -AuditEventHubsConnectionString "xxx"
@@ -52,14 +52,6 @@ Param
 
   [Parameter(Mandatory=$true)]
   [string]
-  $ApplicationInsightsName,
-
-  [Parameter(Mandatory=$true)]
-  [string]
-  $ApplicationInsightsResourceGroup,
-
-  [Parameter(Mandatory=$true)]
-  [string]
   $DiagnosticSeqServerUrl,
 
   [Parameter(Mandatory=$true)]
@@ -76,7 +68,27 @@ Param
   $WebAppConfigAlwaysOn = $false,
 
   [switch] 
-  $ValidateOnly
+  $ValidateOnly,
+
+  [Parameter(Mandatory=$true)]
+  [string]
+  $ClientId,
+
+  [Parameter(Mandatory=$true)]
+  [string]
+  $ClientSecret,
+
+  [Parameter(Mandatory=$true)]
+  [string]
+  $Environment,
+
+  [Parameter(Mandatory=$false)]
+  [string]
+  $DbRequired = 'false',
+
+  [Parameter(Mandatory=$false)]
+  [string]
+  $KeyVaultRequired = 'false'
 )
 
 Push-Location $PSScriptRoot
@@ -86,8 +98,11 @@ $ResourceNamePrefix = "kmd-momentum-mea-$InstanceId"
 $TemplateFile = "azuredeploy.json"
 
 try {
-  [Microsoft.Azure.Common.Authentication.AzureSession]::ClientFactory.AddUserAgent("VSAzureTools-$UI$($host.name)".replace(' ','_'), '3.0.0')
-} catch { }
+  #[Microsoft.Azure.Common.Authentication.AzureSession]::ClientFactory.AddUserAgent("VSAzureTools-$UI$($host.name)".replace(' ','_'), '3.0.0')
+} catch { 
+  Write-Host "An error occurred:"
+  Write-Host $_
+}
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 3
@@ -99,50 +114,81 @@ function Format-ValidationOutput {
 }
 
 $ResourceGroupName = "$ResourceNamePrefix-rg"
+$ApplicationInsightsName="$ResourceNamePrefix-ai";
+$DbServerName="$ResourceNamePrefix-dbsvr";
+$DbName="$ResourceNamePrefix-db";
+$DbConnection="Server=$($DbServerName).postgres.database.azure.com;Database=$($DbName);Port=5432;User Id=$($env:DbLoginId)@$($DbServerName);Password=$($env:DbLoginPassword);Ssl Mode=Require;"
+$KeyVaultName = "$($ResourceNamePrefix.replace('-',''))kv"
+
+if($KeyVaultName.length -gt 24)
+{
+    $KeyVaultName = $KeyVaultName.substring($KeyVaultName.length-24,24);
+}
 
 # Set ARM template parameter values
 $TemplateParameters = @{
+  environment = $Environment;
   instanceId = $InstanceId;
   resourceNamePrefix = $ResourceNamePrefix;
   applicationInsightsName = $ApplicationInsightsName;
-  applicationInsightsResourceGroup = $ApplicationInsightsResourceGroup;
   diagnosticSeqServerUrl = $DiagnosticSeqServerUrl;
   diagnosticSeqApiKey = $DiagnosticSeqApiKey;
   webAppServicePlanSku = $WebAppServicePlanSku;
   webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
+  clientId = $ClientId;
+  clientSecret = $ClientSecret;
+  mcaApiUri = $env:McaApiUri;
+  dbServerName = $DbServerName;
+  dbLoginId = $env:DbLoginId;
+  dbLoginPassword = $env:DbLoginPassword;
+  dbName = $DbName;
+  dbConnection = $DbConnection;
+  dbRequired = $DbRequired;
+  keyVaultRequired = $KeyVaultRequired;
+  keyVaultName = $KeyVaultName
 }
 
 # Create or update the resource group using the specified template file and template parameter values
 $Tags = @{}
 if ($MarkForAutoDelete) {
-  $Tags["keep"] = "false";
+	$Tags["keep"] = "false";
 } else {
-  $Tags["important"] = "true";
+	$Tags["important"] = "true";
 }
 
-New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force
-
-if ($ValidateOnly) {
-  $ErrorMessages = Format-ValidationOutput (Test-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName `
+try
+{
+	New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force
+  
+	if ($ValidateOnly) {
+		$ErrorMessages = Format-ValidationOutput (Test-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName `
                                                                                 -TemplateFile $TemplateFile `
                                                                                 @TemplateParameters)
-  if ($ErrorMessages) {
-      Write-Output '', 'Validation returned the following errors:', @($ErrorMessages), '', 'Template is invalid.'
-  }
-  else {
-      Write-Output '', 'Template is valid.'
-  }
-}
-else {
-  New-AzResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
+
+		if ($ErrorMessages) {
+			Write-Output '', 'Validation returned the following errors:', @($ErrorMessages), '', 'Template is invalid.'
+			exit 1
+		}else {
+			Write-Output '', 'Template is valid.'
+		}
+
+	} else {
+		New-AzResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
                                       -ResourceGroupName $ResourceGroupName `
                                       -TemplateFile $TemplateFile `
                                       @TemplateParameters `
                                       -Force -Verbose `
                                       -ErrorVariable ErrorMessages
-  if ($ErrorMessages) {
-      Write-Output '', 'Template deployment returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
-  }
-}
 
+		if ($ErrorMessages) {
+			Write-Output '', 'Template deployment returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
+			exit 1
+		}
+	}
+}catch{
+	Write-Host "An error occurred:"
+	Write-Host $_
+    Write-Host "##vso[task.LogIssue type=error;]"$_, "##vso[task.complete result=Failed]"
+    exit 1
+}
 Pop-Location

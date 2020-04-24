@@ -1,32 +1,38 @@
 parameters:
   azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
   environmentNameSuffix: phoenix
+  environment: Phoenix
   environmentAutoDelete: false
   instanceId: p12345
   resourceGroupLocation: westeurope
-  applicationInsightsName: kmd-momentum-mea-shareddev-ai
-  applicationInsightsResourceGroup: kmd-momentum-mea-shareddev-rg
   diagnosticSeqServerUrl: https://myseq.com/
   diagnosticSeqApiKey: <secret>
   webAppServicePlanSku: B1
   webAppConfigAlwaysOn: true
   autoSwapSlots: false
+  clientId: <secret>
+  clientSecret: <secret>
+  isDbRequired: 'false'
+  isKeyVaultRequired: 'false'
 
 jobs:
   - deployment: deploy_momentum_mea_${{ parameters.environmentNameSuffix }}
     pool: { vmImage: 'windows-2019' }
     environment: momentum_mea_${{ parameters.environmentNameSuffix }}
     variables:
+      Environment: ${{ parameters.environment }}
       InstanceId: ${{ parameters.instanceId }}
       ResourceGroupLocation: ${{ parameters.resourceGroupLocation }}
-      ApplicationInsightsName: ${{ parameters.applicationInsightsName }}
-      ApplicationInsightsResourceGroup: ${{ parameters.applicationInsightsResourceGroup }}
       DiagnosticSeqServerUrl: ${{ parameters.diagnosticSeqServerUrl }}
       DiagnosticSeqApiKey: ${{ parameters.diagnosticSeqApiKey }}
       WebAppName: kmd-momentum-mea-${{ parameters.instanceId }}-webapp
       ResourceGroupName: kmd-momentum-mea-${{ parameters.instanceId }}-rg
       WebAppServicePlanSku: ${{ parameters.webAppServicePlanSku }}
       WebAppConfigAlwaysOn: ${{ parameters.webAppConfigAlwaysOn }}
+      ClientId: ${{ parameters.clientId }}
+      ClientSecret: ${{ parameters.clientSecret }}
+      isDbRequired: ${{ parameters.isDbRequired }}
+      isKeyVaultRequired: ${{ parameters.isKeyVaultRequired }}
 
     strategy:
       runOnce:
@@ -40,11 +46,23 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'
                 ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-infrastructure.ps1'
-                ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -ApplicationInsightsName '$(ApplicationInsightsName)' -ApplicationInsightsResourceGroup '$(ApplicationInsightsResourceGroup)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)'
+                ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)' -ClientId '$(ClientId)' -ClientSecret '$(ClientSecret)' -Environment '$(Environment)' -DbRequired '$(isDbRequired)' -KeyVaultRequired '$(isKeyVaultRequired)'
                 azurePowerShellVersion: 'LatestVersion'
                 pwsh: true
 
             - task: AzurePowerShell@4
+              condition: and(succeeded(),eq(variables['isDbRequired'],'true'))
+              displayName: Deploy Database
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                ScriptType: 'FilePath'
+                ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-database.ps1'
+                ScriptArguments: -InstanceId '$(InstanceId)' -ArtifactPath '$(Pipeline.Workspace)'
+                azurePowerShellVersion: 'LatestVersion'
+                pwsh: true
+
+            - task: AzurePowerShell@4
+              condition: succeeded()
               displayName: Deploy webapp binaries
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}

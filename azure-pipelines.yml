@@ -1,5 +1,6 @@
 trigger:
 - master
+- dev
 
 stages:
 - stage: Build
@@ -13,13 +14,14 @@ stages:
       maxParallel: 3
     pool:
       vmImage: $(imageName)
+    
     steps:
     - task: UseDotNet@2
       inputs:
         packageType: 'sdk'
         useGlobalJson: true
     - task: NuGetAuthenticate@0
-    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)"
+    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -McaClientId "$(McaClientId)" -McaClientSecret "$(McaClientSecret)" -McaApiUri "$(McaApiUri)" -McaScope "$(McaScope)" -Environment "$(ENVIRONMENT)" -MeaClientId "$(MeaClientId)" -MeaClientSecret "$(MeaClientSecret)" -MeaScope "$(MeaScope)"
       displayName: run build.ps1
       failOnStderr: true
       env:
@@ -37,38 +39,65 @@ stages:
         buildPlatform: '$(imageName)'
 
 - stage: deploy_phoenix
-  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+  condition: and(succeeded(), in(variables['Build.Reason'], 'PullRequest','Manual'))
   jobs:
   - template: azure-pipelines-release-template.yml
     parameters:
       environmentNameSuffix: phoenix
+      environment: Phoenix
       environmentAutoDelete: true
       azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
-      instanceId: p$(Build.BuildId)
+      instanceId: phoenix$(Build.BuildId)
       resourceGroupLocation: westeurope
-      applicationInsightsName: kmd-momentum-mea-phoenix-ai
-      applicationInsightsResourceGroup: kmd-momentum-mea-rg
       diagnosticSeqServerUrl: $(PhoenixDiagnosticSeqServerUrl)
       diagnosticSeqApiKey: $(PhoenixDiagnosticSeqApiKey)
       webAppServicePlanSku: S1
       webAppConfigAlwaysOn: false
       autoSwapSlots: true
+      clientId: $(McaClientId)
+      clientSecret: $(McaClientSecret)
+      isDbRequired: $(DbRequired)
+      isKeyVaultRequired: 'true'
 
 - stage: deploy_internal
   dependsOn: Build
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
   jobs:
   - template: azure-pipelines-release-template.yml
     parameters:
       environmentNameSuffix: internal
+      environment: Internal
       environmentAutoDelete: false
       azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
       instanceId: internal
       resourceGroupLocation: westeurope
-      applicationInsightsName: kmd-momentum-mea-internal-ai
-      applicationInsightsResourceGroup: kmd-momentum-mea-rg
       diagnosticSeqServerUrl: $(ShareddevDiagnosticSeqAServerUrl)
       diagnosticSeqApiKey: $(ShareddevDiagnosticSeqApiKey)
       webAppServicePlanSku: S1
       webAppConfigAlwaysOn: false
       autoSwapSlots: true
+      clientId: $(McaClientId)
+      clientSecret: $(McaClientSecret)
+      isDbRequired: $(DbRequired)
+      isKeyVaultRequired: 'true'
+
+- stage: deploy_external
+  dependsOn: Build
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+  - template: azure-pipelines-release-template.yml
+    parameters:
+      environmentNameSuffix: external
+      environment: External
+      environmentAutoDelete: false
+      azureSubscription: 'KMD Momentum External (a2928298-838a-4035-aeb2-7cd779f86089)'
+      instanceId: external
+      resourceGroupLocation: westeurope
+      diagnosticSeqServerUrl: $(ShareddevDiagnosticSeqAServerUrl)
+      diagnosticSeqApiKey: $(ShareddevDiagnosticSeqApiKey)
+      webAppServicePlanSku: S1
+      webAppConfigAlwaysOn: false
+      autoSwapSlots: true
+      clientId: $(McaClientId)
+      clientSecret: $(McaClientSecret)
+      isDbRequired: $(DbRequired)

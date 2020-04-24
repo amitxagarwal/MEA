@@ -2,10 +2,84 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "environment": {
+      "type": "string",
+      "metadata": {
+        "description": "Environment suffix to identify the environment"
+      }
+    },
+    "keyVaultRequired": {
+      "type": "string",
+      "defaultValue": "false",
+      "metadata": {
+        "description": "Flag for keyVault required or not"
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "metadata": {
+        "description": "KeyVaultName is required for keyVault"
+      }
+    },
+    "dbRequired": {
+      "type": "string",
+      "defaultValue": "false",
+      "metadata": {
+        "description": "Flag for datbase required or not"
+      }
+    },
+    "dbServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for database server"
+      }
+    },
+    "dbLoginId": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for database login"
+      }
+    },
+    "dbLoginPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "Password for database login"
+      }
+    },
+    "dbName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for database"
+      }
+    },
+    "dbConnection": {
+      "type": "string",
+      "metadata": {
+        "description": "Database Connection String"
+      }
+    },
+    "mcaApiUri": {
+      "type": "string",
+      "metadata": {
+        "description": "Base Uri for calling MCA API"
+      }
+    },
+    "clientId": {
+      "type": "string",
+      "metadata": {
+        "description": "MCA client Id for authentication"
+      }
+    },
+    "clientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "MCA client Secret for authentication"
+      }
+    },
     "instanceId": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 9,
+      "maxLength": 16,
       "metadata": {
         "description": "The instance ID (e.g. 'udv', 'udvtest', 'shareddev', 'prod' etc.).",
         "$hint": "Generally only use the 'instanceId' part of the resourceNamePrefix"
@@ -14,7 +88,7 @@
     "resourceNamePrefix": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 27,
+      "maxLength": 34,
       "metadata": {
         "description": "The resource name prefix (e.g. 'kmd-momentum-mea-udv', 'kmd-momentum-shareddev', 'kmd-momentum-prod' etc.).",
         "$hint": "Only use letters, numbers, and hyphen characters here. The hyphens are stripped to make the storage account name, which cannot be more than 24 characters (see https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview#naming-storage-accounts)."
@@ -42,13 +116,7 @@
     "applicationInsightsName": {
       "type": "string",
       "metadata": {
-        "description": "The name of the application insights instance. E.g. 'kmd-momentum-udv-ai' or 'kmd-momentum-ai'."
-      }
-    },
-    "applicationInsightsResourceGroup": {
-      "type": "string",
-      "metadata": {
-        "description": "Resource group name of app insights instance. E.g. 'kmd-momentum-udv-rg' or 'kmd-momentum-shareddev-rg'"
+        "description": "The name of the application insights instance. E.g. 'kmd-momentum-mea-udv-ai' or 'kmd-momentum-mea-ai'."
       }
     },
     "consoleLoggingMinLevel": {
@@ -63,6 +131,17 @@
       ],
       "metadata": {
         "description": "The serilog debug level"
+      }
+    },
+    "vaultSku": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "SKU for the key vault"
       }
     },
     "webAppServicePlanSku": {
@@ -109,9 +188,22 @@
     "webAppName": "[concat(variables('resourceNamePrefixLower'),'-webapp')]",
     "stagingSlotName": "staging",
     "webAppStagingSlotName": "[concat(variables('webAppName'), '/', variables('stagingSlotName'))]",
-    "hostingPlanName": "[concat(variables('resourceNamePrefixLower'),'-appsvcplan')]"
+    "hostingPlanName": "[concat(variables('resourceNamePrefixLower'),'-appsvcplan')]",
+    "azureServicesAuthConnectionString": "RunAs=App",
+    "meaKeyVaultSecretStore": "[tolower(parameters('keyVaultName'))]",
+    "meaKeyVaultUri": "[concat('https://', variables('meaKeyVaultSecretStore'), '.vault.azure.net/')]"
   },
   "resources": [
+    {
+      "name": "[parameters('applicationInsightsName')]",
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2015-05-01",
+      "location": "[parameters('location')]",
+      "tags": {
+      },
+      "properties": {
+      }
+    },
     {
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2018-02-01",
@@ -125,6 +217,9 @@
       "apiVersion": "2015-08-01",
       "type": "Microsoft.Web/sites",
       "name": "[variables('webAppName')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
       "location": "[parameters('location')]",
       "kind": "app",
       "dependsOn": [
@@ -144,8 +239,12 @@
               "value": "[parameters('instanceId')]"
             },
             {
+              "name": "ASPNETCORE_ENVIRONMENT",
+              "value": "[parameters('environment')]"
+            },
+            {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-              "value": "[reference(resourceId(parameters('applicationInsightsResourceGroup'), 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
+              "value": "[reference(resourceId(resourceGroup().Name, 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
             },
             {
               "name": "KMD_MOMENTUM_MEA_ConsoleLoggingMinLevel",
@@ -158,6 +257,46 @@
             {
               "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
               "value": "[parameters('diagnosticSeqApiKey')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_McaClientId",
+              "value": "[parameters('clientId')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_McaClientSecret",
+              "value": "[parameters('clientSecret')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_McaApiUri",
+              "value": "[parameters('mcaApiUri')]"
+            },
+            {
+              "name": "DbServerName",
+              "value": "[parameters('dbServerName')]"
+            },
+            {
+              "name": "DbLoginId",
+              "value": "[parameters('dbLoginId')]"
+            },
+            {
+              "name": "DbLoginPassword",
+              "value": "[parameters('dbLoginPassword')]"
+            },
+            {
+              "name": "DbName",
+              "value": "[parameters('dbName')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ConnectionStrings:MeaDatabase",
+              "value": "[parameters('dbConnection')]"
+            },
+            {
+              "Name": "KMD_MOMENTUM_MEA_MeaKeyVaultSecretStore:AzureServicesAuthConnectionString",
+              "value": "[variables('azureServicesAuthConnectionString')]"
+            },
+            {
+              "Name": "KMD_MOMENTUM_MEA_MeaKeyVaultSecretStore:KeyVaultUrl",
+              "value": "[variables('meaKeyVaultUri')]"
             }
           ]
         }
@@ -174,7 +313,9 @@
             "displayName": "slotConfigNames"
           },
           "properties": {
-            "appSettingNames": [ "SlotName" ]
+            "appSettingNames": [
+              "SlotName"
+            ]
           }
         }
       ]
@@ -186,6 +327,9 @@
       ],
       "kind": "app",
       "type": "Microsoft.Web/sites/slots",
+      "identity": {
+        "type": "SystemAssigned"
+      },
       "location": "[resourceGroup().location]",
       "name": "[variables('webAppStagingSlotName')]",
       "properties": {
@@ -195,15 +339,19 @@
           "appSettings": [
             {
               "name": "SlotName",
-              "value": "staging"
+              "value": "production"
             },
             {
               "name": "KMD_MOMENTUM_MEA_EnvironmentInstanceId",
               "value": "[parameters('instanceId')]"
             },
             {
+              "name": "ASPNETCORE_ENVIRONMENT",
+              "value": "[parameters('environment')]"
+            },
+            {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-              "value": "[reference(resourceId(parameters('applicationInsightsResourceGroup'), 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
+              "value": "[reference(resourceId(resourceGroup().Name, 'Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
             },
             {
               "name": "KMD_MOMENTUM_MEA_ConsoleLoggingMinLevel",
@@ -216,10 +364,119 @@
             {
               "name": "KMD_MOMENTUM_MEA_DiagnosticSeqApiKey",
               "value": "[parameters('diagnosticSeqApiKey')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_McaClientId",
+              "value": "[parameters('clientId')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_McaClientSecret",
+              "value": "[parameters('clientSecret')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_McaApiUri",
+              "value": "[parameters('mcaApiUri')]"
+            },
+            {
+              "name": "DbServerName",
+              "value": "[parameters('dbServerName')]"
+            },
+            {
+              "name": "DbLoginId",
+              "value": "[parameters('dbLoginId')]"
+            },
+            {
+              "name": "DbLoginPassword",
+              "value": "[parameters('dbLoginPassword')]"
+            },
+            {
+              "name": "DbName",
+              "value": "[parameters('dbName')]"
+            },
+            {
+              "name": "KMD_MOMENTUM_MEA_ConnectionStrings:MeaDatabase",
+              "value": "[parameters('dbConnection')]"
+            },
+            {
+              "Name": "KMD_MOMENTUM_MEA_MeaKeyVaultSecretStore:AzureServicesAuthConnectionString",
+              "value": "[variables('azureServicesAuthConnectionString')]"
+            },
+            {
+              "Name": "KMD_MOMENTUM_MEA_MeaKeyVaultSecretStore:KeyVaultUrl",
+              "value": "[variables('meaKeyVaultUri')]"
             }
           ]
         }
       }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "name": "[variables('meaKeyVaultSecretStore')]",
+      "condition": "[equals(parameters('keyVaultRequired'),'true')]",
+      "apiVersion": "2016-10-01",
+      "location": "[parameters('location')]",
+      "tags": {},
+      "dependsOn": [
+        "[concat('Microsoft.Web/sites/', variables('webAppName'))]"
+      ],
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "[parameters('vaultSku')]"
+        },
+        "tenantId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppName')), '2016-08-01', 'Full').identity.tenantid]",
+        "accessPolicies": [
+          {
+            "tenantId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppName')), '2016-08-01', 'Full').identity.tenantid]",
+            "objectId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppName')), '2016-08-01', 'Full').identity.principalId]",
+            "permissions": {
+              "secrets": [
+                "all"
+              ]
+            }
+          }
+        ],
+        "enabledForDeployment": true,
+        "vaultUri": "[variables('meaKeyVaultUri')]"
+      }
+    },
+    {
+      "apiVersion": "2017-12-01-preview",
+      "condition": "[equals(parameters('dbRequired'),'true')]",
+      "kind": "",
+      "location": "[parameters('location')]",
+      "name": "[parameters('dbServerName')]",
+      "properties": {
+        "administratorLogin": "[parameters('dbLoginId')]",
+        "administratorLoginPassword": "[parameters('dbLoginPassword')]"
+      },
+      "type": "Microsoft.DBforPostgreSQL/servers",
+      "resources": [
+        {
+          "apiVersion": "2017-12-01-preview",
+          "condition": "[equals(parameters('dbRequired'),'true')]",
+          "name": "[parameters('dbName')]",
+          "type": "databases",
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('dbServerName'))]"
+          ]
+        },
+        {
+          "name": "defaultRule",
+          "condition": "[equals(parameters('dbRequired'),'true')]",
+          "type": "firewallrules",
+          "location": "[parameters('location')]",
+          "apiVersion": "2017-12-01-preview",
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "255.255.255.255"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('dbServerName'))]"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Threading.Tasks;
 using Xunit;
+using System.Net.Http.Headers;
 
 namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
 {
@@ -25,7 +26,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
@@ -47,7 +48,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
@@ -72,7 +73,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
@@ -97,7 +98,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);

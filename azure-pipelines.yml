@@ -47,7 +47,7 @@ stages:
       environment: Phoenix
       environmentAutoDelete: true
       azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
-      instanceId: phoenix344158
+      instanceId: phoenix$(Build.BuildId)
       resourceGroupLocation: westeurope
       diagnosticSeqServerUrl: $(PhoenixDiagnosticSeqServerUrl)
       diagnosticSeqApiKey: $(PhoenixDiagnosticSeqApiKey)

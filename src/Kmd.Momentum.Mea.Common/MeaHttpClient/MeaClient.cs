@@ -34,6 +34,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             _tenant = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "tenant").Value;
             _mcaConfig = config.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == _tenant);
         }
+
         public async Task<ResultOrHttpError<string, Error>> GetAsync(string path)
         {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);

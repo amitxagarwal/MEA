@@ -68,6 +68,6 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'
                 ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-webapps.ps1'
-                ScriptArguments: -PublishedArtifactsPath '$(Pipeline.Workspace)/Applications' -WebAppName '$(WebAppName)' -ResourceGroupName '$(ResourceGroupName)' -AutoSwapSlots:("${{ parameters.autoSwapSlots }}" -eq "true") -InstanceId '$(InstanceId)'
+                ScriptArguments: -PublishedArtifactsPath '$(Pipeline.Workspace)/Applications' -WebAppName '$(WebAppName)' -ResourceGroupName '$(ResourceGroupName)' -AutoSwapSlots:("${{ parameters.autoSwapSlots }}" -eq "true")
                 azurePowerShellVersion: 'LatestVersion'
                 pwsh: true

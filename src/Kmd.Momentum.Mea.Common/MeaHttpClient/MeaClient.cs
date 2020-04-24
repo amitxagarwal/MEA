@@ -175,7 +175,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
                         new KeyValuePair<string, string>("resource", _mcaConfig.KommuneResource)
                });
 
-                var response = await _httpClient.PostAsync(new Uri("https://login.microsoftonline.com/momentumb2c.onmicrosoft.com/oauth2/token"), content).ConfigureAwait(false);
+                var response = await _httpClient.PostAsync(new Uri($"{_config["Scope"]}"), content).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {

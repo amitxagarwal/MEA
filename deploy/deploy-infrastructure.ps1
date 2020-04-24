@@ -171,7 +171,7 @@ try
 
     Write-Host "Creating resource group '$ResourceGroupName'"
 
-	New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force -ErrorVariable ErrorMessages
+	New-AzResourceGroup -Name $ResourceGroupName -Mode 'Incremental' -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force -ErrorVariable ErrorMessages
 
     Write-Host "Resource group '$ResourceGroupName' created successfully"
 

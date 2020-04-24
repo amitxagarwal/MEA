@@ -134,8 +134,6 @@ try
         Write-Host "Managing KeyVault Name Length completed"
     }
 
-    if($LASTEXITCODE -ne 0) { exit 1 }
-
     Write-Host "Setting ARM Template parameters"
 
     # Set ARM template parameter values
@@ -171,8 +169,6 @@ try
 	    $Tags["important"] = "true";
     }
 
-    if($LASTEXITCODE -ne 0) { exit 1 }
-
     Write-Host "Creating resource group '$ResourceGroupName'"
 
 	New-AzResourceGroup -Name $ResourceGroupName -Location $ResourceGroupLocation -Tags $Tags -Verbose -Force -ErrorVariable ErrorMessages
@@ -187,8 +183,6 @@ try
         Write-Host '',"##vso[task.complete result=Failed]"
 		exit 1
     }
-
-    if($LASTEXITCODE -ne 0) { exit 1 }
     
 	if ($ValidateOnly) {
         Write-Host '', 'Validating deployment Template.'
@@ -206,10 +200,7 @@ try
 
 		}else {
 			Write-Host '', 'Template is valid.'
-		}
-        
-        if($LASTEXITCODE -ne 0) { exit 1 }
-
+		}        
 	} else {
 
         Write-Host "Deploying resources."
@@ -229,9 +220,7 @@ try
             Write-Host '',"##vso[task.LogIssue type=error;]"$ErrMsg
             Write-Host '',"##vso[task.complete result=Failed]"
 			exit 1
-		}
-        
-        if($LASTEXITCODE -ne 0) { exit 1 }
+		}     
 	}
 }catch{
 	Write-Host '',"An error occurred:"

@@ -108,7 +108,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             //Arrange
             int pageNumber = -1;
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
-            var context = new Mock<IHttpContextAccessor>();
+            var context = GetContext();
             var hc = new DefaultHttpContext();
             hc.TraceIdentifier = Guid.NewGuid().ToString();
             var claims = new List<Claim>()
@@ -154,7 +154,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             //Arrange
             int pageNumber = 45;
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
-            var context = new Mock<IHttpContextAccessor>();
+            var context = GetContext();
             var hc = new DefaultHttpContext();
             hc.TraceIdentifier = Guid.NewGuid().ToString();
             var claims = new List<Claim>()

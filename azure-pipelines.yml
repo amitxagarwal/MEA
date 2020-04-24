@@ -80,3 +80,24 @@ stages:
       clientSecret: $(McaClientSecret)
       isDbRequired: $(DbRequired)
       isKeyVaultRequired: 'true'
+
+- stage: deploy_external
+  dependsOn: Build
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+  - template: azure-pipelines-release-template.yml
+    parameters:
+      environmentNameSuffix: external
+      environment: External
+      environmentAutoDelete: false
+      azureSubscription: 'KMD Momentum External (a2928298-838a-4035-aeb2-7cd779f86089)'
+      instanceId: external
+      resourceGroupLocation: westeurope
+      diagnosticSeqServerUrl: $(ShareddevDiagnosticSeqAServerUrl)
+      diagnosticSeqApiKey: $(ShareddevDiagnosticSeqApiKey)
+      webAppServicePlanSku: S1
+      webAppConfigAlwaysOn: false
+      autoSwapSlots: true
+      clientId: $(McaClientId)
+      clientSecret: $(McaClientSecret)
+      isDbRequired: $(DbRequired)

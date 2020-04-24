@@ -40,7 +40,10 @@ Param(
     [string] $ResourceGroupName,
 
     [Parameter(Mandatory=$false)]
-    [Switch] $AutoSwapSlots = $false
+    [Switch] $AutoSwapSlots = $false,
+
+    [Parameter(Mandatory=$true)]
+    [string] $InstanceId
 )
 
 $ErrorActionPreference = "Stop"
@@ -80,7 +83,7 @@ try{
     if ($AutoSwapSlots) {
         Write-Host "Auto-swapping slots..."
         $ScriptToRun = $PSScriptRoot+"\deploy-swapslots.ps1"
-        & $ScriptToRun -ResourceGroupName $ResourceGroupName -WebAppName $WebAppName
+        & $ScriptToRun -ResourceGroupName $ResourceGroupName -WebAppName $WebAppName -DestinationSlotName $InstanceId
     }
 }
 catch{

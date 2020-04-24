@@ -247,41 +247,50 @@ try {
 
     if($LASTEXITCODE -ne 0) { exit 1 }
 
-    $PublishedApplications = $(
-        "Kmd.Momentum.Mea.Api"
-    )
+    if ($PublishArtifactsToAzureDevOps) {
 
-    foreach ($srcProjectName in $PublishedApplications) {
-        Push-Location "./src/$srcProjectName"
-        try {
-            Write-Host "build: publishing output of '$srcProjectName' into '$ArtifactsStagingPath/$srcProjectName'"
-
-            if ($suffix) {
-                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName" --version-suffix "$suffix"
-            }
-            else {
-                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName"
-            }
-            
-            if($LASTEXITCODE -ne 0) { exit 1 }
-
-            $compressedArtifactFileName = Compress-Directory "$ArtifactsStagingPath/$srcProjectName"
-            
-            if ($PublishArtifactsToAzureDevOps) {
-                Write-Host "##vso[artifact.upload artifactname=Applications;]$compressedArtifactFileName"
-            }
-        }
-        catch{
+        Write-Host '', "Publish is started for Application"
         
-            Write-Host "An error occurred:"
-            Write-Host $_
-            Write-Host "##vso[task.LogIssue type=error;]"$_
-            Write-Host "##vso[task.complete result=Failed]"
+        $PublishedApplications = $(
+            "Kmd.Momentum.Mea.Api"
+        )
+        
+        foreach ($srcProjectName in $PublishedApplications) {
+            try {
             
-            exit 1
-        }
-        finally {
-            Pop-Location
+                Push-Location "./src/$srcProjectName"
+                Write-Host "build: publishing output of '$srcProjectName' into '$ArtifactsStagingPath/$srcProjectName'"
+
+                if ($suffix) {
+                    & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName" --version-suffix "$suffix"
+                }
+                else {
+                    & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName"
+                }
+                
+                if($LASTEXITCODE -ne 0) { exit 1 }
+
+                Write-Host '', "Publish: Compression is started for Application"
+                
+                $compressedArtifactFileName = Compress-Directory "$ArtifactsStagingPath/$srcProjectName"
+                
+                Write-Host '', "Publish: Uploading is started for Application"
+
+                Write-Host "##vso[artifact.upload artifactname=Applications;]$compressedArtifactFileName"
+                
+            }
+            catch{
+            
+                Write-Host "An error occurred:"
+                Write-Host $_
+                Write-Host "##vso[task.LogIssue type=error;]"$_
+                Write-Host "##vso[task.complete result=Failed]"
+                
+                exit 1
+            }
+            finally {
+                Pop-Location
+            }
         }
     }
 

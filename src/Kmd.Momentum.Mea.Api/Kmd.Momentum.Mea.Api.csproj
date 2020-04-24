@@ -9,6 +9,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\$(Configuration)\netcoreapp3.1\Kmd.Momentum.Mea.Api.xml</DocumentationFile>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Kmd.Momentum.Mea.Api.xml</DocumentationFile>
+  </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="CorrelationId" Version="2.1.0" />

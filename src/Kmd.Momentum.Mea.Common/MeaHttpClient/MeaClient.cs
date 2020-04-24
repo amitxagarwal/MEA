@@ -24,6 +24,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
         private readonly string _correlationId;
         private readonly string _tenant;
         private readonly MeaAuthorization _mcaConfig;
+        private string _mcaClientSecret;
 
         public MeaClient(IConfiguration config, HttpClient httpClient, IHttpContextAccessor httpContextAccessor, IMeaSecretStore meaSecretStore)
         {
@@ -123,44 +124,34 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             if (environment == "Build")
             {
-                var mcaClientSecret = Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_McaClientSecret");
-                var token = await GetTokenAsync(mcaClientSecret).ConfigureAwait(false);
-
-                if (token.IsError)
-                {
-                    Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting access token from Momentum Core System : {token.Error}");
-                    var error = new Error(_correlationId, new string[] { token.Error }, "Momentum Core Api");
-
-                    return new ResultOrHttpError<HttpResponseMessage, string>(error.ToString(), token.StatusCode.Value);
-                }
-
-                return new ResultOrHttpError<HttpResponseMessage, string>(token.Result);
+                _mcaClientSecret = Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_McaClientSecret");
             }
 
             else
             {
-                var mcaClientSecret = await _meaSecretStore.GetSecretValueBySecretKeyAsync(_mcaConfig.KommuneAccessIdentifier).ConfigureAwait(false);
+                var secretValue = await _meaSecretStore.GetSecretValueBySecretKeyAsync(_mcaConfig.KommuneAccessIdentifier).ConfigureAwait(false);
 
-                if (mcaClientSecret == null)
+                if (secretValue == null)
                 {
                     Log.ForContext("CorrelationId", _correlationId)
                         .Error("Could not fetch the mca client secret value from the key vault");
 
                     return new ResultOrHttpError<HttpResponseMessage, string>("Could not find the client secret value for authorizing to momentum core system");
                 }
-
-                var token = await GetTokenAsync(mcaClientSecret.SecretValue).ConfigureAwait(false);
-
-                if (token.IsError)
-                {
-                    Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting access token from Momentum Core System : {token.Error}");
-                    var error = new Error(_correlationId, new string[] { token.Error }, "Momentum Core Api");
-
-                    return new ResultOrHttpError<HttpResponseMessage, string>(error.ToString(), token.StatusCode.Value);
-                }
-
-                return new ResultOrHttpError<HttpResponseMessage, string>(token.Result);
+                _mcaClientSecret = secretValue.SecretValue;
             }
+
+            var token = await GetTokenAsync(_mcaClientSecret).ConfigureAwait(false);
+
+            if (token.IsError)
+            {
+                Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting access token from Momentum Core System : {token.Error}");
+                var error = new Error(_correlationId, new string[] { token.Error }, "Momentum Core Api");
+
+                return new ResultOrHttpError<HttpResponseMessage, string>(error.ToString(), token.StatusCode.Value);
+            }
+
+            return new ResultOrHttpError<HttpResponseMessage, string>(token.Result);
         }
 
         private async Task<ResultOrHttpError<HttpResponseMessage, string>> GetTokenAsync(string clientSecret)

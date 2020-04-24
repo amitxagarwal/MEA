@@ -17,7 +17,6 @@ namespace Kmd.Momentum.Mea.Citizen
     public class CitizenService : ICitizenService
     {
         private readonly ICitizenHttpClientHelper _citizenHttpClient;
-        private readonly IConfiguration _config;
         private readonly string _correlationId;
         private readonly string _clientId;
         private readonly string _tenant;
@@ -27,7 +26,6 @@ namespace Kmd.Momentum.Mea.Citizen
             IHttpContextAccessor httpContextAccessor)
         {
             _citizenHttpClient = citizenHttpClient;
-            _config = config;
             _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
             _clientId = httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == "azp").Value;
             _tenant = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "tenant").Value;

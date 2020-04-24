@@ -109,19 +109,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             int pageNumber = -1;
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = GetContext();
-            var hc = new DefaultHttpContext();
-            hc.TraceIdentifier = Guid.NewGuid().ToString();
-            var claims = new List<Claim>()
-                        {
-                            new Claim("azp", Guid.NewGuid().ToString()),
-                        };
-            var identity = new ClaimsIdentity(claims, "JWT");
-            var claimsPrincipal = new ClaimsPrincipal(identity);
-
-            hc.User = claimsPrincipal;
-
-            context.Setup(x => x.HttpContext).Returns(hc);
-
+            
             var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
@@ -155,19 +143,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             int pageNumber = 45;
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = GetContext();
-            var hc = new DefaultHttpContext();
-            hc.TraceIdentifier = Guid.NewGuid().ToString();
-            var claims = new List<Claim>()
-                        {
-                            new Claim("azp", Guid.NewGuid().ToString()),
-                        };
-            var identity = new ClaimsIdentity(claims, "JWT");
-            var claimsPrincipal = new ClaimsPrincipal(identity);
-
-            hc.User = claimsPrincipal;
-
-            context.Setup(x => x.HttpContext).Returns(hc);
-
+            
             var _configuration = new Mock<IConfiguration>();
             _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 

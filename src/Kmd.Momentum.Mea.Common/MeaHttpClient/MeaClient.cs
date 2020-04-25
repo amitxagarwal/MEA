@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
+using Newtonsoft.Json.Schema.Generation;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -48,20 +49,26 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
                 {
                     var errorFromResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-                    var json = JsonConvert.DeserializeObject<Error>("error");
-                    var schema = JsonSchema.FromType<Error>();
-                    var schemaJson = schema.ToJson();
+                    var generator = new JSchemaGenerator();
+                    var errorSchema = generator.Generate(typeof(Error));
+                    
+                    var schemaFromResponse = JObject.Parse(errorFromResponse);
 
-                    var schemaFromResponse = JsonSchema.FromSampleJson(errorFromResponse);
-                    var schemaJsonFromResponse = schemaFromResponse.ToJson();
+                    if (!schemaFromResponse.IsValid(errorSchema))
+                    {
+                        var error = new Error(_correlationId, new string[] { "An error occured while fetching the record(s) from Core Api", errorFromResponse }, "MEA");
+                        Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System : {errorFromResponse}");
 
-                    if (schema == schemaFromResponse)
-                        errorFromResponse = "hi";
+                        return new ResultOrHttpError<string, Error>(error, response.StatusCode);
+                    }
+                    else
+                    {
+                        var error = JsonConvert.DeserializeObject<Error>(errorFromResponse);
+                        Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System : {errorFromResponse}");
 
-                    var error = new Error(_correlationId, new string[] { "An error occured while fetching the record(s) from Core Api", errorFromResponse }, "MEA");
-                    Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System : {errorFromResponse}");
+                        return new ResultOrHttpError<string, Error>(error, response.StatusCode);
+                    }
 
-                    return new ResultOrHttpError<string, Error>(error, response.StatusCode);
                 }
             }
 

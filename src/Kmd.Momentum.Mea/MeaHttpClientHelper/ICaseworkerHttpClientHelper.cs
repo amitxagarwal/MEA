@@ -7,8 +7,8 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 {
     public interface ICaseworkerHttpClientHelper
     {
-        Task<ResultOrHttpError<CaseworkerList, Error>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url, int pageNumber);
+        Task<ResultOrHttpError<CaseworkerList, Error>> GetAllCaseworkerDataFromMomentumCoreAsync(string path, int pageNumber);
 
-        Task<ResultOrHttpError<string, Error>> GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(Uri url);
+        Task<ResultOrHttpError<string, Error>> GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(string path);
     }
 }

@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
 {
+    /// <summary>
+    /// Controller to handle all the caseworker related API requests
+    /// </summary>
     [ApiController]
     [Route("caseworkers")]
     [Produces("application/json", "text/json")]
@@ -19,6 +22,10 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
     {
         private readonly ICaseworkerService _caseworkerService;
 
+        /// <summary>
+        /// Constructor for caseworker controller
+        /// </summary>
+        /// <param name="caseworkerService"></param>
         public CaseworkerController(ICaseworkerService caseworkerService)
         {
             _caseworkerService = caseworkerService ?? throw new ArgumentNullException(nameof(caseworkerService));
@@ -31,6 +38,8 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         ///<response code="400"> Bad request</response>
         ///<response code="404">The caseworker data is not found</response>
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
+        ///<param name="pageNumber">The PageNumber to access the records from Core system. Minimum Value is 0</param>
+        ///<returns>List of caseworker</returns>
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -57,6 +66,8 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         ///<response code="400">Bad request</response>
         ///<response code="404">The caseworker detail by id is not found</response>
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
+        ///<param name="caseworkerId">The caseworker id to access the records from Core system.</param>
+        ///<returns>caseworker details</returns>
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]

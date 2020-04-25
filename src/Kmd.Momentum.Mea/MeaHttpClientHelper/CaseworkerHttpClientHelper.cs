@@ -17,7 +17,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             _meaClient = meaClient ?? throw new ArgumentNullException(nameof(meaClient));
         }
 
-        public async Task<ResultOrHttpError<CaseworkerList, Error>> GetAllCaseworkerDataFromMomentumCoreAsync(Uri url, int pageNumber)
+        public async Task<ResultOrHttpError<CaseworkerList, Error>> GetAllCaseworkerDataFromMomentumCoreAsync(string path, int pageNumber)
         {
             var pageSize = 100;
             pageNumber = pageNumber == 0 ? 1 : pageNumber;
@@ -25,7 +25,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             var queryStringParams = $"pagingInfo.pageNumber={pageNumber}&pagingInfo.pageSize={pageSize}";
 
-            var response = await _meaClient.GetAsync(new Uri(url + "?" + queryStringParams)).ConfigureAwait(false);
+            var response = await _meaClient.GetAsync(path + "?" + queryStringParams).ConfigureAwait(false);
 
             if (response.IsError)
             {
@@ -54,9 +54,9 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             return new ResultOrHttpError<CaseworkerList, Error>(responseData);
         }
 
-        public async Task<ResultOrHttpError<string, Error>> GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(Uri url)
+        public async Task<ResultOrHttpError<string, Error>> GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(string path)
         {
-            var response = await _meaClient.GetAsync(url).ConfigureAwait(false);
+            var response = await _meaClient.GetAsync(path).ConfigureAwait(false);
 
             if (response.IsError)
             {

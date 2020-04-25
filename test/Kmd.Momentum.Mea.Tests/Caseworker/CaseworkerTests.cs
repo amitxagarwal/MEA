@@ -40,11 +40,9 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var _configuration = new Mock<IConfiguration>();
+            var configurationMoq = new Mock<IConfiguration>();
             var pageNumber = 1;
             var context = GetContext();
-
-            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
             var caseworkerData = new List<CaseworkerDataResponseModel>()
             {
@@ -60,10 +58,10 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
                 Result = caseworkerData
             };
 
-            helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers"), pageNumber))
+            helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber))
                     .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(responseData)));
 
-            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
 
             //Act
             var result = await caseWorkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
@@ -79,18 +77,16 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var _configuration = new Mock<IConfiguration>();
+            var configurationMoq = new Mock<IConfiguration>();
             var pageNumber = 0;
             var context = GetContext();
 
-            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
-
             var error = new Error("123456", new string[] { "An Error Occured while retriving data of all caseworkers" }, "MCA");
 
-            helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers"), pageNumber))
+            helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber))
                     .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(error, HttpStatusCode.BadRequest)));
 
-            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
 
             //Act
             var result = await caseWorkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
@@ -106,21 +102,19 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var _configuration = new Mock<IConfiguration>();
+            var configurationMoq = new Mock<IConfiguration>();
             var id = It.IsAny<string>();
             var context = GetContext();
-
-            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
             var response = new CaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
 
             var responseData = JsonConvert.SerializeObject(response);
 
-            helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}employees/{id}")))
+            helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync($"employees/{id}"))
                    .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(responseData)));
 
-            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
 
             //Act
             var result = await caseWorkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);
@@ -136,21 +130,19 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var _configuration = new Mock<IConfiguration>();
+            var configurationMoq = new Mock<IConfiguration>();
             var id = It.IsAny<string>();
             var context = GetContext();
-
-            _configuration.SetupGet(x => x["KMD_MOMENTUM_MEA_McaApiUri"]).Returns("http://google.com/");
 
             var response = new CaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
 
             var error = new Error("123456", new string[] { "Caseworker data with the supplied caseworkerId is not found" }, "MCA");
 
-            helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(new Uri($"{_configuration.Object["KMD_MOMENTUM_MEA_McaApiUri"]}employees/{id}")))
+            helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync($"employees/{id}"))
                    .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
 
-            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, _configuration.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
 
             //Act
             var result = await caseWorkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);

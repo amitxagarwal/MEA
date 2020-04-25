@@ -29,7 +29,7 @@ namespace Kmd.Momentum.Mea.Caseworker
         public async Task<ResultOrHttpError<CaseworkerList, Error>> GetAllCaseworkersAsync(int pageNumber)
         {
             var response = await _caseworkerHttpClient.GetAllCaseworkerDataFromMomentumCoreAsync
-                (new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers"), pageNumber).ConfigureAwait(false);
+                ("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber).ConfigureAwait(false);
 
             if (response.IsError)
             {
@@ -51,7 +51,7 @@ namespace Kmd.Momentum.Mea.Caseworker
 
         public async Task<ResultOrHttpError<CaseworkerDataResponseModel, Error>> GetCaseworkerByIdAsync(string id)
         {
-            var response = await _caseworkerHttpClient.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}employees/{id}")).ConfigureAwait(false);
+            var response = await _caseworkerHttpClient.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync($"employees/{id}").ConfigureAwait(false);
 
             if (response.IsError)
             {

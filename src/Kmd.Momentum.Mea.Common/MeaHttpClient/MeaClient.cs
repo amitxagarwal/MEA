@@ -45,6 +45,14 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             {
                 var errorFromResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
+                if(string.IsNullOrEmpty(errorFromResponse))
+                {
+                    var error = new Error(_correlationId, new string[] { "An error occured while fetching the record(s) from Core Api", errorFromResponse }, "MEA");
+                    Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System : {errorFromResponse}");
+
+                    return new ResultOrHttpError<string, Error>(error, response.StatusCode);
+                }
+
                 try
                 {
                     var error = JsonConvert.DeserializeObject<Error>(errorFromResponse);

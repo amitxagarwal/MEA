@@ -48,7 +48,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
                 {
                     var errorFromResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-                    var json = JsonConvert.DeserializeObject<Error>("error");
+                    //var json = JsonConvert.DeserializeObject<Error>("error");
                     var schema = JsonSchema.FromType<Error>();
                     var schemaJson = schema.ToJson();
 

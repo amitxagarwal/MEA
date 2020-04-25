@@ -106,7 +106,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
             var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var error = "[\"An error occured while fetching the record(s) from Core Api\"]";
+            var error = "[\"1014 - Oplysningerne kunne ikke valideres hos DFDG. Prøv igen eller meld fejlen hos Momentum-support.\"]";
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

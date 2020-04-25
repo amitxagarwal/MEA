@@ -178,17 +178,20 @@ try
                                       -TemplateFile $TemplateFile `
                                       @TemplateParameters `
                                       -Force -Verbose `
-                                      -ErrorVariable ErrorMessages
+                                      -ErrorVariable ErrorMessages `
+                                      -Mode 'Incremental'
 
 		if ($ErrorMessages) {
 			Write-Output '', 'Template deployment returned the following errors:', @(@($ErrorMessages) | ForEach-Object { $_.Exception.Message.TrimEnd("`r`n") })
 			exit 1
 		}
 	}
+
 }catch{
 	Write-Host "An error occurred:"
 	Write-Host $_
-    Write-Host "##vso[task.LogIssue type=error;]"$_, "##vso[task.complete result=Failed]"
+    Write-Host "##vso[task.LogIssue type=error;]"$_
+    Write-Host "##vso[task.complete result=Failed]"
     exit 1
 }
 Pop-Location

@@ -24,7 +24,6 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
         private readonly string _correlationId;
         private readonly string _tenant;
         private readonly MeaAuthorization _mcaConfig;
-        private string _mcaClientSecret;
 
         public MeaClient(IConfiguration config, HttpClient httpClient, IHttpContextAccessor httpContextAccessor, IMeaSecretStore meaSecretStore)
         {
@@ -120,28 +119,17 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
         private async Task<ResultOrHttpError<HttpResponseMessage, string>> ReturnAuthorizationTokenAsync()
         {
-            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+            var meaSecret = await GetMeaSecret().ConfigureAwait(false);
 
-            if (environment == "Build")
+            if (meaSecret == null)
             {
-                _mcaClientSecret = Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_McaClientSecret");
+                Log.ForContext("CorrelationId", _correlationId)
+                    .Error("Could not fetch the mca client secret value from the key vault");
+
+                return new ResultOrHttpError<HttpResponseMessage, string>("Could not find the client secret value for authorizing to momentum core system");
             }
 
-            else
-            {
-                var secretValue = await _meaSecretStore.GetSecretValueBySecretKeyAsync(_mcaConfig.KommuneAccessIdentifier).ConfigureAwait(false);
-
-                if (secretValue == null)
-                {
-                    Log.ForContext("CorrelationId", _correlationId)
-                        .Error("Could not fetch the mca client secret value from the key vault");
-
-                    return new ResultOrHttpError<HttpResponseMessage, string>("Could not find the client secret value for authorizing to momentum core system");
-                }
-                _mcaClientSecret = secretValue.SecretValue;
-            }
-
-            var token = await GetTokenAsync(_mcaClientSecret).ConfigureAwait(false);
+            var token = await GetTokenAsync(meaSecret).ConfigureAwait(false);
 
             if (token.IsError)
             {
@@ -152,6 +140,15 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             }
 
             return new ResultOrHttpError<HttpResponseMessage, string>(token.Result);
+        }
+
+        private async Task<string> GetMeaSecret()
+        {
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+
+            return environment == "Build"
+                ? Environment.GetEnvironmentVariable("KMD_MOMENTUM_MEA_McaClientSecret")
+                : (await _meaSecretStore.GetSecretValueBySecretKeyAsync(_mcaConfig.KommuneAccessIdentifier).ConfigureAwait(false)).SecretValue;
         }
 
         private async Task<ResultOrHttpError<HttpResponseMessage, string>> GetTokenAsync(string clientSecret)

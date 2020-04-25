@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -46,18 +47,23 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
                 if ((int)response.StatusCode >= (int)HttpStatusCode.BadRequest && (int)response.StatusCode < (int)HttpStatusCode.InternalServerError)
                 {
                     var errorFromResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    var error = new Error(_correlationId, new string[] { "An error occured while fetching the record(s) from Core Api" }, "MEA");
+
+                    var json = JsonConvert.DeserializeObject<Error>("error");
+                    var schema = JsonSchema.FromType<Error>();
+                    var schemaJson = schema.ToJson();
+
+                    var schemaFromResponse = JsonSchema.FromSampleJson(errorFromResponse);
+                    var schemaJsonFromResponse = schemaFromResponse.ToJson();
+
+                    if (schema == schemaFromResponse)
+                        errorFromResponse = "hi";
+
+                    var error = new Error(_correlationId, new string[] { "An error occured while fetching the record(s) from Core Api", errorFromResponse }, "MEA");
                     Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System : {errorFromResponse}");
 
                     return new ResultOrHttpError<string, Error>(error, response.StatusCode);
                 }
-
-                var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
-
-                Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System {errorResponse}");
-                return new ResultOrHttpError<string, Error>(errorResponse, response.StatusCode);
             }
-
             return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 

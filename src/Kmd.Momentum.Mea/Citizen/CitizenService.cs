@@ -29,10 +29,19 @@ namespace Kmd.Momentum.Mea.Citizen
             _clientId = httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == "azp").Value;
         }
 
-        public async Task<ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>> GetAllActiveCitizensAsync()
+        public async Task<ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>> GetAllActiveCitizensAsync(int pageNumber)
         {
+            if (pageNumber <= 0)
+            {
+                var error = new Error(_correlationId, new []{ "PageNumber cannot be less than or equal to zero" }, "Mea");
+                Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
+                .Error("PageNumber is less than or equal to zero");
+                return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>(error, System.Net.HttpStatusCode.BadRequest);
+            }
+
             var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCoreAsync
-                (new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/search")).ConfigureAwait(false);
+                (new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/search"), pageNumber).ConfigureAwait(false);
 
             if (response.IsError)
             {

@@ -7,13 +7,23 @@ using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Controllers.Health
 {
+    /// <summary>
+    /// Health Controller
+    /// </summary>
+    [ApiController]
     [Route("[controller]/[action]")]
+    [Produces("application/json", "text/json")]
     //[Authorize]
     public class HealthController : Controller
     {
         private readonly HealthCheckService _healthCheckService;
         private readonly IMeaSecretStore _meaSecretStore;
 
+        /// <summary>
+        /// Health Controller Constructor
+        /// </summary>
+        /// <param name="healthCheckService"></param>
+        /// <param name="meaSecretStore"></param>
         public HealthController(HealthCheckService healthCheckService, IMeaSecretStore meaSecretStore)
         {
             _healthCheckService = healthCheckService;

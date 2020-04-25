@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,10 +36,22 @@ namespace Kmd.Momentum.Mea.Common.Authorization.Caseworker
         private bool CheckForValidScope(string tenant, string[] scope)
         {
             bool result = false;
-            var authorization = _configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<Authorization>>().FirstOrDefault(x => x.KommuneId == tenant);
+            var authorization = _configuration.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == tenant);
+            var meaScope = _configuration.GetSection("MeaAuthorizationScopes:ScopeForCaseworkerApi").Value;
 
-            if (authorization != null && scope.Contains(authorization.Scopes.ScopeForCaseworkerApi))
+            if (authorization == null || meaScope == null)
+            {
+                Log.ForContext("KommuneId", tenant)
+                    .Error("The mea authorization settings are missing from configuration file");
+
+                return result;
+            }
+
+            if (tenant == authorization.KommuneId && scope.Any(x => x == meaScope))
                 return true;
+
+            Log.ForContext("KommuneId", tenant)
+                .Error("The mea authorization settings do not match do not match with the token claims");
 
             return result;
         }

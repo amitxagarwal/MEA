@@ -18,7 +18,6 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
     [ApiController]
     [Route("citizens")]
     [Produces("application/json", "text/json")]
-    [Authorize(MeaCustomClaimAttributes.CitizenRole)]
     public class CitizenController : ControllerBase
     {
         private readonly ICitizenService _citizenService;
@@ -41,6 +40,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
         ///<param name="pageNumber">The PageNumber to access the records from Core system. Minimum Value is 1</param>
         ///<returns>List of CitizenDataResponseModel</returns>
+        [Authorize(MeaCustomClaimAttributes.CitizenRole)]
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -70,6 +70,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
         ///<param name="cprNumber">The CPR number to search the record in the Core system</param>
         ///<returns>CitizenDataResponseModel</returns>
+        [Authorize(MeaCustomClaimAttributes.CitizenRole)]
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -100,6 +101,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
         ///<param name="citizenId">The Citizen ID or Momentum Id to search the record in the Core system</param>
         ///<returns>CitizenDataResponseModel</returns>
+        [Authorize(MeaCustomClaimAttributes.CitizenRole)]
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -131,6 +133,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<param name="momentumCitizenId">The MomentumCitizenID or CitizenId to Create the journal note record in the Core system</param>
         ///<param name="requestModel">The requestmodel to save as a journal note record, in the Core system</param>
         ///<returns>Ok</returns>
+        [Authorize(MeaCustomClaimAttributes.JournalRole)]
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]

@@ -10,6 +10,16 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="appsettings.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="AutoFixture.Idioms" Version="4.11.0" />
         <PackageReference Include="FluentAssertions" Version="5.10.3" />
         <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
@@ -36,12 +46,6 @@
       <ProjectReference Include="..\..\src\Kmd.Momentum.Mea.Api\Kmd.Momentum.Mea.Api.csproj" />
       <ProjectReference Include="..\..\src\Kmd.Momentum.Mea.Common\Kmd.Momentum.Mea.Common.csproj" />
       <ProjectReference Include="..\..\src\Kmd.Momentum.Mea\Kmd.Momentum.Mea.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Update="appsettings.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
     </ItemGroup>
 
 </Project>

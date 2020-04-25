@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
+using Kmd.Momentum.Mea.Common.Swagger;
 
 namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
 {
@@ -38,7 +39,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         [ProducesResponseType(404)]
         [ProducesResponseType(401)]
         [SwaggerOperation(OperationId = "GetAllActiveCitizens")]
-        []
+        [SwaggerParameterProperty("",]
         public async Task<ActionResult<IReadOnlyList<CitizenDataResponseModel>>> GetAllActiveCitizens()
         {
             var result = await _citizenService.GetAllActiveCitizensAsync().ConfigureAwait(false);

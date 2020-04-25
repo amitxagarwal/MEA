@@ -4,9 +4,6 @@ using Kmd.Momentum.Mea.Common.Authorization.Caseworker;
 using Kmd.Momentum.Mea.Common.Authorization.Citizen;
 using Kmd.Momentum.Mea.Common.Authorization.Journal;
 using Kmd.Momentum.Mea.Common.DatabaseStore;
-using Kmd.Momentum.Mea.Common.Framework;
-using Kmd.Momentum.Mea.Common.Framework.PollyOptions;
-using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Kmd.Momentum.Mea.Common.Modules;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -23,6 +20,7 @@ using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
@@ -31,10 +29,17 @@ using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api
 {
+    /// <summary>
+    /// startup to configure the asp.net core pipeline and services.
+    /// </summary>
     public class Startup
     {
         private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// Constructor for startup
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration) => this._configuration = configuration;
 
         /// <summary>
@@ -52,11 +57,18 @@ namespace Kmd.Momentum.Mea.Api
                 (typeof(Kmd.Momentum.Mea.Modules.MeaAssemblyPart).Assembly, productPathName: "Mea", openApiProductName: "Mea", new Version("0.0.1"))
             };
 
+        /// <summary>
+        /// Discovers all the assemblies and add to this collection.
+        /// </summary>
         public static MeaAssemblyDiscoverer MeaAssemblyDiscoverer { get; } =
             new MeaAssemblyDiscoverer(MeaAssemblyParts);
 
 #pragma warning disable CA1822
         // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// Configure services for this API
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc()
@@ -122,6 +134,7 @@ namespace Kmd.Momentum.Mea.Api
 
             services.AddSwaggerGen(c =>
             {
+                c.DescribeAllParametersInCamelCase();
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
@@ -145,10 +158,13 @@ namespace Kmd.Momentum.Mea.Api
                 securityRequirement.Add(securityScheme, new[] { "Bearer" });
                 c.AddSecurityRequirement(securityRequirement);
                 c.EnableAnnotations();
+                
+                var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                //var commentsFileName = Assembly.GetExecutingAssembly().GetName().Name + ".XML";
+                var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlFile = Path.Combine(baseDirectory, xmlFileName);
 
-                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                //c.IncludeXmlComments(xmlPath);
+                c.IncludeXmlComments(xmlFile);                
             });
 
             services.AddHealthChecks().AddCheck("basic_readiness_check", () => new HealthCheckResult(status: HealthStatus.Healthy), new[] { "ready" });
@@ -191,6 +207,11 @@ namespace Kmd.Momentum.Mea.Api
             return await configManager.GetConfigurationAsync().ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Configuring the Asp.Net pipeline
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCorrelationId(new CorrelationIdOptions()

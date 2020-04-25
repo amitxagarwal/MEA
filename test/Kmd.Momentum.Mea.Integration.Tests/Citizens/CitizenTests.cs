@@ -25,21 +25,21 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         {
             //Arrange       
             var clientMoq = _factory.CreateClient();
-
+            var pageNumber = 2;
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
             clientMoq.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
-            var response = await clientMoq.GetAsync($"/citizens").ConfigureAwait(false);
+            var response = await clientMoq.GetAsync($"/citizens?pagenumber={pageNumber}").ConfigureAwait(false);
             var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var actualResponse = JsonConvert.DeserializeObject<List<CitizenDataResponseModel>>(result);
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            actualResponse.Should().NotBeNullOrEmpty();
-            actualResponse.Count.Should().BeGreaterThan(0);
+            result.Should().NotBeNullOrEmpty();
+            actualResponse.Count.Should().BeLessOrEqualTo(100);
         }
 
         [SkipLocalFact]
@@ -106,7 +106,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
             var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var error = "[\"An error occured while fetching the record(s) from Core Api\"]";
+            var error = "[\"1014 - Oplysningerne kunne ikke valideres hos DFDG. Prøv igen eller meld fejlen hos Momentum-support.\"]";
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

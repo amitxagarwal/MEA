@@ -21,8 +21,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Health
         /// Health Controller Constructor
         /// </summary>
         /// <param name="healthCheckService"></param>
-        /// <param name="meaSecretStore"></param>
-        public HealthController(HealthCheckService healthCheckService, IMeaSecretStore meaSecretStore)
+        public HealthController(HealthCheckService healthCheckService)
         {
             _healthCheckService = healthCheckService;
         }

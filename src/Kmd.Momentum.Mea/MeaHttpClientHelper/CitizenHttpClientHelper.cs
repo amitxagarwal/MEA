@@ -25,7 +25,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
         }
 
-        public async Task<ResultOrHttpError<IReadOnlyList<string>, Error>> GetAllActiveCitizenDataFromMomentumCoreAsync(string path)
+        public async Task<ResultOrHttpError<IReadOnlyList<string>, Error>> GetAllActiveCitizenDataFromMomentumCoreAsync(string path, int pageNumber)
         {
             List<JToken> totalRecords = new List<JToken>();
             List<string> JsonStringList = new List<string>();

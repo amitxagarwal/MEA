@@ -40,7 +40,7 @@ namespace Kmd.Momentum.Mea.Citizen
             }
 
             var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCoreAsync
-                ("/search").ConfigureAwait(false);
+                ("/search", pageNumber).ConfigureAwait(false);
 
             if (response.IsError)
             {

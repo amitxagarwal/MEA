@@ -4,6 +4,7 @@ using Kmd.Momentum.Mea.Common.MeaHttpClient;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
     {
         private readonly IMeaClient _meaClient;
         private readonly string _correlationId;
+        private readonly string _clientId;
 
         public CitizenHttpClientHelper(IMeaClient meaClient, IHttpContextAccessor httpContextAccessor)
         {
@@ -47,7 +49,10 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             if (pageNumber > (totalCount / size) + 1)
             {
-                var error = new Error(_correlationId, new[] { "No Records are available for entered page number" }, "MEA");                
+                var error = new Error(_correlationId, new[] { "No Records are available for entered page number" }, "MEA");
+                Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
+                .Error("No Records are available for entered page number");
                 return new ResultOrHttpError<CitizenList, Error>(error, HttpStatusCode.BadRequest);
             }
 

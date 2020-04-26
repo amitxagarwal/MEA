@@ -8,6 +8,5 @@ namespace Kmd.Momentum.Mea.Citizen.Model
     {
         public IReadOnlyList<CitizenDataResponseModel> Data { get; }
 
-
     }
 }

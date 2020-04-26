@@ -34,12 +34,12 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             //Act
             var response = await clientMoq.GetAsync($"/citizens?pagenumber={pageNumber}").ConfigureAwait(false);
             var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<List<CitizenDataResponseModel>>(result);
+            var actualResponse = JsonConvert.DeserializeObject<CitizenList>(result);
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            result.Should().NotBeNullOrEmpty();
-            actualResponse.Count.Should().BeLessOrEqualTo(100);
+            actualResponse.Result.Should().BeNullOrEmpty();
+            actualResponse.TotalNoOfPages.Should().NotBe(0);
         }
 
         [SkipLocalFact]
@@ -56,12 +56,11 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             //Act
             var response = await clientMoq.GetAsync($"/citizen").ConfigureAwait(false);
             var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<List<CitizenDataResponseModel>>(result);
+            var actualResponse = JsonConvert.DeserializeObject<CitizenList>(result);
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-            result.Should().BeNullOrEmpty();
-            actualResponse.Should().BeNullOrEmpty();
+            actualResponse.Result.Should().BeNullOrEmpty();
         }
 
         [SkipLocalFact]

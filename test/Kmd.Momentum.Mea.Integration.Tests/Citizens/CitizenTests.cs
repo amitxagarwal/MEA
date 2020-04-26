@@ -38,7 +38,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            actualResponse.Result.Should().BeNullOrEmpty();
+            actualResponse.Result.Should().NotBeNullOrEmpty();
             actualResponse.TotalNoOfPages.Should().NotBe(0);
         }
 

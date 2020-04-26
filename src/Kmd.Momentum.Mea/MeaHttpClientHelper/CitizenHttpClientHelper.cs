@@ -58,9 +58,8 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             foreach (var item in totalRecords)
             {
-                var jsonToReturn = JsonConvert.SerializeObject(new
-                {
-                    citizenId = item["id"],
+                var jsonToReturn = JsonConvert.SerializeObject(new CitizenDataResponseModel(
+                     citizenId = item["id"],
                     displayName = item["name"],
                     givenName = (string)null,
                     middleName = (string)null,
@@ -71,7 +70,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                     description = item["description"],
                     isBookable = true,
                     isActive = true
-                });
+                    ));
                 JsonStringList.Add(jsonToReturn);
             }
 

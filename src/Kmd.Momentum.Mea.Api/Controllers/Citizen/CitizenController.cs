@@ -39,7 +39,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         ///<response code="404">The active citizen data is not found</response>
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
         ///<param name="pageNumber">The PageNumber to access the records from Core system. Minimum Value is 1</param>
-        ///<returns>List of CitizenDataResponseModel</returns>
+        ///<returns>List of citizens</returns>
         [Authorize(MeaCustomClaimAttributes.CitizenRole)]
         [HttpGet]
         [ProducesResponseType(200)]
@@ -47,7 +47,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         [ProducesResponseType(404)]
         [ProducesResponseType(401)]
         [SwaggerOperation(OperationId = "GetAllActiveCitizens")]
-        public async Task<ActionResult<IReadOnlyList<CitizenDataResponseModel>>> GetAllActiveCitizens([FromQuery] [Required] int pageNumber)
+        public async Task<ActionResult<CitizenList>> GetAllActiveCitizens([FromQuery] [Required] int pageNumber)
         {
             var result = await _citizenService.GetAllActiveCitizensAsync(pageNumber).ConfigureAwait(false);
             

@@ -25,10 +25,11 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
         }
 
-        public async Task<ResultOrHttpError<IReadOnlyList<string>, Error>> GetAllActiveCitizenDataFromMomentumCoreAsync(string path, int pageNumber)
+        public async Task<ResultOrHttpError<CitizenList, Error>> GetAllActiveCitizenDataFromMomentumCoreAsync(string path, int pageNumber)
         {
             List<JToken> totalRecords = new List<JToken>();
-            List<string> JsonStringList = new List<string>();
+            //List<string> JsonStringList = new List<string>();
+            List<CitizenDataResponseModel> JsonStringList = new List<CitizenDataResponseModel>();
 
             var pageNo = pageNumber;
             var size = 100;
@@ -39,7 +40,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             if (response.IsError)
             {
-                return new ResultOrHttpError<IReadOnlyList<string>, Error>(response.Error, response.StatusCode.Value);
+                return new ResultOrHttpError<CitizenList, Error>(response.Error, response.StatusCode.Value);
             }
 
             var content = response.Result;
@@ -47,11 +48,11 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
             if (pageNumber > (totalCount / size) + 1)
             {
-                var error = new Error(_correlationId, new[] { "No Records are available for entered page number" }, "MEA");                
-                return new ResultOrHttpError<IReadOnlyList<string>, Error>(error, HttpStatusCode.BadRequest);
+                var error = new Error(_correlationId, new[] { "No Records are available for entered page number" }, "MEA");
+                return new ResultOrHttpError<CitizenList, Error>(error, HttpStatusCode.BadRequest);
             }
 
-            var jsonArray = JArray.Parse(JObject.Parse(content)["results"].ToString());            
+            var jsonArray = JArray.Parse(JObject.Parse(content)["results"].ToString());
 
             totalRecords.AddRange(jsonArray.Children());
 
@@ -74,7 +75,15 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 JsonStringList.Add(jsonToReturn);
             }
 
-            return new ResultOrHttpError<IReadOnlyList<string>, Error>(JsonStringList);
+            var responseData = new CitizenList()
+            {
+                TotalNoOfPages = (totalCount / size) + 1,
+                TotalSearchCount = totalCount,
+                PageNo = pageNumber,
+                Result = JsonStringList
+            };
+
+            return new ResultOrHttpError<CitizenList, Error>(responseData);
         }
 
         public async Task<ResultOrHttpError<string, Error>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(string path)

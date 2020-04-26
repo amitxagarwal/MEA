@@ -1,4 +1,5 @@
 ﻿using Kmd.Momentum.Mea.Citizen.Model;
+using Kmd.Momentum.Mea.Common.Authorization;
 using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +17,6 @@ namespace Kmd.Momentum.Mea.Citizen
     public class CitizenService : ICitizenService
     {
         private readonly ICitizenHttpClientHelper _citizenHttpClient;
-        private readonly IConfiguration _config;
         private readonly string _correlationId;
         private readonly string _clientId;
 
@@ -24,15 +24,23 @@ namespace Kmd.Momentum.Mea.Citizen
             IHttpContextAccessor httpContextAccessor)
         {
             _citizenHttpClient = citizenHttpClient;
-            _config = config;
             _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
             _clientId = httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == "azp").Value;
         }
 
-        public async Task<ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>> GetAllActiveCitizensAsync()
+        public async Task<ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>> GetAllActiveCitizensAsync(int pageNumber)
         {
+            if (pageNumber <= 0)
+            {
+                var error = new Error(_correlationId, new []{ "PageNumber cannot be less than or equal to zero" }, "Mea");
+                Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
+                .Error("PageNumber is less than or equal to zero");
+                return new ResultOrHttpError<IReadOnlyList<CitizenDataResponseModel>, Error>(error, System.Net.HttpStatusCode.BadRequest);
+            }
+
             var response = await _citizenHttpClient.GetAllActiveCitizenDataFromMomentumCoreAsync
-                (new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}/search")).ConfigureAwait(false);
+                ("/search", pageNumber).ConfigureAwait(false);
 
             if (response.IsError)
             {
@@ -55,7 +63,7 @@ namespace Kmd.Momentum.Mea.Citizen
         public async Task<ResultOrHttpError<CitizenDataResponseModel, Error>> GetCitizenByCprAsync(string cpr)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync
-                (new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{cpr}")).ConfigureAwait(false);
+                ($"citizens/{cpr}").ConfigureAwait(false);
 
             if (response.IsError)
             {
@@ -70,7 +78,6 @@ namespace Kmd.Momentum.Mea.Citizen
             var citizenData = JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString());
 
             Log.ForContext("CorrelationId", _correlationId)
-                    .ForContext("Client", _clientId)
                 .ForContext("CitizenId", citizenData.CitizenId)
                 .Information("The citizen details by CPR number is returned successfully");
 
@@ -79,15 +86,16 @@ namespace Kmd.Momentum.Mea.Citizen
 
         public async Task<ResultOrHttpError<CitizenDataResponseModel, Error>> GetCitizenByIdAsync(string citizenId)
         {
-            var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}citizens/{citizenId}")).ConfigureAwait(false);
+            var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync($"citizens/{citizenId}").ConfigureAwait(false);
 
             if (response.IsError)
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
                 Log.ForContext("CorrelationId", _correlationId)
                     .ForContext("Client", _clientId)
-                 .ForContext("CitizenId", citizenId)
-                .Error("An error occured while retrieving citizen data by citizenID" + error);
+                    .ForContext("CitizenId", citizenId)
+                    .Error("An error occured while retrieving citizen data by citizenID" + error);
+
                 return new ResultOrHttpError<CitizenDataResponseModel, Error>(response.Error, response.StatusCode.Value);
             }
 
@@ -95,7 +103,7 @@ namespace Kmd.Momentum.Mea.Citizen
             var citizenData = JsonConvert.DeserializeObject<CitizenDataResponseModel>(json.ToString());
 
             Log.ForContext("CorrelationId", _correlationId)
-                    .ForContext("Client", _clientId)
+                .ForContext("Client", _clientId)
                 .ForContext("CitizenId", citizenData.CitizenId)
                 .Information("The citizen details by CitizenId has been returned successfully");
 
@@ -104,7 +112,7 @@ namespace Kmd.Momentum.Mea.Citizen
 
         public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsync(string momentumCitizenId, JournalNoteResponseModel requestModel)
         {
-            var response = await _citizenHttpClient.CreateJournalNoteInMomentumCoreAsync(new Uri($"{_config["KMD_MOMENTUM_MEA_McaApiUri"]}journals/note"), momentumCitizenId, requestModel).ConfigureAwait(false);
+            var response = await _citizenHttpClient.CreateJournalNoteInMomentumCoreAsync("journals/note", momentumCitizenId, requestModel).ConfigureAwait(false);
 
             if (response.IsError)
             {

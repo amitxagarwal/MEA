@@ -210,8 +210,8 @@ try
                                       -TemplateFile $TemplateFile `
                                       @TemplateParameters `
                                       -Force -Verbose `
-                                      -Mode 'Incremental'`
-                                      -ErrorVariable ErrorMessages
+                                      -ErrorVariable ErrorMessages `
+                                      -Mode 'Incremental'
 
         Write-Host "Deploying of resources completed."
 

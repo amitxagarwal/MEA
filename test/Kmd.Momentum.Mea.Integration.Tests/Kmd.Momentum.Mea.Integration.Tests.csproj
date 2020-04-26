@@ -20,4 +20,19 @@
     <ProjectReference Include="..\..\src\Kmd.Momentum.Mea\Kmd.Momentum.Mea.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.Build.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.Phoenix.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

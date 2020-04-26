@@ -10,11 +10,23 @@ using System;
 
 namespace Kmd.Momentum.Mea.Api
 {
+    /// <summary>
+    /// Starting point for the API
+    /// </summary>
     public static class Program
     {
+        /// <summary>
+        /// GetEnvironmentInstanceId method to get the instance id from environment variables
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
         public static string GetEnvironmentInstanceId(IConfiguration configuration) =>
             configuration.GetValue("EnvironmentInstanceId", defaultValue: Environment.MachineName);
 
+        /// <summary>
+        /// Main method to start the api process
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             var config = new ConfigurationBuilder().AddEnvironmentVariables(prefix: "KMD_MOMENTUM_MEA_").AddCommandLine(args).AddUserSecrets<Startup>().Build();
@@ -35,7 +47,9 @@ namespace Kmd.Momentum.Mea.Api
                 .Enrich.WithProperty("EnvironmentInstanceId", environmentInstanceId)
                 .WriteTo.Console(restrictedToMinimumLevel: consoleMinLevel)
                 .WriteTo.Seq(serverUrl: seqServerUrl, apiKey: seqApiKey, compact: true)
+#pragma warning disable CS0618 // Type or member is obsolete
                 .WriteTo.ApplicationInsights(TelemetryConfiguration.Active, TelemetryConverter.Traces)
+#pragma warning restore CS0618 // Type or member is obsolete
                 .CreateLogger();
 
             try
@@ -69,8 +83,19 @@ namespace Kmd.Momentum.Mea.Api
         }
 
         // NOTE: this exact signature is required by tooling such as the testing infrastructure
+        /// <summary>
+        /// Bulding the host for the API.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static IHostBuilder CreateHostBuilder(string[] args) => CreateConfigurableHostBuilder(args, config: null);
 
+        /// <summary>
+        /// Creating configurable host builder.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="config"></param>
+        /// <returns></returns>
         public static IHostBuilder CreateConfigurableHostBuilder(string[] args, IConfiguration config) =>
             Host.CreateDefaultBuilder(args)
                 .UseSerilog()

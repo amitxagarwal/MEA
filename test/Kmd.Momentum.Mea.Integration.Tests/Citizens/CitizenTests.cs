@@ -56,11 +56,9 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             //Act
             var response = await clientMoq.GetAsync($"/citizen").ConfigureAwait(false);
             var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<CitizenList>(result);
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-            actualResponse.Result.Should().BeNullOrEmpty();
         }
 
         [SkipLocalFact]

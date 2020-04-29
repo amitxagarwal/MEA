@@ -166,7 +166,7 @@ try
     keyVaultRequired = $KeyVaultRequired;
     keyVaultName = $KeyVaultName;
     test = $Test;
-    test1 =$env:test1
+    test1 =$Test
     }
 
     Write-Host "Create or update ResourceGroup Tag"

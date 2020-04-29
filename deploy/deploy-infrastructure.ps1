@@ -88,11 +88,19 @@ Param
 
   [Parameter(Mandatory=$false)]
   [string]
-  $KeyVaultRequired = 'false'
+  $KeyVaultRequired = 'false',
+
+  [Parameter(Mandatory=$false)]
+  [string]
+  $Test
 )
 
 Push-Location $PSScriptRoot
 Write-Host "Deploying from '$PSScriptRoot'"
+
+Write-Host "Deploying from '$Test'"
+
+Write-Host "Deploying from '$($env:test1)'"
 
 $ResourceNamePrefix = "kmd-momentum-mea-$InstanceId"
 $TemplateFile = "azuredeploy.json"

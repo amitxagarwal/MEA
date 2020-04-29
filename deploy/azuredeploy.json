@@ -183,10 +183,12 @@
       }
     },
     "test": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "a"
     },
     "test1": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "a1"
     }
   },
   "variables": {

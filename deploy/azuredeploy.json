@@ -181,6 +181,12 @@
       "metadata": {
         "description": "true will make the web site 'always on' - incompatible with certain plans like D1 Shared"
       }
+    },
+    "test": {
+      "type": "string"
+    },
+    "test1": {
+      "type": "string"
     }
   },
   "variables": {
@@ -299,6 +305,14 @@
             {
               "Name": "KMD_MOMENTUM_MEA_MeaKeyVaultSecretStore:KeyVaultUrl",
               "value": "[variables('meaKeyVaultUri')]"
+            },
+            {
+              "Name": "KMD_MOMENTUM_MEA_test",
+              "value": "[parameters('test')]"
+            },
+            {
+              "Name": "KMD_MOMENTUM_MEA_test1",
+              "value": "[parameters('test1')]"
             }
           ]
         }
@@ -406,6 +420,14 @@
             {
               "Name": "KMD_MOMENTUM_MEA_MeaKeyVaultSecretStore:KeyVaultUrl",
               "value": "[variables('meaKeyVaultUri')]"
+            },
+            {
+              "Name": "KMD_MOMENTUM_MEA_test",
+              "value": "[parameters('test')]"
+            },
+            {
+              "Name": "KMD_MOMENTUM_MEA_test1",
+              "value": "[parameters('test1')]"
             }
           ]
         }

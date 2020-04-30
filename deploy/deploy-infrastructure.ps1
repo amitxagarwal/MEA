@@ -86,7 +86,7 @@ Param
   [string]
   $KeyVaultRequired = 'false',
 
-    [Parameter(Mandatory=$false)]
+  [Parameter(Mandatory=$false)]
   [string]
   $DbLoginId = 'MeaAdmin',
 

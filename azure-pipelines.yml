@@ -49,8 +49,8 @@ stages:
       azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
       instanceId: phoenix$(Build.BuildId)
       resourceGroupLocation: westeurope
-      diagnosticSeqServerUrl: $(InternalDiagnosticSeqServerUrl)
-      diagnosticSeqApiKey: $(InternalDiagnosticSeqApiKey)
+      diagnosticSeqServerUrl: $(PhoenixDiagnosticSeqServerUrl)
+      diagnosticSeqApiKey: $(PhoenixDiagnosticSeqApiKey)
       webAppServicePlanSku: S1
       webAppConfigAlwaysOn: false
       autoSwapSlots: true

@@ -72,10 +72,6 @@ Param
 
   [Parameter(Mandatory=$true)]
   [string]
-  $ClientId,
-
-  [Parameter(Mandatory=$true)]
-  [string]
   $ClientSecret,
 
   [Parameter(Mandatory=$true)]
@@ -90,17 +86,10 @@ Param
   [string]
   $KeyVaultRequired = 'false',
 
-  [Parameter(Mandatory=$false)]
-  [string]
-  $Test
 )
 
 Push-Location $PSScriptRoot
 Write-Host "Deploying from '$PSScriptRoot'"
-
-Write-Host "Deploying from '$Test'"
-
-Write-Host "Deploying from '$($env:test1)'"
 
 $ResourceNamePrefix = "kmd-momentum-mea-$InstanceId"
 $TemplateFile = "azuredeploy.json"
@@ -153,10 +142,7 @@ try
     diagnosticSeqServerUrl = $DiagnosticSeqServerUrl;
     diagnosticSeqApiKey = $DiagnosticSeqApiKey;
     webAppServicePlanSku = $WebAppServicePlanSku;
-    webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
-    clientId = $ClientId;
-    clientSecret = $ClientSecret;
-    mcaApiUri = $env:McaApiUri;
+    webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;    
     dbServerName = $DbServerName;
     dbLoginId = $env:DbLoginId;
     dbLoginPassword = $env:DbLoginPassword;
@@ -165,7 +151,6 @@ try
     dbRequired = $DbRequired;
     keyVaultRequired = $KeyVaultRequired;
     keyVaultName = $KeyVaultName;
-    test = $Test;
     }
 
     Write-Host "Create or update ResourceGroup Tag"

@@ -21,7 +21,7 @@ stages:
         packageType: 'sdk'
         useGlobalJson: true
     - task: NuGetAuthenticate@0
-    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -McaClientId "$(McaClientId)" -McaClientSecret "$(McaClientSecret)" -McaApiUri "$(McaApiUri)" -McaScope "$(McaScope)" -Environment "$(ENVIRONMENT)" -MeaClientId "$(MeaClientId)" -MeaClientSecret "$(MeaClientSecret)" -MeaScope "$(MeaScope)" -Test "$(test1)"
+    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -McaClientId "$(McaClientId)" -McaClientSecret "$(McaClientSecret)" -McaApiUri "$(McaApiUri)" -McaScope "$(McaScope)" -Environment "Build" -MeaClientId "$(MeaClientId)" -MeaClientSecret "$(MeaClientSecret)" -MeaScope "$(MeaScope)"
       displayName: run build.ps1
       failOnStderr: true
       env:
@@ -49,16 +49,15 @@ stages:
       azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
       instanceId: phoenix$(Build.BuildId)
       resourceGroupLocation: westeurope
-      diagnosticSeqServerUrl: $(PhoenixDiagnosticSeqServerUrl)
-      diagnosticSeqApiKey: $(PhoenixDiagnosticSeqApiKey)
+      diagnosticSeqServerUrl: $(InternalDiagnosticSeqServerUrl)
+      diagnosticSeqApiKey: $(InternalDiagnosticSeqApiKey)
       webAppServicePlanSku: S1
       webAppConfigAlwaysOn: false
       autoSwapSlots: true
       clientId: $(McaClientId)
       clientSecret: $(McaClientSecret)
       isDbRequired: $(DbRequired)
-      isKeyVaultRequired: 'true'
-      test: $(test1)
+      isKeyVaultRequired: 'true'     
 
 - stage: deploy_internal
   dependsOn: Build
@@ -72,8 +71,8 @@ stages:
       azureSubscription: 'KMD Momentum Internal (77a2aca7-3b91-463d-9165-c6d0bb3689f9)'
       instanceId: internal
       resourceGroupLocation: westeurope
-      diagnosticSeqServerUrl: $(ShareddevDiagnosticSeqAServerUrl)
-      diagnosticSeqApiKey: $(ShareddevDiagnosticSeqApiKey)
+      diagnosticSeqServerUrl: $(InternalDiagnosticSeqAServerUrl)
+      diagnosticSeqApiKey: $(InternalDiagnosticSeqApiKey)
       webAppServicePlanSku: S1
       webAppConfigAlwaysOn: false
       autoSwapSlots: true
@@ -94,8 +93,8 @@ stages:
       azureSubscription: 'KMD Momentum External (a2928298-838a-4035-aeb2-7cd779f86089)'
       instanceId: external
       resourceGroupLocation: westeurope
-      diagnosticSeqServerUrl: $(ShareddevDiagnosticSeqAServerUrl)
-      diagnosticSeqApiKey: $(ShareddevDiagnosticSeqApiKey)
+      diagnosticSeqServerUrl: $(ExternalDiagnosticSeqAServerUrl)
+      diagnosticSeqApiKey: $(ExternalDiagnosticSeqApiKey)
       webAppServicePlanSku: S1
       webAppConfigAlwaysOn: false
       autoSwapSlots: true

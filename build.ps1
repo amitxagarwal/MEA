@@ -95,11 +95,7 @@ Param(
     # The DbRequired for build database if it is true
     [Parameter(Mandatory=$false)]
     [string]
-    $DbRequired = "false",
-
-    [Parameter(Mandatory=$false)]
-    [string]
-    $Test = "false"
+    $DbRequired = "false"
 )
 
 function Compress-Directory {
@@ -118,10 +114,6 @@ function Compress-Directory {
 }
 
 Write-Host "build: Build started"
-
-Write-Host "build: Build started--$Test"
-
-Write-Host "build: Build started--$($env:test1)"
 
 if ($VerbosePreference) {
     & dotnet --info

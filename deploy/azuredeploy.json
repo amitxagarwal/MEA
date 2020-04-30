@@ -58,18 +58,6 @@
         "description": "Database Connection String"
       }
     },
-    "mcaApiUri": {
-      "type": "string",
-      "metadata": {
-        "description": "Base Uri for calling MCA API"
-      }
-    },
-    "clientId": {
-      "type": "string",
-      "metadata": {
-        "description": "MCA client Id for authentication"
-      }
-    },
     "clientSecret": {
       "type": "string",
       "metadata": {
@@ -181,14 +169,6 @@
       "metadata": {
         "description": "true will make the web site 'always on' - incompatible with certain plans like D1 Shared"
       }
-    },
-    "test": {
-      "type": "string",
-      "defaultValue": "a"
-    },
-    "test1": {
-      "type": "string",
-      "defaultValue": "a1"
     }
   },
   "variables": {
@@ -269,18 +249,6 @@
               "value": "[parameters('diagnosticSeqApiKey')]"
             },
             {
-              "name": "KMD_MOMENTUM_MEA_McaClientId",
-              "value": "[parameters('clientId')]"
-            },
-            {
-              "name": "KMD_MOMENTUM_MEA_McaClientSecret",
-              "value": "[parameters('clientSecret')]"
-            },
-            {
-              "name": "KMD_MOMENTUM_MEA_McaApiUri",
-              "value": "[parameters('mcaApiUri')]"
-            },
-            {
               "name": "DbServerName",
               "value": "[parameters('dbServerName')]"
             },
@@ -307,14 +275,6 @@
             {
               "Name": "KMD_MOMENTUM_MEA_MeaKeyVaultSecretStore:KeyVaultUrl",
               "value": "[variables('meaKeyVaultUri')]"
-            },
-            {
-              "Name": "KMD_MOMENTUM_MEA_test",
-              "value": "[parameters('test')]"
-            },
-            {
-              "Name": "KMD_MOMENTUM_MEA_test1",
-              "value": "[parameters('test1')]"
             }
           ]
         }
@@ -384,18 +344,6 @@
               "value": "[parameters('diagnosticSeqApiKey')]"
             },
             {
-              "name": "KMD_MOMENTUM_MEA_McaClientId",
-              "value": "[parameters('clientId')]"
-            },
-            {
-              "name": "KMD_MOMENTUM_MEA_McaClientSecret",
-              "value": "[parameters('clientSecret')]"
-            },
-            {
-              "name": "KMD_MOMENTUM_MEA_McaApiUri",
-              "value": "[parameters('mcaApiUri')]"
-            },
-            {
               "name": "DbServerName",
               "value": "[parameters('dbServerName')]"
             },
@@ -422,14 +370,6 @@
             {
               "Name": "KMD_MOMENTUM_MEA_MeaKeyVaultSecretStore:KeyVaultUrl",
               "value": "[variables('meaKeyVaultUri')]"
-            },
-            {
-              "Name": "KMD_MOMENTUM_MEA_test",
-              "value": "[parameters('test')]"
-            },
-            {
-              "Name": "KMD_MOMENTUM_MEA_test1",
-              "value": "[parameters('test1')]"
             }
           ]
         }

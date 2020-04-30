@@ -84,7 +84,7 @@ Param
 
   [Parameter(Mandatory=$false)]
   [string]
-  $KeyVaultRequired = 'false',
+  $KeyVaultRequired = 'false'
 
 )
 

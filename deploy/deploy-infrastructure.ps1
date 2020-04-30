@@ -143,13 +143,14 @@ try
     webAppServicePlanSku = $WebAppServicePlanSku;
     webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;    
     dbServerName = $DbServerName;
-    dbLoginId = $env:DbLoginId;
-    dbLoginPassword = $env:DbLoginPassword;
+    dbLoginId = "McaAdmin";
+    dbLoginPassword = "Admin@123";
     dbName = $DbName;
     dbConnection = $DbConnection;
     dbRequired = $DbRequired;
     keyVaultRequired = $KeyVaultRequired;
     keyVaultName = $KeyVaultName;
+    clientSecret = $ClientSecret
     }
 
     Write-Host "Create or update ResourceGroup Tag"

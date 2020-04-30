@@ -144,8 +144,8 @@ try
     webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;   
     clientSecret = $ClientSecret
     dbServerName = $DbServerName;
-    dbLoginId = "McaAdmin";
-    dbLoginPassword = "Admin@123";
+    dbLoginId = $env:DbLoginId;
+    dbLoginPassword = $env:DbLoginPassword;
     dbName = $DbName;
     dbConnection = $DbConnection;
     dbRequired = $DbRequired;

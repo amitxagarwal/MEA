@@ -141,7 +141,8 @@ try
     diagnosticSeqServerUrl = $DiagnosticSeqServerUrl;
     diagnosticSeqApiKey = $DiagnosticSeqApiKey;
     webAppServicePlanSku = $WebAppServicePlanSku;
-    webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;    
+    webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;   
+    clientSecret = $ClientSecret
     dbServerName = $DbServerName;
     dbLoginId = "McaAdmin";
     dbLoginPassword = "Admin@123";
@@ -149,8 +150,7 @@ try
     dbConnection = $DbConnection;
     dbRequired = $DbRequired;
     keyVaultRequired = $KeyVaultRequired;
-    keyVaultName = $KeyVaultName;
-    clientSecret = $ClientSecret
+    keyVaultName = $KeyVaultName
     }
 
     Write-Host "Create or update ResourceGroup Tag"

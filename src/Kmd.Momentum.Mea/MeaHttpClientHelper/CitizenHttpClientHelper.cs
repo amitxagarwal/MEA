@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.MeaHttpClientHelper
@@ -56,7 +57,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 return new ResultOrHttpError<CitizenList, Error>(error, HttpStatusCode.BadRequest);
             }
 
-            var jsonArray = JArray.Parse(JObject.Parse(content)["results"].ToString());            
+            var jsonArray = JArray.Parse(JObject.Parse(content)["results"].ToString());
 
             totalRecords.AddRange(jsonArray.Children());
 
@@ -101,19 +102,29 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             return new ResultOrHttpError<string, Error>(content);
         }
 
-        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteInMomentumCoreAsync(string path, string momentumCitizenId, JournalNoteResponseModel requestModel)
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteInMomentumCoreAsync(string path, string momentumCitizenId, JournalNoteRequestModel requestModel)
         {
             List<JournalNoteAttachmentModel> attachmentList = new List<JournalNoteAttachmentModel>();
 
-            foreach (var doc in requestModel.Documents)
+            if (requestModel.Documents!=null)
             {
-                var attachemnt = new JournalNoteAttachmentModel()
+                foreach (var doc in requestModel.Documents)
                 {
-                    ContentType = doc.ContentType,
-                    Document = doc.Content,
-                    Title = doc.Name
-                };
-                attachmentList.Add(attachemnt);
+                    var errorMsg = ValidateDocument(doc);
+                    if (errorMsg != string.Empty)
+                    {
+                        var error = new Error(_correlationId, new string[] { errorMsg }, "Mea");
+                        return new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest);
+                    }
+
+                    var attachemnt = new JournalNoteAttachmentModel()
+                    {
+                        ContentType = doc.ContentType,
+                        Document = doc.Content,
+                        Title = doc.Name
+                    };
+                    attachmentList.Add(attachemnt);
+                }
             }
 
             JournalNoteModel mcaRequestModel = new JournalNoteModel()
@@ -124,7 +135,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 Body = requestModel.Body,
                 Source = "Mea",
                 ReferenceId = momentumCitizenId,
-                JournalTypeId = requestModel.Type.ToLower() == "sms" ? "022.247.000" : "022.420.000",
+                JournalTypeId = requestModel.Type == JournalNoteType.SMS ? "022.247.000" : "022.420.000",
                 Attachments = attachmentList
             };
 
@@ -141,6 +152,27 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             var content = response.Result;
 
             return new ResultOrHttpError<string, Error>(content);
+        }
+
+        private string ValidateDocument(JournalNoteDocumentRequestModel document)
+        {
+            var regx = new Regex(@"([a-zA-Z0-9\s_\\.\-\(\)])+(.doc|.docx|.pdf|.txt)$", RegexOptions.IgnoreCase);
+            if (!regx.IsMatch(document.Name))
+                return "Invalid document name";
+
+            if (document.Name.EndsWith(".pdf", true, System.Globalization.CultureInfo.CurrentCulture) && (document.ContentType != "application/pdf" && document.ContentType != "application/octet-stream"))
+                return "Pdf has invalid content type";
+
+            if (document.Name.EndsWith(".doc", true, System.Globalization.CultureInfo.CurrentCulture) && (document.ContentType != "application/msword" && document.ContentType != "application/octet-stream"))
+                return "Document file has invalid content type";
+
+            if (document.Name.EndsWith(".docx", true, System.Globalization.CultureInfo.CurrentCulture) && (document.ContentType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && document.ContentType != "application/octet-stream"))
+                return "Document file has invalid content type";
+
+            if (document.Name.EndsWith(".txt", true, System.Globalization.CultureInfo.CurrentCulture) && document.ContentType != "text/plain")
+                return "Text file has invalid content type";
+
+            return string.Empty;
         }
     }
 }

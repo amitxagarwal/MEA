@@ -9,11 +9,10 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         private string body = "testBody";
         private string title = "testTitle";
         private string type = "testType";
-        //private IReadOnlyList<JournalNoteDocumentResponseModel> document;
-        private string content = "testContent";
-        private string contentType = "testContentType";
-        private string name = "testDocumentName";
-
+        private List<JournalNoteDocumentResponseModel> journalNoteDocumentResponseModel = new List<JournalNoteDocumentResponseModel>()
+        {
+            new JournalNoteDocumentResponseModel(){Content="testContent", ContentType="testContentType", Name="testDocumentName"}
+        };
 
         public JournalNoteResponseModel Build()
         {
@@ -22,17 +21,8 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
                 Cpr = this.cpr,
                 Body = this.body,
                 Title = this.title,
-                Type = this.type
-            };
-        }
-
-        public JournalNoteDocumentResponseModel Build1()
-        {
-            return new JournalNoteDocumentResponseModel()
-            {
-                Content = this.content,
-                ContentType = this.contentType,
-                Name = this.name
+                Type = this.type,
+                Documents = this.journalNoteDocumentResponseModel
             };
         }
 
@@ -54,11 +44,10 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             return this;
         }
 
-        //public JournalNoteResponseBuilder WithDocument(string document)
-        //{
-        //    this.document = document;
-        //    return this;
-        //}
-
+        public JournalNoteResponseBuilder WithDocuments(List<JournalNoteDocumentResponseModel> document)
+        {
+            this.journalNoteDocumentResponseModel = document;
+            return this;
+        }
     }
 }

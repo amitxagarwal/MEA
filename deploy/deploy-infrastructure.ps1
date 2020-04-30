@@ -92,8 +92,7 @@ Param
 
   [Parameter(Mandatory=$false)]
   [string]
-  $DbLoginPassword = 'Admin@123',
-  
+  $DbLoginPassword = 'Admin@123'  
 )
 
 Push-Location $PSScriptRoot

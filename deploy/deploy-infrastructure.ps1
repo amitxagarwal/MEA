@@ -85,7 +85,6 @@ Param
   [Parameter(Mandatory=$false)]
   [string]
   $KeyVaultRequired = 'false'
-
 )
 
 Push-Location $PSScriptRoot

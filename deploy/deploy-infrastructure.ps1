@@ -125,7 +125,7 @@ try
     $ApplicationInsightsName="$ResourceNamePrefix-ai";
     $DbServerName="$ResourceNamePrefix-dbsvr";
     $DbName="$ResourceNamePrefix-db";
-    $DbConnection="Server=$($DbServerName).postgres.database.azure.com;Database=$($DbName);Port=5432;User Id=$($env:DbLoginId)@$($DbServerName);Password=$($env:DbLoginPassword);Ssl Mode=Require;"
+    $DbConnection="Server=$($DbServerName).postgres.database.azure.com;Database=$($DbName);Port=5432;User Id=$($DbLoginId)@$($DbServerName);Password=$($DbLoginPassword);Ssl Mode=Require;"
     $KeyVaultName = "$($ResourceNamePrefix.replace('-',''))kv"
 
     Write-Host "Checking KeyVault Name Length"

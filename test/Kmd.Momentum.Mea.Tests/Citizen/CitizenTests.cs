@@ -279,6 +279,10 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
                 Documents = requestDocumentModel
             };
 
+            var requestDocumentModel1 = new JournalNoteResponseBuilder().Build1();
+
+            var requestModel1 = new JournalNoteResponseBuilder().Build();
+
             helperHttpClientMoq.Setup(x => x.CreateJournalNoteInMomentumCoreAsync("journals/note", "testCitizenId", requestModel))
                 .Returns(Task.FromResult(new ResultOrHttpError<string, Error>("")));
 

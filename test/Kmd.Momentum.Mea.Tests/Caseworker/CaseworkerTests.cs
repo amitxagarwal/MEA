@@ -61,7 +61,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber))
                     .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(responseData)));
 
-            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseWorkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
@@ -86,7 +86,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber))
                     .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(error, HttpStatusCode.BadRequest)));
 
-            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseWorkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
@@ -114,7 +114,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync($"employees/{id}"))
                    .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(responseData)));
 
-            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseWorkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);
@@ -142,7 +142,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync($"employees/{id}"))
                    .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
 
-            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseWorkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);

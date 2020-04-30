@@ -164,7 +164,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
                 Cpr = "0101005402",
                 Title = "testTitle",
                 Body = "testBody",
-                Type = JournalNoteType.Sms,
+                Type = JournalNoteType.SMS,
                 Documents = documentList
             };
             string _serializedRequest = JsonConvert.SerializeObject(mcaRequestModel);

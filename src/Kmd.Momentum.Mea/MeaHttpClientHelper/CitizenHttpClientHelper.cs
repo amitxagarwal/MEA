@@ -156,21 +156,9 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
         private string ValidateDocument(JournalNoteDocumentRequestModel document)
         {
-            var regx = new Regex(@"([a-zA-Z0-9\s_\\.\-\(\)])+(.doc|.docx|.pdf|.txt)$", RegexOptions.IgnoreCase);
+            var regx = new Regex(@"([a-zA-Z0-9\s_\\.\-\(\)])+(.doc|.docx|.pdf|.txt|.htm|.html|.msg)$", RegexOptions.IgnoreCase);
             if (!regx.IsMatch(document.Name))
-                return "Invalid document name";
-
-            if (document.Name.EndsWith(".pdf", true, System.Globalization.CultureInfo.CurrentCulture) && (document.ContentType != "application/pdf" && document.ContentType != "application/octet-stream"))
-                return "Pdf has invalid content type";
-
-            if (document.Name.EndsWith(".doc", true, System.Globalization.CultureInfo.CurrentCulture) && (document.ContentType != "application/msword" && document.ContentType != "application/octet-stream"))
-                return "Document file has invalid content type";
-
-            if (document.Name.EndsWith(".docx", true, System.Globalization.CultureInfo.CurrentCulture) && (document.ContentType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && document.ContentType != "application/octet-stream"))
-                return "Document file has invalid content type";
-
-            if (document.Name.EndsWith(".txt", true, System.Globalization.CultureInfo.CurrentCulture) && document.ContentType != "text/plain")
-                return "Text file has invalid content type";
+                return "Invalid document type";         
 
             return string.Empty;
         }

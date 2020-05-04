@@ -9,12 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="NewFolder2\**" />
-    <EmbeddedResource Remove="NewFolder2\**" />
-    <None Remove="NewFolder2\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Citizen\Model\CitizenDataUploadModel.cs" />
     <Compile Remove="Class1.cs" />
     <Compile Remove="MeaServiceCollectionExtensions.cs" />

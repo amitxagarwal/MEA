@@ -1,6 +1,6 @@
 ﻿using Kmd.Momentum.Mea.Caseworker.Model;
 using Kmd.Momentum.Mea.Common.Exceptions;
-using Kmd.Momentum.Mea.Task.Model;
+using Kmd.Momentum.Mea.TaskApi.Model;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Caseworker

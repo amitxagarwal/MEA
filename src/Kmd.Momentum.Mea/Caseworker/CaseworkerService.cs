@@ -1,7 +1,7 @@
 ﻿using Kmd.Momentum.Mea.Caseworker.Model;
 using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
-using Kmd.Momentum.Mea.Task.Model;
+using Kmd.Momentum.Mea.TaskApi.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;

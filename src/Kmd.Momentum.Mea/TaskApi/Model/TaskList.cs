@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kmd.Momentum.Mea.Task.Model
+namespace Kmd.Momentum.Mea.TaskApi.Model
 {
     public class TaskList
     {

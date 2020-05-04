@@ -106,14 +106,14 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
         {
             List<JournalNoteAttachmentModel> attachmentList = new List<JournalNoteAttachmentModel>();
 
-            if (requestModel.Documents!=null)
+            if (requestModel.Documents != null)
             {
                 foreach (var doc in requestModel.Documents)
                 {
-                    var errorMsg = ValidateDocument(doc);
-                    if (errorMsg != string.Empty)
+
+                    if (!isValidDocument(doc))
                     {
-                        var error = new Error(_correlationId, new string[] { errorMsg }, "Mea");
+                        var error = new Error(_correlationId, new string[] { "Invalid document type" }, "Mea");
                         return new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest);
                     }
 
@@ -154,13 +154,18 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             return new ResultOrHttpError<string, Error>(content);
         }
 
-        private string ValidateDocument(JournalNoteDocumentRequestModel document)
+        private Boolean isValidDocument(JournalNoteDocumentRequestModel document)
         {
             var regx = new Regex(@"([a-zA-Z0-9\s_\\.\-\(\)])+(.doc|.docx|.pdf|.txt|.htm|.html|.msg)$", RegexOptions.IgnoreCase);
-            if (!regx.IsMatch(document.Name))
-                return "Invalid document type";         
 
-            return string.Empty;
+            if (!regx.IsMatch(document.Name))
+            {
+                Log.ForContext("CorrelationId", _correlationId)
+                    .ForContext("Client", _clientId)
+                .Error("Invalid docuemnt type: " + document.Name);
+                return false;
+            }
+            return true;            
         }
     }
 }

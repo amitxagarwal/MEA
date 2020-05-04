@@ -12,6 +12,7 @@ namespace Kmd.Momentum.Mea.Citizen.Model
         
         public string Body { get; set; }
 
+        #nullable enable
         public IReadOnlyList<JournalNoteDocumentRequestModel>? Documents { get; set; }
     }
 }

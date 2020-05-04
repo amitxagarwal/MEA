@@ -1,5 +1,5 @@
 schedules:
-  - cron: "0 * * * *"
+  - cron: "*/5 * * * *"
     branches:
       include:
       - dev

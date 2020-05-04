@@ -1,6 +1,7 @@
 ﻿using Kmd.Momentum.Mea.Caseworker;
 using Kmd.Momentum.Mea.Caseworker.Model;
 using Kmd.Momentum.Mea.Common.Authorization;
+using Kmd.Momentum.Mea.Task.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -78,6 +79,36 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         public async Task<ActionResult<CaseworkerData>> GetCaseworkerById([Required] [FromRoute] string caseworkerId)
         {
             var result = await _caseworkerService.GetCaseworkerByIdAsync(caseworkerId).ConfigureAwait(false);
+
+            if (result.IsError)
+            {
+                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error.Errors);
+            }
+            else
+            {
+                return Ok(result.Result);
+            }
+        }
+
+        ///<summary>
+        ///Get all tasks for the caseworkers
+        ///</summary>
+        ///<response code="200">The caseworker detail by id is loaded successfully</response>
+        ///<response code="400">Bad request</response>
+        ///<response code="404">The caseworker detail by id is not found</response>
+        ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
+        ///<param name="caseworkerId">The caseworker id to access the records from Core system.</param>
+        ///<returns>caseworker details</returns>
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [Route("{caseworkerID}/tasks")]
+        [SwaggerOperation(OperationId = "getTasksbyCaseworker")]
+        public async Task<ActionResult<TaskData>> GetTasksByCaseworkerId([Required] [FromRoute] string caseworkerId, int pageNumber)
+        {
+            var result = await _caseworkerService.GetAllTasksForCaseworkerIdAsync(caseworkerId, pageNumber).ConfigureAwait(false);
 
             if (result.IsError)
             {

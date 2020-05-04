@@ -1,6 +1,7 @@
 ﻿using Kmd.Momentum.Mea.Caseworker.Model;
 using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
+using Kmd.Momentum.Mea.Task.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -76,6 +77,30 @@ namespace Kmd.Momentum.Mea.Caseworker
                 .Information("The caseworker details by CaseworkerId has been returned successfully");
 
             return new ResultOrHttpError<CaseworkerDataResponseModel, Error>(dataToReturn);
+        }
+
+        public async Task<ResultOrHttpError<TaskList, Error>> GetAllTasksForCaseworkerIdAsync(string caseworkerId, int pageNumber)
+        {
+            var response = await _caseworkerHttpClient.GetAllTasksForCaseworkersAsync
+               ("/tasks/filtered", pageNumber, caseworkerId).ConfigureAwait(false);
+
+            if (response.IsError)
+            {
+                var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
+
+                Log.ForContext("CorrelationId", _correlationId)
+                   .ForContext("ClientId", _clientId)
+                   .Error("An Error Occured while retrieving data of all the caseworkers" + error);
+
+                return new ResultOrHttpError<TaskList, Error>(response.Error, response.StatusCode.Value);
+            }
+
+            Log.ForContext("CorrelationId", _correlationId)
+               .ForContext("ClientId", _clientId)
+               .Information("All the caseworkers data retrieved successfully");
+
+            return new ResultOrHttpError<TaskList, Error>(response.Result);
+
         }
     }
 }

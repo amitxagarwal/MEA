@@ -2,7 +2,7 @@ schedules:
   - cron: "*/5 * * * *"
     branches:
       include:
-      - dev
+      - add-pipeline-variable-from-keyvault
     always: true
 trigger: none
 pool:

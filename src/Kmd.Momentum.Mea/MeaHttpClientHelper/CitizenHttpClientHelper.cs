@@ -52,7 +52,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             {
                 var error = new Error(_correlationId, new[] { "No Records are available for entered page number" }, "MEA");
                 Log.ForContext("CorrelationId", _correlationId)
-                    .ForContext("Client", _clientId)
+                    .ForContext("ClientId", _clientId)
                 .Error("No Records are available for entered page number");
                 return new ResultOrHttpError<CitizenList, Error>(error, HttpStatusCode.BadRequest);
             }
@@ -161,8 +161,8 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             if (!regx.IsMatch(document.Name))
             {
                 Log.ForContext("CorrelationId", _correlationId)
-                    .ForContext("Client", _clientId)
-                .Error("Invalid docuemnt type: " + document.Name);
+                    .ForContext("ClientId", _clientId)
+                .Error("Invalid document type: " + document.Name);
                 return false;
             }
             return true;            

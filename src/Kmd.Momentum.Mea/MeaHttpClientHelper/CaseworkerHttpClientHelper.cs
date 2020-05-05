@@ -106,7 +106,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             foreach (var item in records)
             {
                 var dataToReturn = new TaskDataResponseModel(item.Id, item.Title, item.Description, item.Deadline, item.CreatedAt,
-               item.StateChangedAt, item.State.ToString(), (IReadOnlyList<AssignedActors>)item.AssignedActors, item.Reference);
+               item.StateChangedAt, item.State, (IReadOnlyList<AssignedActors>)item.AssignedActors, item.Reference);
                 totalRecords.Add(dataToReturn);
             }
 

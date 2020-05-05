@@ -167,7 +167,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             var TaskData = new List<TaskDataResponseModel>()
             {
                new TaskDataResponseModel (id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-               It.IsAny<string>(), It.IsAny<IReadOnlyList<AssignedActors>>(), It.IsAny<Reference>())
+               It.IsAny<TaskState>(), It.IsAny<IReadOnlyList<AssignedActors>>(), It.IsAny<Reference>())
                };
 
             var responseData = new TaskList()

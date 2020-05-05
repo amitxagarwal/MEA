@@ -15,14 +15,14 @@ namespace Kmd.Momentum.Mea.TaskApi.Model
         public string CreateAt { get; }
 
         public string StateChangedAt { get; }
-        public string TaskState { get; }
+        public TaskState TaskState { get; }
 
         public IReadOnlyList<AssignedActors> AssignedActors { get; }
         public Reference Reference { get; }
 
 
         public TaskDataResponseModel(string taskId, string title, string description, string deadline, string createAt,
-            string stateChangedAt, string taskState, IReadOnlyList<AssignedActors> assignedActors, Reference reference)
+            string stateChangedAt, TaskState taskState, IReadOnlyList<AssignedActors> assignedActors, Reference reference)
         {
             TaskId = taskId;
             Title = title;

@@ -10,7 +10,7 @@ namespace Kmd.Momentum.Mea.TaskApi.Model
         public string Title { get; set; }
 
         public string Description { get; set; }
-        public int State { get; set; }
+        public TaskState State { get; set; }
 
         public string Deadline { get; set; }
 

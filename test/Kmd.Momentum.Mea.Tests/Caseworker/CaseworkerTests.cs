@@ -41,7 +41,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
             var configurationMoq = new Mock<IConfiguration>();
-            int pageNumber = 1;
+            var pageNumber = 1;
             var context = GetContext();
 
             var caseworkerData = new List<CaseworkerDataResponseModel>()
@@ -78,7 +78,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
             var configurationMoq = new Mock<IConfiguration>();
-            int pageNumber = 0;
+            var pageNumber = 0;
             var context = GetContext();
 
             var error = new Error("123456", new string[] { "An Error Occured while retriving data of all caseworkers" }, "MCA");

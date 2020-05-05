@@ -32,7 +32,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             List<JToken> totalRecords = new List<JToken>();
             List<string> JsonStringList = new List<string>();
 
-            int pageNo = pageNumber;
+            var pageNo = pageNumber;
             var size = 100;
             var skip = (pageNo - 1) * size;
 

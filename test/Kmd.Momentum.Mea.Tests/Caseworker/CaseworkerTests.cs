@@ -159,14 +159,14 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
             var configurationMoq = new Mock<IConfiguration>();
-            var id = It.IsAny<string>();
+            var id = It.IsAny<Guid>();
             var pageNumber = 1;
             var caseworkerId = It.IsAny<string>();
             var context = GetContext();
 
             var TaskData = new List<TaskDataResponseModel>()
             {
-               new TaskDataResponseModel (id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+               new TaskDataResponseModel (id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(),
                It.IsAny<TaskState>(), It.IsAny<IReadOnlyList<AssignedActors>>(), It.IsAny<Reference>())
                };
 

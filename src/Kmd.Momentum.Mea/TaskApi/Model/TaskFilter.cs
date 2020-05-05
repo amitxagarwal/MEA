@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,7 +17,7 @@ namespace Kmd.Momentum.Mea.TaskApi.Model
 
         public bool HasMore { get; set; }
 
-        public string AdditionalValues { get; set; }
+        public IDictionary AdditionalValues { get; set; }
 
         public IReadOnlyList<TaskData> Data { get; set; }
     }

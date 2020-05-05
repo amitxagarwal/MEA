@@ -77,15 +77,8 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             List<TaskDataResponseModel> totalRecords = new List<TaskDataResponseModel>();
             var Result = new TaskSearchQuery()
             {
-                Start = null,
-                End = null,
                 AssignedActors = new List<string>() { caseworkerId },
                 Types = new List<TaskType>() { },
-                IsActive = true,
-                IsCompleted = false,
-                IsCanceled = false,
-                IsStarted = true,
-                IncludeUnassignedTasks = false
             };
             string serializedRequest = JsonConvert.SerializeObject(Result);
             StringContent stringContent = new StringContent(serializedRequest, Encoding.UTF8, "application/json");

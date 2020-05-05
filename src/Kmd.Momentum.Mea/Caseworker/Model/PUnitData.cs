@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Kmd.Momentum.Mea.Caseworker.Model
 {
@@ -14,7 +15,7 @@ namespace Kmd.Momentum.Mea.Caseworker.Model
 
         public bool HasMore { get; set; }
 
-        public string AdditionalValues { get; set; }
+        public IDictionary AdditionalValues { get; set; }
 
         public IReadOnlyList<CaseworkerData> Data { get; set; }
     }

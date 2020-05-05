@@ -4,9 +4,11 @@ using System.Text;
 
 namespace Kmd.Momentum.Mea.TaskApi.Model
 {
-    public class AssignedActors
+    public enum TaskUpdateStatus
     {
-        public Guid Id { get; set; }
-        public string DisplayName { get; set; }
+        Completed,
+        Cancel,
+        Delete,
+        Start
     }
 }

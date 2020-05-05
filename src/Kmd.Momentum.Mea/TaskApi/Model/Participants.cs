@@ -6,8 +6,8 @@ namespace Kmd.Momentum.Mea.TaskApi.Model
 {
     public class Participants
     {
-        public string ActorId { get; set; }
-        public string Responsibility { get; set; }
+        public Guid ActorId { get; set; }
+        public int Responsibility { get; set; }
 
     }
 }

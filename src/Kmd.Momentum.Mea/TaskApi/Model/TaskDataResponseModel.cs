@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Kmd.Momentum.Mea.TaskApi.Model
 {
@@ -17,10 +15,14 @@ namespace Kmd.Momentum.Mea.TaskApi.Model
         public string CreateAt { get; }
 
         public string StateChangedAt { get; }
+        public string TaskState { get; }
+
+        public IReadOnlyList<AssignedActors> AssignedActors { get; }
+        public Reference Reference { get; }
 
 
         public TaskDataResponseModel(string taskId, string title, string description, string deadline, string createAt,
-            string stateChangedAt)
+            string stateChangedAt, string taskState, IReadOnlyList<AssignedActors> assignedActors, Reference reference)
         {
             TaskId = taskId;
             Title = title;
@@ -28,7 +30,9 @@ namespace Kmd.Momentum.Mea.TaskApi.Model
             Deadline = deadline;
             CreateAt = createAt;
             StateChangedAt = stateChangedAt;
-           
+            TaskState = taskState;
+            AssignedActors = assignedActors;
+            Reference = reference;
         }
     }
 }

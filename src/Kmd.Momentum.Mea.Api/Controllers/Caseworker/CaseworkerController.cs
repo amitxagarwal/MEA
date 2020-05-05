@@ -95,11 +95,11 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         ///</summary>
         ///<response code="200">The caseworker detail by id is loaded successfully</response>
         ///<response code="400">Bad request</response>
-        ///<response code="404">The caseworker detail by id is not found</response>
+        ///<response code="404">The List of tasks by caseworkerId is not found</response>
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
         ///<param name="caseworkerId">The caseworker id to access the records from Core system.</param>
-        ///<param name="pageNumber">The caseworker id to access the records from Core system.</param>
-        ///<returns>caseworker details</returns>
+        ///<param name="pageNumber">The PageNumber to access the records from Core system. Minimum Value is 0</param>
+        ///<returns>List of Tasks for caseworkerId</returns>
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -107,7 +107,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         [ProducesResponseType(401)]
         [Route("{caseworkerId}/tasks")]
         [SwaggerOperation(OperationId = "getTasksbyCaseworker")]
-        public async Task<ActionResult<TaskData>> GetTasksByCaseworkerId([Required] [FromRoute] string caseworkerId, [Required] [FromQuery] int pageNumber)
+        public async Task<ActionResult<TaskData>> GetAllTasksByCaseworkerId([Required] [FromRoute] string caseworkerId, [Required] [FromQuery] int pageNumber)
         {
             var result = await _caseworkerService.GetAllTasksForCaseworkerIdAsync(caseworkerId, pageNumber).ConfigureAwait(false);
 

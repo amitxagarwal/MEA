@@ -3,6 +3,7 @@ using Kmd.Momentum.Mea.Caseworker;
 using Kmd.Momentum.Mea.Caseworker.Model;
 using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
+using Kmd.Momentum.Mea.TaskApi.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -61,10 +62,10 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber))
                     .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(responseData)));
 
-            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+            var caseworkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
 
             //Act
-            var result = await caseWorkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
+            var result = await caseworkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
 
             //Asert
             result.Should().NotBeNull();
@@ -86,10 +87,10 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber))
                     .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(error, HttpStatusCode.BadRequest)));
 
-            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+            var caseworkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
 
             //Act
-            var result = await caseWorkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
+            var result = await caseworkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
 
             //Asert
             result.Should().NotBeNull();
@@ -114,10 +115,10 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync($"employees/{id}"))
                    .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(responseData)));
 
-            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+            var caseworkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
 
             //Act
-            var result = await caseWorkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);
+            var result = await caseworkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);
 
             //Asert
             result.Should().NotBeNull();
@@ -142,15 +143,82 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync($"employees/{id}"))
                    .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
 
-            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+            var caseworkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
 
             //Act
-            var result = await caseWorkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);
+            var result = await caseworkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);
 
             //Asert
             result.IsError.Should().BeTrue();
             result.Error.Errors[0].Should().Be("Caseworker data with the supplied caseworkerId is not found");
         }
 
+        [Fact]
+        public async Task GetAllTasksByCaseworkerIdSuccess()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
+            var configurationMoq = new Mock<IConfiguration>();
+            var id = It.IsAny<string>();
+            var pageNumber = 1;
+            var caseworkerId = It.IsAny<string>();
+            var context = GetContext();
+
+            var TaskData = new List<TaskDataResponseModel>()
+            {
+               new TaskDataResponseModel (id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+               It.IsAny<string>(), It.IsAny<IReadOnlyList<AssignedActors>>(), It.IsAny<Reference>())
+               };
+
+            var responseData = new TaskList()
+            {
+                TotalNoOfPages = 1,
+                TotalSearchCount = 1,
+                PageNo = 1,
+                Result = TaskData
+            };
+
+            helperHttpClientMoq.Setup(x => x.GetAllTasksByCaseworkerIdFromMomentumCoreAsync("/tasks/filtered", pageNumber, caseworkerId))
+                               .Returns(Task.FromResult(new ResultOrHttpError<TaskList, Error>(responseData)));
+
+            var caseworkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+
+            //Act
+            var result = await caseworkerService.GetAllTasksForCaseworkerIdAsync(caseworkerId, pageNumber).ConfigureAwait(false);
+
+            //Asert
+            result.Should().NotBeNull();
+            result.IsError.Should().BeFalse();
+            result.Result.Should().BeEquivalentTo(responseData);
+        }
+
+        [Fact]
+        public async Task GetAllTasksByCaseworkerIdFails()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
+            var configurationMoq = new Mock<IConfiguration>();
+            var id = It.IsAny<string>();
+            var pageNumber = 1;
+            var caseworkerId = It.IsAny<string>();
+            var context = GetContext();
+
+            var error = new Error("123456", new string[] { "An Error Occured while retriving tasks with given caseworkerId" }, "MCA");
+
+            helperHttpClientMoq.Setup(x => x.GetAllTasksByCaseworkerIdFromMomentumCoreAsync("/tasks/filtered", pageNumber, caseworkerId))
+                    .Returns(Task.FromResult(new ResultOrHttpError<TaskList, Error>(error, HttpStatusCode.BadRequest)));
+
+            var caseworkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+
+            //Act
+            var result = await caseworkerService.GetAllTasksForCaseworkerIdAsync(caseworkerId, pageNumber).ConfigureAwait(false);
+
+            //Asert
+            result.Should().NotBeNull();
+            result.IsError.Should().BeTrue();
+            result.Error.Errors[0].Should().Be("An Error Occured while retriving tasks with given caseworkerId");
+        }
     }
+
 }
+

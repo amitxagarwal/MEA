@@ -81,7 +81,7 @@ namespace Kmd.Momentum.Mea.Caseworker
 
         public async Task<ResultOrHttpError<TaskList, Error>> GetAllTasksForCaseworkerIdAsync(string caseworkerId, int pageNumber)
         {
-            var response = await _caseworkerHttpClient.GetAllTasksForCaseworkersAsync
+            var response = await _caseworkerHttpClient.GetAllTasksByCaseworkerIdFromMomentumCoreAsync
                ("/tasks/filtered", pageNumber, caseworkerId).ConfigureAwait(false);
 
             if (response.IsError)

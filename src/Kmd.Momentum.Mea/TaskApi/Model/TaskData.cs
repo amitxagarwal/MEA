@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Kmd.Momentum.Mea.TaskApi.Model
 {
@@ -28,6 +26,8 @@ namespace Kmd.Momentum.Mea.TaskApi.Model
         public IReadOnlyList<AssignedActors> AssignedActors { get; set; }
         public string Subject { get; set; }
         public int Type { get; set; }
+        public string RelatedEntityId { get; set; }
+        public Reference Reference { get; set; }
         public IReadOnlyList<Participants> Participants { get; set; }
         public string RelatedEntityType { get; set; }
     }

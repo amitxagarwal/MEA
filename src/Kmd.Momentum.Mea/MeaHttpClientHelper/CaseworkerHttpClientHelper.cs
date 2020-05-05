@@ -70,7 +70,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             return new ResultOrHttpError<string, Error>(content);
         }
 
-        public async Task<ResultOrHttpError<TaskList, Error>> GetAllTasksForCaseworkersAsync(string path, int pageNumber, string caseworkerId)
+        public async Task<ResultOrHttpError<TaskList, Error>> GetAllTasksByCaseworkerIdFromMomentumCoreAsync(string path, int pageNumber, string caseworkerId)
         {
             var pageSize = 100;
             pageNumber = pageNumber == 0 ? 1 : pageNumber;
@@ -79,8 +79,8 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             {
                 Start = null,
                 End = null,
-                AssignedActors =  new List<string>() { caseworkerId},
-                Types = new List<TaskType>() {},
+                AssignedActors = new List<string>() { caseworkerId },
+                Types = new List<TaskType>() { },
                 IsActive = true,
                 IsCompleted = false,
                 IsCanceled = false,
@@ -106,7 +106,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             foreach (var item in records)
             {
                 var dataToReturn = new TaskDataResponseModel(item.Id, item.Title, item.Description, item.Deadline, item.CreatedAt,
-               item.StateChangedAt);
+               item.StateChangedAt, item.State.ToString(), (IReadOnlyList<AssignedActors>)item.AssignedActors, item.Reference);
                 totalRecords.Add(dataToReturn);
             }
 

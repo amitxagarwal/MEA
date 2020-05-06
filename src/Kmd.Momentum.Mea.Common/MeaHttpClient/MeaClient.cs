@@ -124,6 +124,48 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
+        public async Task<ResultOrHttpError<string, Error>> PutAsync(string path, StringContent stringContent)
+        {
+            var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
+
+            if (authResponse.IsError)
+            {
+                Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while creating records in Momentum Core System : {authResponse.Error}");
+                var error = new Error(_correlationId, new string[] { authResponse.Error }, "Momentum Core Api");
+
+                return new ResultOrHttpError<string, Error>(error, authResponse.StatusCode.Value);
+            }
+
+            var accessToken = JObject.Parse(await authResponse.Result.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("bearer " + accessToken);
+
+            var url = new Uri($"{_mcaConfig.KommuneUrl}{path}");
+
+            var response = await _httpClient.PutAsync(url, stringContent).ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                if ((int)response.StatusCode >= (int)HttpStatusCode.BadRequest && (int)response.StatusCode < (int)HttpStatusCode.InternalServerError)
+                {
+                    var errorFromResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var error = new Error(_correlationId, new string[] { "An error occured while creating records in Momentum Core System" }, "MEA");
+                    Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while creating records in Momentum Core System : {errorFromResponse}");
+
+                    return new ResultOrHttpError<string, Error>(error, response.StatusCode);
+                }
+
+                var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+
+                Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while creating records in Momentum Core System {errorResponse}");
+
+                return new ResultOrHttpError<string, Error>(errorResponse, response.StatusCode);
+            }
+
+            return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+        }
+
+
         private async Task<ResultOrHttpError<HttpResponseMessage, string>> ReturnAuthorizationTokenAsync()
         {
             var meaSecret = await GetMeaSecret().ConfigureAwait(false);

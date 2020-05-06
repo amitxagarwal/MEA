@@ -1,9 +1,12 @@
 ﻿using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.Common.MeaHttpClient;
+using Kmd.Momentum.Mea.TaskApi.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 {
@@ -18,7 +21,12 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 
         public async Task<ResultOrHttpError<string, Error>> UpdateTaskStatusFromMomentumCoreAsync(string path)
         {
-            var response = await _meaClient.GetAsync(path).ConfigureAwait(false);
+            var Result = new TaskUpdateModel();
+
+            string serializedRequest = JsonConvert.SerializeObject(Result);
+            StringContent stringContent = new StringContent(serializedRequest, Encoding.UTF8, "application/json");
+
+            var response = await _meaClient.PutAsync(path, stringContent).ConfigureAwait(false);
 
             if (response.IsError)
             {

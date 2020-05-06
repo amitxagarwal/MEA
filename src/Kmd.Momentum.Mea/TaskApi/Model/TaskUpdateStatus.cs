@@ -6,9 +6,9 @@ namespace Kmd.Momentum.Mea.TaskApi.Model
 {
     public enum TaskUpdateStatus
     {
-        Completed,
-        Cancel,
-        Delete,
-        Start
+        Completed = 0,
+        Cancel = 1,
+        Delete = 2,
+        Start = 3
     }
 }

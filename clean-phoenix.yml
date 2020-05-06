@@ -47,7 +47,7 @@ steps:
         exit 1
       }
 
-      # Do the work
+      # Check and delete resource group
       foreach ($rg in $resourceGroups)
       {
         Write-Output "Checking resourceGroup Name - $($rg.resourcegroupname) for last deployment time."

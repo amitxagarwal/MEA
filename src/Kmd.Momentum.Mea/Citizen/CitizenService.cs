@@ -110,7 +110,7 @@ namespace Kmd.Momentum.Mea.Citizen
             return new ResultOrHttpError<CitizenDataResponseModel, Error>(citizenData);
         }
 
-        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsync(string momentumCitizenId, JournalNoteResponseModel requestModel)
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsync(string momentumCitizenId, JournalNoteRequestModel requestModel)
         {
             var response = await _citizenHttpClient.CreateJournalNoteInMomentumCoreAsync("journals/note", momentumCitizenId, requestModel).ConfigureAwait(false);
 

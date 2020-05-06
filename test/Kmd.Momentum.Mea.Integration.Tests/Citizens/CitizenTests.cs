@@ -149,9 +149,9 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
-            List<JournalNoteDocumentResponseModel> documentList = new List<JournalNoteDocumentResponseModel>()
+            List<JournalNoteDocumentRequestModel> documentList = new List<JournalNoteDocumentRequestModel>()
             {
-                new JournalNoteDocumentResponseModel()
+                new JournalNoteDocumentRequestModel()
                 {
                     Content = "testContent",
                     ContentType = "application/octet-stream",
@@ -159,12 +159,12 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
                 }
             };
 
-            JournalNoteResponseModel mcaRequestModel = new JournalNoteResponseModel()
+            JournalNoteRequestModel mcaRequestModel = new JournalNoteRequestModel()
             {
                 Cpr = "0101005402",
                 Title = "testTitle",
                 Body = "testBody",
-                Type = "SMS",
+                Type = JournalNoteType.SMS,
                 Documents = documentList
             };
             string _serializedRequest = JsonConvert.SerializeObject(mcaRequestModel);

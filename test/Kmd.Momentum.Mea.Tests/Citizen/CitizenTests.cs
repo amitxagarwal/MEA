@@ -264,18 +264,18 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var context = GetContext();
             var configurationMoq = new Mock<IConfiguration>();
 
-            JournalNoteDocumentResponseModel[] requestDocumentModel = { new JournalNoteDocumentResponseModel() {
+            JournalNoteDocumentRequestModel[] requestDocumentModel = { new JournalNoteDocumentRequestModel() {
                 Content="testContent",
                 ContentType="testContentType",
                 Name="testDocumentName"
             } };
 
-            var requestModel = new JournalNoteResponseModel()
+            var requestModel = new JournalNoteRequestModel()
             {
                 Cpr = "testCpr",
                 Body = "testBody",
                 Title = "testTitle",
-                Type = "testType",
+                Type = JournalNoteType.SMS,
                 Documents = requestDocumentModel
             };
 
@@ -301,18 +301,18 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var context = GetContext();
             var configurationMoq = new Mock<IConfiguration>();
 
-            JournalNoteDocumentResponseModel[] requestDocumentModel = { new JournalNoteDocumentResponseModel() {
+            JournalNoteDocumentRequestModel[] requestDocumentModel = { new JournalNoteDocumentRequestModel() {
                 Content="testContent",
                 ContentType="testContentType",
                 Name="testDocumentName"
             } };
 
-            var requestModel = new JournalNoteResponseModel()
+            var requestModel = new JournalNoteRequestModel()
             {
                 Cpr = "testCpr",
                 Body = "testBody",
                 Title = "testTitle",
-                Type = "testType",
+                Type = JournalNoteType.SMS,
                 Documents = requestDocumentModel
             };
 

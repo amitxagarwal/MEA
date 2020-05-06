@@ -72,10 +72,6 @@ Param
 
   [Parameter(Mandatory=$true)]
   [string]
-  $ClientId,
-
-  [Parameter(Mandatory=$true)]
-  [string]
   $ClientSecret,
 
   [Parameter(Mandatory=$true)]
@@ -88,7 +84,15 @@ Param
 
   [Parameter(Mandatory=$false)]
   [string]
-  $KeyVaultRequired = 'false'
+  $KeyVaultRequired = 'false',
+
+  [Parameter(Mandatory=$false)]
+  [string]
+  $DbLoginId = 'MeaAdmin',
+
+  [Parameter(Mandatory=$false)]
+  [string]
+  $DbLoginPassword = 'Admin@123'  
 )
 
 Push-Location $PSScriptRoot
@@ -120,7 +124,7 @@ try
     $ApplicationInsightsName="$ResourceNamePrefix-ai";
     $DbServerName="$ResourceNamePrefix-dbsvr";
     $DbName="$ResourceNamePrefix-db";
-    $DbConnection="Server=$($DbServerName).postgres.database.azure.com;Database=$($DbName);Port=5432;User Id=$($env:DbLoginId)@$($DbServerName);Password=$($env:DbLoginPassword);Ssl Mode=Require;"
+    $DbConnection="Server=$($DbServerName).postgres.database.azure.com;Database=$($DbName);Port=5432;User Id=$($DbLoginId)@$($DbServerName);Password=$($DbLoginPassword);Ssl Mode=Require;"
     $KeyVaultName = "$($ResourceNamePrefix.replace('-',''))kv"
 
     Write-Host "Checking KeyVault Name Length"
@@ -145,13 +149,11 @@ try
     diagnosticSeqServerUrl = $DiagnosticSeqServerUrl;
     diagnosticSeqApiKey = $DiagnosticSeqApiKey;
     webAppServicePlanSku = $WebAppServicePlanSku;
-    webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;
-    clientId = $ClientId;
-    clientSecret = $ClientSecret;
-    mcaApiUri = $env:McaApiUri;
+    webAppConfigAlwaysOn = $WebAppConfigAlwaysOn;   
+    clientSecret = $ClientSecret
     dbServerName = $DbServerName;
-    dbLoginId = $env:DbLoginId;
-    dbLoginPassword = $env:DbLoginPassword;
+    dbLoginId = $DbLoginId;
+    dbLoginPassword = $DbLoginPassword;
     dbName = $DbName;
     dbConnection = $DbConnection;
     dbRequired = $DbRequired;

@@ -10,7 +10,6 @@ parameters:
   webAppServicePlanSku: B1
   webAppConfigAlwaysOn: true
   autoSwapSlots: false
-  clientId: <secret>
   clientSecret: <secret>
   isDbRequired: 'false'
   isKeyVaultRequired: 'false'
@@ -29,7 +28,6 @@ jobs:
       ResourceGroupName: kmd-momentum-mea-${{ parameters.instanceId }}-rg
       WebAppServicePlanSku: ${{ parameters.webAppServicePlanSku }}
       WebAppConfigAlwaysOn: ${{ parameters.webAppConfigAlwaysOn }}
-      ClientId: ${{ parameters.clientId }}
       ClientSecret: ${{ parameters.clientSecret }}
       isDbRequired: ${{ parameters.isDbRequired }}
       isKeyVaultRequired: ${{ parameters.isKeyVaultRequired }}
@@ -46,7 +44,7 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 ScriptType: 'FilePath'
                 ScriptPath: '$(Pipeline.Workspace)/deploy/deploy-infrastructure.ps1'
-                ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)' -ClientId '$(ClientId)' -ClientSecret '$(ClientSecret)' -Environment '$(Environment)' -DbRequired '$(isDbRequired)' -KeyVaultRequired '$(isKeyVaultRequired)'
+                ScriptArguments: -MarkForAutoDelete:("${{ parameters.environmentAutoDelete }}" -eq "true") -InstanceId '$(InstanceId)' -ResourceGroupLocation '$(ResourceGroupLocation)' -DiagnosticSeqServerUrl '$(DiagnosticSeqServerUrl)' -DiagnosticSeqApiKey '$(DiagnosticSeqApiKey)' -WebAppConfigAlwaysOn ("$(WebAppConfigAlwaysOn)" -eq "true") -WebAppServicePlanSku '$(WebAppServicePlanSku)' -ClientSecret '$(ClientSecret)' -Environment '$(Environment)' -DbRequired '$(isDbRequired)' -KeyVaultRequired '$(isKeyVaultRequired)'
                 azurePowerShellVersion: 'LatestVersion'
                 pwsh: true
 

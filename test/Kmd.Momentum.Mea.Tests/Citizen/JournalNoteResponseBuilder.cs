@@ -8,21 +8,21 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
         private string cpr = "testCpr";
         private string body = "testBody";
         private string title = "testTitle";
-        private string type = "testType";
-        private List<JournalNoteDocumentResponseModel> journalNoteDocumentResponseModel = new List<JournalNoteDocumentResponseModel>()
+        private JournalNoteType type = new JournalNoteType();
+        private List<JournalNoteDocumentRequestModel> journalNoteDocumentRequestModel = new List<JournalNoteDocumentRequestModel>()
         {
-            new JournalNoteDocumentResponseModel(){Content="testContent", ContentType="testContentType", Name="testDocumentName"}
+            new JournalNoteDocumentRequestModel(){Content="testContent", ContentType="testContentType", Name="testDocumentName"}
         };
 
-        public JournalNoteResponseModel Build()
+        public JournalNoteRequestModel Build()
         {
-            return new JournalNoteResponseModel()
+            return new JournalNoteRequestModel()
             {
                 Cpr = this.cpr,
                 Body = this.body,
                 Title = this.title,
                 Type = this.type,
-                Documents = this.journalNoteDocumentResponseModel
+                Documents = this.journalNoteDocumentRequestModel
             };
         }
 
@@ -43,10 +43,15 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             this.title = title;
             return this;
         }
-
-        public JournalNoteResponseBuilder WithDocuments(List<JournalNoteDocumentResponseModel> document)
+        public JournalNoteResponseBuilder WithType(JournalNoteType type)
         {
-            this.journalNoteDocumentResponseModel = document;
+            this.type = type;
+            return this;
+        }
+
+        public JournalNoteResponseBuilder WithDocuments(List<JournalNoteDocumentRequestModel> document)
+        {
+            this.journalNoteDocumentRequestModel = document;
             return this;
         }
     }

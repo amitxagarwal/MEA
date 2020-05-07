@@ -110,7 +110,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             result.Should().BeEquivalentTo(error);
         }
 
-        [Fact]
+        [SkipLocalFact]
         public async Task GetCaseworkerByCaseworkerIdFailsDueToInvalidReq()
         {
             //Arrange

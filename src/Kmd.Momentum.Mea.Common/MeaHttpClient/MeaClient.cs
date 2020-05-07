@@ -124,7 +124,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
-        public async Task<ResultOrHttpError<string, Error>> PutAsync(string path, StringContent stringContent)
+        public async Task<ResultOrHttpError<string, Error>> PutAsync(string path)
         {
             var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
 
@@ -142,7 +142,7 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             var url = new Uri($"{_mcaConfig.KommuneUrl}{path}");
 
-            var response = await _httpClient.PutAsync(url, stringContent).ConfigureAwait(false);
+            var response = await _httpClient.PutAsync(url, null).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {

@@ -8,28 +8,27 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.TaskApi
 {
-   public class TaskService : ITaskService
+    public class TaskService : ITaskService
     {
         private readonly ITaskHttpClientHelper _taskHttpClient;
-        private readonly IConfiguration _config;
         private readonly string _correlationId;
         private readonly string _clientId;
 
-        public TaskService(ITaskHttpClientHelper taskHttpClient, IConfiguration config, IHttpContextAccessor httpContextAccessor)
+        public TaskService(ITaskHttpClientHelper taskHttpClient, IHttpContextAccessor httpContextAccessor)
         {
             _taskHttpClient = taskHttpClient ?? throw new ArgumentNullException(nameof(taskHttpClient));
-            _config = config;
             _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
             _clientId = httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == "azp").Value;
         }
+
        public async Task<ResultOrHttpError<TaskDataResponseModel, Error>> UpdateTaskStatusByIdAsync(string taskId, TaskUpdateModel taskUpdateStatus)
         {
-            var response = await _taskHttpClient.UpdateTaskStatusFromMomentumCoreAsync($"/tasks/{taskId}/{taskUpdateStatus}", taskId, taskUpdateStatus).ConfigureAwait(false);
+            var taskStateValue = (int)taskUpdateStatus.taskUpdateStatus;
+            var response = await _taskHttpClient.UpdateTaskStatusFromMomentumCoreAsync($"/tasks/{taskId}/{taskStateValue}?applicationContext={taskUpdateStatus.applicationContext}").ConfigureAwait(false);
 
             if (response.IsError)
             {

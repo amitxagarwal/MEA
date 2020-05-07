@@ -5,15 +5,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Api.Controllers.Tasks
 {
-
     /// <summary>
     /// Controller to handle all the task related API requests
     /// </summary>
@@ -29,7 +26,6 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Tasks
         /// Constructor for task controller
         /// </summary>
         /// <param name="taskService"></param>
-    
         public TasksController(ITaskService taskService)
         {
             _taskService = taskService ?? throw new ArgumentNullException(nameof(taskService));
@@ -40,10 +36,10 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Tasks
         ///</summary>
         ///<response code="200">The task status is updated successfully</response>
         ///<response code="400">Bad request</response>
-        ///<response code="404">The task detail by id is not found</response>
+        ///<response code="404">The task details by id is not found</response>
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
-        ///<param name="taskID">The MomentumCitizenID or CitizenId to Create the journal note record in the Core system</param>
-        ///<param name="taskUpdateStatus">The requestmodel to save as a journal note record, in the Core system</param>
+        ///<param name="taskId">The MomentumCitizenId or CitizenId to update the task in the Core system</param>
+        ///<param name="taskUpdateStatus">The request model to update task in the Core system</param>
         [HttpPut]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -51,7 +47,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Tasks
         [ProducesResponseType(401)]
         [Route("{taskId}/update")]
         [SwaggerOperation(OperationId = "Update Task status")]
-        public async Task<ActionResult<TaskData>> GetCaseworkerById([Required] [FromRoute] string taskId, [Required] [FromBody] TaskUpdateModel taskUpdateStatus)
+        public async Task<ActionResult<TaskData>> UpdateTaskStatusById([Required] [FromRoute] string taskId, [Required] [FromBody] TaskUpdateModel taskUpdateStatus)
         {
             var result = await _taskService.UpdateTaskStatusByIdAsync(taskId, taskUpdateStatus).ConfigureAwait(false);
 

@@ -38,7 +38,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Tasks
         ///<response code="400">Bad request</response>
         ///<response code="404">The task details by id is not found</response>
         ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
-        ///<param name="taskId">The MomentumCitizenId or CitizenId to update the task in the Core system</param>
+        ///<param name="taskId">The TaskId to update the task in the Core system</param>
         ///<param name="taskUpdateStatus">The request model to update task in the Core system</param>
         [HttpPut]
         [ProducesResponseType(200)]
@@ -47,7 +47,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Tasks
         [ProducesResponseType(401)]
         [Route("{taskId}/update")]
         [SwaggerOperation(OperationId = "Update Task status")]
-        public async Task<ActionResult<TaskData>> UpdateTaskStatusById([Required] [FromRoute] string taskId, [Required] [FromBody] TaskUpdateModel taskUpdateStatus)
+        public async Task<ActionResult<TaskData>> UpdateTaskStatusById([Required] [FromRoute] string taskId, [Required] [FromBody] TaskUpdateStatus taskUpdateStatus)
         {
             var result = await _taskService.UpdateTaskStatusByIdAsync(taskId, taskUpdateStatus).ConfigureAwait(false);
 

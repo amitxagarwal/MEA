@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kmd.Momentum.Mea.TaskApi.Model
+﻿namespace Kmd.Momentum.Mea.TaskApi.Model
 {
-    public enum TaskUpdateStatus
+    public class TaskUpdateStatus
     {
-        Completed = 0,
-        Cancel = 1,
-        Delete = 2,
-        Start = 3
+        public TaskAction taskAction { get; set; }
+
+        public TaskContext taskContext { get; set; }
     }
 }
+

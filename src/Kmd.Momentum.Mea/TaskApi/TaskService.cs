@@ -2,7 +2,6 @@
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Kmd.Momentum.Mea.TaskApi.Model;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Serilog;
 using System;
@@ -25,31 +24,31 @@ namespace Kmd.Momentum.Mea.TaskApi
             _clientId = httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == "azp").Value;
         }
 
-       public async Task<ResultOrHttpError<TaskDataResponseModel, Error>> UpdateTaskStatusByIdAsync(string taskId, TaskUpdateModel taskUpdateStatus)
+       public async Task<ResultOrHttpError<TaskDataResponseModel, Error>> UpdateTaskStatusByIdAsync(string taskId, TaskUpdateStatus taskUpdateStatus)
         {
-            var taskStateValue = (int)taskUpdateStatus.taskUpdateStatus;
-            var response = await _taskHttpClient.UpdateTaskStatusFromMomentumCoreAsync($"/tasks/{taskId}/{taskStateValue}?applicationContext={taskUpdateStatus.applicationContext}").ConfigureAwait(false);
+            var taskStateValue = (int)taskUpdateStatus.taskAction;
+            var response = await _taskHttpClient.UpdateTaskStatusByTaskIdFromMomentumCoreAsync($"/tasks/{taskId}/{taskStateValue}?applicationContext={taskUpdateStatus.taskContext}").ConfigureAwait(false);
 
             if (response.IsError)
             {
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
                 Log.ForContext("CorrelationId", _correlationId)
                    .ForContext("Client", _clientId)
-                   .ForContext("CaseworkerId", taskId)
-                   .Error("An error occured while retrieving caseworker data by CaseworkerId" + error);
+                   .ForContext("TaskId", taskId)
+                   .Error("An error occured while updating task state" + error);
                 return new ResultOrHttpError<TaskDataResponseModel, Error>(response.Error, response.StatusCode.Value);
             }
 
             var content = response.Result;
-            var caseworkerDataObj = JsonConvert.DeserializeObject<TaskData>(content);
+            var taskDataObj = JsonConvert.DeserializeObject<TaskData>(content);
 
-            var dataToReturn = new TaskDataResponseModel(caseworkerDataObj.Id, caseworkerDataObj.Title, caseworkerDataObj.Description, caseworkerDataObj.Deadline, caseworkerDataObj.CreatedAt,
-               caseworkerDataObj.StateChangedAt, caseworkerDataObj.State, (IReadOnlyList<AssignedActors>)caseworkerDataObj.AssignedActors, caseworkerDataObj.Reference);
+            var dataToReturn = new TaskDataResponseModel(taskDataObj.Id, taskDataObj.Title, taskDataObj.Description, taskDataObj.Deadline, taskDataObj.CreatedAt,
+               taskDataObj.StateChangedAt, taskDataObj.State, (IReadOnlyList<AssignedActors>)taskDataObj.AssignedActors, taskDataObj.Reference);
 
             Log.ForContext("CorrelationId", _correlationId)
                 .ForContext("Client", _clientId)
-                .ForContext("CaseworkerId", caseworkerDataObj.Id)
-                .Information("The caseworker details by CaseworkerId has been returned successfully");
+                .ForContext("TaskId", taskDataObj.Id)
+                .Information("The task status is updated successfully");
 
             return new ResultOrHttpError<TaskDataResponseModel, Error>(dataToReturn);
         }

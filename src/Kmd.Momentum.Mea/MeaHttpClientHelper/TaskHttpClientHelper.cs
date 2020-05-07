@@ -14,7 +14,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             _meaClient = meaClient ?? throw new ArgumentNullException(nameof(meaClient));
         }
 
-        public async Task<ResultOrHttpError<string, Error>> UpdateTaskStatusFromMomentumCoreAsync(string path)
+        public async Task<ResultOrHttpError<string, Error>> UpdateTaskStatusByTaskIdFromMomentumCoreAsync(string path)
         {
             var response = await _meaClient.PutAsync(path).ConfigureAwait(false);
 

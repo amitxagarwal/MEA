@@ -9,6 +9,6 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 {
     public interface ITaskHttpClientHelper
     {
-        Task<ResultOrHttpError<string, Error>> UpdateTaskStatusFromMomentumCoreAsync(string path);
+        Task<ResultOrHttpError<string, Error>> UpdateTaskStatusFromMomentumCoreAsync(string path, string taskId, TaskUpdateModel taskUpdateStatus);
     }
 }

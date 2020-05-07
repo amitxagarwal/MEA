@@ -5,6 +5,7 @@
         public const string CitizenRole = "citizen";
         public const string CaseworkerRole = "caseworker";
         public const string JournalRole = "journal";
+        public const string TaskRole = "task";
 
         public const string AudienceClaimTypeName = "aud";
         public const string TenantClaimTypeName = "tenant";

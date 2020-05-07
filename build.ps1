@@ -142,7 +142,7 @@ try{
 
         & dotnet build "Kmd.Momentum.Mea.DbAdmin.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
   
-        if($LASTEXITCODE -ne 0) { exit 3 }
+        if($LASTEXITCODE -ne 0) { exit 1 }
 
         $now = Get-Date
         $nowStr = $now.ToUniversalTime().ToString("yyyyMMddHHmmss")
@@ -173,17 +173,27 @@ try{
         if($LASTEXITCODE -ne 0) { exit 1 }
     
         if ($PublishArtifactsToAzureDevOps) {
-     
+
+            Write-Host "Creating artifacts for database"
+
             foreach ($item in Get-ChildItem "./bin/*/*") {
-     
+
                 Write-Host "##vso[artifact.upload artifactname=dbApp;]$item"
+
+                if($LASTEXITCODE -ne 0) { exit 1 }
             }
         
+            Write-Host "Creating artifacts for database migration scripts"
+
             foreach ($item in Get-ChildItem "$PSScriptRoot/MigrationScripts") {
         
                 Write-Host "##vso[artifact.upload artifactname=migrationScripts;]$item"
-             }
+
+                if($LASTEXITCODE -ne 0) { exit 1 }
+            }
+
         }
+
         Pop-Location
     }
     else
@@ -192,6 +202,10 @@ try{
     }
 }
 catch{
+    Write-Host "An error occurred:"
+	Write-Host $_
+    Write-Host "##vso[task.LogIssue type=error;]"$_
+    Write-Host "##vso[task.complete result=Failed]"
     exit 1
 }
 
@@ -204,8 +218,9 @@ try {
         Write-Host "build: Cleaning ./artifacts"
         Remove-Item ./artifacts -Force -Recurse
     }
-
+    
     $ArtifactsStagingPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($ArtifactsStagingPath)
+    
     Write-Host "build: staging artifacts to '$ArtifactsStagingPath'"
     
     $branch = @{ $true = $SrcBranchName; $false = $(git symbolic-ref --short -q HEAD) }[$SrcBranchName -ne $NULL];
@@ -214,42 +229,70 @@ try {
     $commitHash = $(git rev-parse --short HEAD)
     $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
 
+    if($LASTEXITCODE -ne 0) { exit 1 }
+
     Write-Host "build: Package version suffix is $suffix"
     Write-Host "build: Build version suffix is $buildSuffix"
 
     & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
-    if($LASTEXITCODE -ne 0) { 
 
-    Write-Host "build again to fix dependencies if exist"
-
-    & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
+    if($LASTEXITCODE -ne 0) {
+    
+        Write-Host "build: Build again to fix dependencies if exist"
+        
+        & dotnet build "kmd-momentum-mea.sln" -c Release --verbosity "$BuildVerbosity" --version-suffix "$buildSuffix"
     }
-    if($LASTEXITCODE -ne 0) { exit 3 }
 
-    $PublishedApplications = $(
-        "Kmd.Momentum.Mea.Api"
-    )
+    if($LASTEXITCODE -ne 0) { exit 1 }
 
-    foreach ($srcProjectName in $PublishedApplications) {
-        Push-Location "./src/$srcProjectName"
-        try {
-            Write-Host "build: publishing output of '$srcProjectName' into '$ArtifactsStagingPath/$srcProjectName'"
+    if ($PublishArtifactsToAzureDevOps) {
 
-            if ($suffix) {
-                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName" --version-suffix "$suffix"
-            }
-            else {
-                & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName"
-            }
-            if($LASTEXITCODE -ne 0) { exit 3 }
+        Write-Host "build: Publish is started for Application"
+        
+        $PublishedApplications = $(
+            "Kmd.Momentum.Mea.Api"
+        )
+        
+        foreach ($srcProjectName in $PublishedApplications) {
+            try {
+            
+                Push-Location "./src/$srcProjectName"
+                Write-Host "build: Publishing output of '$srcProjectName' into '$ArtifactsStagingPath/$srcProjectName'"
 
-            $compressedArtifactFileName = Compress-Directory "$ArtifactsStagingPath/$srcProjectName"
-            if ($PublishArtifactsToAzureDevOps) {
+                if ($suffix) {
+                    & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName" --version-suffix "$suffix"
+                }
+                else {
+                    & dotnet publish -c Release --verbosity "$BuildVerbosity" --no-build --no-restore -o "$ArtifactsStagingPath/$srcProjectName"
+                }
+                
+                if($LASTEXITCODE -ne 0) { exit 1 }
+
+                Write-Host "build: Compression is started for Application"
+                
+                $compressedArtifactFileName = Compress-Directory "$ArtifactsStagingPath/$srcProjectName"
+                
+                Write-Host "build: Compression is completed for Application"
+
+                Write-Host "build: Uploading artifact is started for Application"
+
                 Write-Host "##vso[artifact.upload artifactname=Applications;]$compressedArtifactFileName"
+
+                Write-Host "build: Uploading artifact is completed for Application"
+                
             }
-        }
-        finally {
-            Pop-Location
+            catch{
+            
+                Write-Host "An error occurred:"
+                Write-Host $_
+                Write-Host "##vso[task.LogIssue type=error;]"$_
+                Write-Host "##vso[task.complete result=Failed]"
+                
+                exit 1
+            }
+            finally {
+                Pop-Location
+            }
         }
     }
 
@@ -266,7 +309,18 @@ try {
             ($env:KMD_MOMENTUM_MEA_ClientId = $MeaClientId); 
             ($env:KMD_MOMENTUM_MEA_Scope = $MeaScope);
             ($env:ASPNETCORE_ENVIRONMENT = $Environment) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
-            if($LASTEXITCODE -ne 0) { exit 3 }
+            
+            if($LASTEXITCODE -ne 0) { exit 1 }
+        }
+        catch{
+        
+            Write-Host "An error occurred:"
+            Write-Host $_
+            Write-Host "##vso[task.LogIssue type=error;]"$_
+            Write-Host "##vso[task.complete result=Failed]"
+            
+            exit 1
+
         }
         finally {
             Pop-Location
@@ -274,20 +328,42 @@ try {
     }
 
     if($PublishArtifactsToAzureDevOps) {
-      $deployScriptSourcePath = "$PSScriptRoot/deploy"
-      $artifactsOutputPath = "$ArtifactsStagingPath/deploy"
-      Write-Host "build: publishing files from '$deployScriptSourcePath' to '$artifactsOutputPath'"
 
-      If(!(test-path $artifactsOutputPath)) {
-        Write-Host "build: creating folder '$artifactsOutputPath'"
-        New-Item -ItemType Directory -Force -Path $artifactsOutputPath
-      }
+        Write-Host "build: Publish is started for deploy scripts"
 
-      $resolvedArtifactsOutputPath = Resolve-Path -Path "$artifactsOutputPath"
-      Copy-Item "$deployScriptSourcePath/*" -Destination $resolvedArtifactsOutputPath -Recurse
-      Write-Host "##vso[artifact.upload containerfolder=deploy;artifactname=deploy;]$resolvedArtifactsOutputPath"
+        $deployScriptSourcePath = "$PSScriptRoot/deploy"
+        $artifactsOutputPath = "$ArtifactsStagingPath/deploy"
+        
+        Write-Host "build: Publishing files from '$deployScriptSourcePath' to '$artifactsOutputPath'"
+        
+        If(!(test-path $artifactsOutputPath)) {
+            Write-Host "build: creating folder '$artifactsOutputPath'"
+            New-Item -ItemType Directory -Force -Path $artifactsOutputPath
+        }
+
+        if($LASTEXITCODE -ne 0) { exit 1 }
+        
+        $resolvedArtifactsOutputPath = Resolve-Path -Path "$artifactsOutputPath"
+
+        if($LASTEXITCODE -ne 0) { exit 1 }
+
+        Copy-Item "$deployScriptSourcePath/*" -Destination $resolvedArtifactsOutputPath -Recurse
+
+        if($LASTEXITCODE -ne 0) { exit 1 }
+        
+        Write-Host "##vso[artifact.upload containerfolder=deploy;artifactname=deploy;]$resolvedArtifactsOutputPath"
+
+        Write-Host "build: Publish is completed for deploy scripts"
     }
 }
-finally {
+catch{
+    
+    Write-Host "An error occurred:"
+    Write-Host $_
+    Write-Host "##vso[task.LogIssue type=error;]"$_
+    Write-Host "##vso[task.complete result=Failed]"
+    exit 1
+
+}finally {
     Pop-Location
 }

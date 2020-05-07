@@ -1,17 +1,15 @@
 ﻿using Kmd.Momentum.Mea.Citizen.Model;
 using Kmd.Momentum.Mea.Common.Exceptions;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.MeaHttpClientHelper
 {
     public interface ICitizenHttpClientHelper
     {
-        Task<ResultOrHttpError<IReadOnlyList<string>, Error>> GetAllActiveCitizenDataFromMomentumCoreAsync(Uri url);
+        Task<ResultOrHttpError<CitizenList, Error>> GetAllActiveCitizenDataFromMomentumCoreAsync(string path, int pageNumber);
 
-        Task<ResultOrHttpError<string, Error>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(Uri url);
+        Task<ResultOrHttpError<string, Error>> GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync(string path);
 
-        Task<ResultOrHttpError<string, Error>> CreateJournalNoteInMomentumCoreAsync(Uri url, string momentumCitizenId, JournalNoteResponseModel requestModel);
+        Task<ResultOrHttpError<string, Error>> CreateJournalNoteInMomentumCoreAsync(string path, string momentumCitizenId, JournalNoteRequestModel requestModel);
     }
 }

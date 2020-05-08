@@ -26,8 +26,8 @@ namespace Kmd.Momentum.Mea.TaskApi
 
        public async Task<ResultOrHttpError<TaskDataResponseModel, Error>> UpdateTaskStatusByIdAsync(string taskId, TaskUpdateStatus taskUpdateStatus)
         {
-            var taskStateValue = (int)taskUpdateStatus.taskAction;
-            var response = await _taskHttpClient.UpdateTaskStatusByTaskIdFromMomentumCoreAsync($"/tasks/{taskId}/{taskStateValue}?applicationContext={taskUpdateStatus.taskContext}").ConfigureAwait(false);
+            var taskStateValue = (int)taskUpdateStatus.TaskAction;
+            var response = await _taskHttpClient.UpdateTaskStatusByTaskIdFromMomentumCoreAsync($"/tasks/{taskId}/{taskStateValue}?applicationContext={taskUpdateStatus.TaskContext}").ConfigureAwait(false);
 
             if (response.IsError)
             {

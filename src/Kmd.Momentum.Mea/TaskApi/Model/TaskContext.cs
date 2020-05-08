@@ -7,6 +7,6 @@
         Offers,
         Dashboard,
         Admin,
-        Search 
+        Search
     }
 }

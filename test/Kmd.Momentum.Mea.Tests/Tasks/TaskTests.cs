@@ -1,12 +1,9 @@
 ﻿using FluentAssertions;
-using Kmd.Momentum.Mea.Caseworker;
-using Kmd.Momentum.Mea.Caseworker.Model;
 using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Kmd.Momentum.Mea.TaskApi;
 using Kmd.Momentum.Mea.TaskApi.Model;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Moq;
 using Newtonsoft.Json;
 using System;
@@ -16,12 +13,11 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
-
 namespace Kmd.Momentum.Mea.Tests.Tasks
 {
     public class TaskTests
     {
- private Mock<IHttpContextAccessor> GetContext()
+        private Mock<IHttpContextAccessor> GetContext()
         {
             var context = new Mock<IHttpContextAccessor>();
             var hc = new DefaultHttpContext();
@@ -43,7 +39,7 @@ namespace Kmd.Momentum.Mea.Tests.Tasks
             //Arrange
             var helperHttpClientMoq = new Mock<ITaskHttpClientHelper>();
             var taskId = It.IsAny<Guid>();
-            var taskStateValue = It.IsAny<int>(); 
+            var taskStateValue = It.IsAny<int>();
             var context = GetContext();
 
             var response = new TaskDataResponseModel(taskId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(),
@@ -54,9 +50,8 @@ namespace Kmd.Momentum.Mea.Tests.Tasks
 
             var taskUpdateStatus = new TaskUpdateStatus()
             {
-                taskAction = TaskAction.Completed,
-
-                taskContext = TaskContext.Citizens
+                TaskAction = TaskAction.Completed,
+                TaskContext = TaskContext.Citizens
             };
 
             helperHttpClientMoq.Setup(x => x.UpdateTaskStatusByTaskIdFromMomentumCoreAsync($"/tasks/{taskId}/{taskStateValue}?applicationContext={TaskContext.Citizens}"))
@@ -90,9 +85,8 @@ namespace Kmd.Momentum.Mea.Tests.Tasks
 
             var taskUpdateStatus = new TaskUpdateStatus()
             {
-                taskAction = TaskAction.Completed,
-
-                taskContext = TaskContext.Citizens
+                TaskAction = TaskAction.Completed,
+                TaskContext = TaskContext.Citizens
             };
 
             var error = new Error("123456", new string[] { "Some error occured while updating task status" }, "MCA");

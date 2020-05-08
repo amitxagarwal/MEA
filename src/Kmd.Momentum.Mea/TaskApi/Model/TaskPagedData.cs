@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kmd.Momentum.Mea.TaskApi.Model
 {
-   public class TaskFilter
+   public class TaskPagedData
     {
         public string ReferenceId { get; set; }
 

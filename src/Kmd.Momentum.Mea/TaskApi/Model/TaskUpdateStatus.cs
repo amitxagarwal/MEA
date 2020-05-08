@@ -2,9 +2,9 @@
 {
     public class TaskUpdateStatus
     {
-        public TaskAction taskAction { get; set; }
+        public TaskAction TaskAction { get; set; }
 
-        public TaskContext taskContext { get; set; }
+        public TaskContext TaskContext { get; set; }
     }
 }
 

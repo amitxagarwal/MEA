@@ -42,7 +42,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Tasks
             string _serializedRequest = JsonConvert.SerializeObject(taskUpdateStatus);
 
             //Act
-            var response = await client.PutAsync(requestUri, new StringContent(_serializedRequest, Encoding.UTF8, "application/json")).ConfigureAwait(false);
+            var response = await client.PutAsync(requestUri, new StringContent(_serializedRequest, Encoding.UTF8, "application/json"));
             var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var actualResponse = JsonConvert.DeserializeObject<TaskDataResponseModel>(responseBody);
 
@@ -55,7 +55,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Tasks
         public async Task UpdateTaskstatusFails()
         {
             //Arrange
-            var taskId = "70375a2b-14d2-4774-a9a2-ab123ebd2ff6" ;
+            var taskId = "70375a2b-14d2-4774-a9a2-ab123ebd2ff6";
             var requestUri = $"/task/{taskId}/updates";
 
             var client = _factory.CreateClient();
@@ -72,7 +72,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Tasks
             string _serializedRequest = JsonConvert.SerializeObject(taskUpdateStatus);
 
             //Act
-            var response = await client.PutAsync(requestUri, new StringContent(_serializedRequest, Encoding.UTF8, "application/json")).ConfigureAwait(false);
+            var response = await client.PutAsync(requestUri, new StringContent(_serializedRequest, Encoding.UTF8, "application/json"));
             var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var actualResponse = JsonConvert.DeserializeObject<TaskDataResponseModel>(responseBody);
 

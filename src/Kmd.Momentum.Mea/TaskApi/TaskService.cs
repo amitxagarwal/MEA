@@ -48,7 +48,7 @@ namespace Kmd.Momentum.Mea.TaskApi
             Log.ForContext("CorrelationId", _correlationId)
                 .ForContext("Client", _clientId)
                 .ForContext("TaskId", taskDataObj.Id)
-                .Information("The task status is updated successfully");
+                .Information("The Task status is updated successfully");
 
             return new ResultOrHttpError<TaskDataResponseModel, Error>(dataToReturn);
         }

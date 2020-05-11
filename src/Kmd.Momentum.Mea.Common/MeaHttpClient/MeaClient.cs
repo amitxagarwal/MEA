@@ -68,6 +68,13 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
                 try
                 {
                     var error = JsonConvert.DeserializeObject<Error>(errorFromResponse);
+                    if (error.Errors == null)
+                    {
+                        var errorIs = new Error(_correlationId, new string[] { errorFromResponse }, "MEA");
+                        Log.ForContext("CorrelationId", _correlationId).Error("Error Occured while getting the data from Momentum Core System");
+
+                        return new ResultOrHttpError<string, Error>(errorIs, response.StatusCode);
+                    }
                     Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System : {errorFromResponse}");
                     return new ResultOrHttpError<string, Error>(error, response.StatusCode);
                 }

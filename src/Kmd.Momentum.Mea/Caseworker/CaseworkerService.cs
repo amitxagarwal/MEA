@@ -14,14 +14,12 @@ namespace Kmd.Momentum.Mea.Caseworker
     public class CaseworkerService : ICaseworkerService
     {
         private readonly ICaseworkerHttpClientHelper _caseworkerHttpClient;
-        private readonly IConfiguration _config;
         private readonly string _correlationId;
         private readonly string _clientId;
 
-        public CaseworkerService(ICaseworkerHttpClientHelper caseworkerHttpClient, IConfiguration config, IHttpContextAccessor httpContextAccessor)
+        public CaseworkerService(ICaseworkerHttpClientHelper caseworkerHttpClient, IHttpContextAccessor httpContextAccessor)
         {
             _caseworkerHttpClient = caseworkerHttpClient ?? throw new ArgumentNullException(nameof(caseworkerHttpClient));
-            _config = config;
             _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
             _clientId = httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == "azp").Value;
         }

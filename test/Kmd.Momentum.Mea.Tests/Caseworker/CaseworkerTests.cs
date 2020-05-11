@@ -62,7 +62,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber))
                     .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(responseData)));
 
-            var caseworkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseworkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
@@ -87,7 +87,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber))
                     .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(error, HttpStatusCode.BadRequest)));
 
-            var caseworkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseworkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
@@ -99,6 +99,31 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         }
 
         [Fact]
+        public async Task GetAllCaseworkersFailsWhenPAgeNoIsLessThan0()
+        {
+            //Arrange
+            var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
+            var configurationMoq = new Mock<IConfiguration>();
+            int pageNumber = -3;
+            var context = GetContext();
+
+            var error = new Error("123456", new string[] { "The offset specified in a OFFSET clause may not be negative." }, "MCA");
+
+            helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber))
+                    .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(error, HttpStatusCode.BadRequest)));
+
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, context.Object);
+
+            //Act
+            var result = await caseWorkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
+
+            //Asert
+            result.Should().NotBeNull();
+            result.IsError.Should().BeTrue();
+            result.Error.Errors[0].Should().Be("The offset specified in a OFFSET clause may not be negative.");
+        }
+
+        [Fact]
         public async Task GetCaseworkerByCaseworkerIdSuccess()
         {
             //Arrange
@@ -107,15 +132,14 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             var id = It.IsAny<string>();
             var context = GetContext();
 
-            var response = new CaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
+            var response = new CaseworkerDataResponseModelBuilder().Build();
 
             var responseData = JsonConvert.SerializeObject(response);
 
             helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync($"employees/{id}"))
                    .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(responseData)));
 
-            var caseworkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseworkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);
@@ -135,15 +159,14 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             var id = It.IsAny<string>();
             var context = GetContext();
 
-            var response = new CaseworkerDataResponseModel(id, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
+            var response = new CaseworkerDataResponseModelBuilder().Build();
 
             var error = new Error("123456", new string[] { "Caseworker data with the supplied caseworkerId is not found" }, "MCA");
 
             helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync($"employees/{id}"))
                    .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
 
-            var caseworkerService = new CaseworkerService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseworkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);

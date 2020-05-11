@@ -32,6 +32,7 @@ namespace Kmd.Momentum.Mea.Citizen
                 var error = new Error(_correlationId, new[] { "PageNumber cannot be less than or equal to zero" }, "Mea");
                 Log.ForContext("CorrelationId", _correlationId)
                     .ForContext("Client", _clientId)
+                    .ForContext("PageNumber", pageNumber)
                 .Error("PageNumber is less than or equal to zero");
                 return new ResultOrHttpError<CitizenList, Error>(error, System.Net.HttpStatusCode.BadRequest);
             }
@@ -44,6 +45,7 @@ namespace Kmd.Momentum.Mea.Citizen
                 var error = response.Error.Errors.Aggregate((a, b) => a + "," + b);
                 Log.ForContext("CorrelationId", _correlationId)
                     .ForContext("Client", _clientId)
+                    .ForContext("PageNumber", pageNumber)
                 .Error("An error occurred while retrieving data of all active citizens" + error);
                 return new ResultOrHttpError<CitizenList, Error>(response.Error, response.StatusCode.Value);
             }
@@ -52,6 +54,7 @@ namespace Kmd.Momentum.Mea.Citizen
 
             Log.ForContext("CorrelationId", _correlationId)
                     .ForContext("Client", _clientId)
+                    .ForContext("PageNumber", pageNumber)
                 .Information("All the active citizens data retrieved successfully");
 
             return new ResultOrHttpError<CitizenList, Error>(result);

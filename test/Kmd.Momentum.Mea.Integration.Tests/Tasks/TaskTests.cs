@@ -3,6 +3,7 @@ using Kmd.Momentum.Mea.TaskApi.Model;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -31,7 +32,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Tasks
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
 
             var taskUpdateStatus = new TaskUpdateStatus()
@@ -63,7 +64,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Tasks
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             var taskUpdateStatus = new TaskUpdateStatus()
             {
                 TaskAction = TaskAction.Start,

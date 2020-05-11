@@ -137,7 +137,6 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             if (authResponse.IsError)
             {
-                Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while updating records in Momentum Core System : {authResponse.Error}");
                 var error = new Error(_correlationId, new string[] { authResponse.Error }, "Momentum Core Api");
 
                 return new ResultOrHttpError<string, Error>(error, authResponse.StatusCode.Value);

@@ -7,20 +7,13 @@ namespace Kmd.Momentum.Mea.TaskApi.Model
     {
         public string SicknessBenefitType { get; set; }
         public Guid Id { get; set; }
-
         public string Title { get; set; }
-
         public string Description { get; set; }
         public TaskState State { get; set; }
-
         public DateTime Deadline { get; set; }
-
         public DateTime CreatedAt { get; set; }
-
         public DateTime UpdatedAt { get; set; }
-
         public string UpdatedById { get; set; }
-
         public string CreatedById { get; set; }
         public DateTime? StateChangedAt { get; set; }
         public IReadOnlyList<string> Assignee { get; set; }

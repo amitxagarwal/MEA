@@ -93,7 +93,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             }
 
             var content = response.Result;
-            var caseworkerDataObj = JsonConvert.DeserializeObject<TaskFilter>(content);
+            var caseworkerDataObj = JsonConvert.DeserializeObject<TaskPagedData>(content);
             var records = caseworkerDataObj.Data;
 
             foreach (var item in records)

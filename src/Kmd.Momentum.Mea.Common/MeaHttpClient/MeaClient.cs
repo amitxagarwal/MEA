@@ -131,6 +131,62 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
             return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
+        public async Task<ResultOrHttpError<string, Error>> PutAsync(string path)
+        {
+            var authResponse = await ReturnAuthorizationTokenAsync().ConfigureAwait(false);
+
+            if (authResponse.IsError)
+            {
+                var error = new Error(_correlationId, new string[] { authResponse.Error }, "Momentum Core Api");
+
+                return new ResultOrHttpError<string, Error>(error, authResponse.StatusCode.Value);
+            }
+
+            var accessToken = JObject.Parse(await authResponse.Result.Content.ReadAsStringAsync().ConfigureAwait(false))["access_token"];
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("bearer " + accessToken);
+
+            var url = new Uri($"{_mcaConfig.KommuneUrl}{path}");
+
+            var response = await _httpClient.PutAsync(url, null).ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorFromResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (string.IsNullOrEmpty(errorFromResponse))
+                {
+                    var error = new Error(_correlationId, new string[] { "An error occured while updating records in Momentum Core System" }, "MEA");
+                    Log.ForContext("CorrelationId", _correlationId).Error("An error occured while updating records in Momentum Core System");
+
+                    return new ResultOrHttpError<string, Error>(error, response.StatusCode);
+                }
+
+                try
+                {
+                    var error = JsonConvert.DeserializeObject<Error>(errorFromResponse);
+                    if (error.Errors == null)
+                    {
+                        var errorIs = new Error(_correlationId, new string[] { errorFromResponse }, "MEA");
+                        Log.ForContext("CorrelationId", _correlationId).Error("An error occured while updating records in Momentum Core System");
+
+                        return new ResultOrHttpError<string, Error>(errorIs, response.StatusCode);
+                    }
+                    Log.ForContext("CorrelationId", _correlationId).Error($"An error occured while updating records in Momentum Core System : {errorFromResponse}");
+                    return new ResultOrHttpError<string, Error>(error, response.StatusCode);
+                }
+                catch
+                {
+                    var error = new Error(_correlationId, new string[] { "An error occured while updating records in Momentum Core System", errorFromResponse }, "MEA");
+                    Log.ForContext("CorrelationId", _correlationId).Error($"An error occured while updating records in Momentum Core System : {errorFromResponse}");
+
+                    return new ResultOrHttpError<string, Error>(error, response.StatusCode);
+                }
+            }
+
+            return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+        }
+
         private async Task<ResultOrHttpError<HttpResponseMessage, string>> ReturnAuthorizationTokenAsync()
         {
             var meaSecret = await GetMeaSecret().ConfigureAwait(false);

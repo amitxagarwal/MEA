@@ -1,13 +1,18 @@
 ﻿using Kmd.Momentum.Mea.Caseworker.Model;
+using Kmd.Momentum.Mea.Common.Authorization;
 using Kmd.Momentum.Mea.Common.Exceptions;
 using Kmd.Momentum.Mea.MeaHttpClientHelper;
 using Kmd.Momentum.Mea.TaskApi.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Caseworker
@@ -17,18 +22,24 @@ namespace Kmd.Momentum.Mea.Caseworker
         private readonly ICaseworkerHttpClientHelper _caseworkerHttpClient;
         private readonly string _correlationId;
         private readonly string _clientId;
+        private readonly IConfiguration _config;
+        private readonly string _tenant;
+        private readonly MeaAuthorization _mcaConfig;
 
-        public CaseworkerService(ICaseworkerHttpClientHelper caseworkerHttpClient, IHttpContextAccessor httpContextAccessor)
+        public CaseworkerService(IConfiguration config, ICaseworkerHttpClientHelper caseworkerHttpClient, IHttpContextAccessor httpContextAccessor)
         {
+            _config = config;
             _caseworkerHttpClient = caseworkerHttpClient ?? throw new ArgumentNullException(nameof(caseworkerHttpClient));
             _correlationId = httpContextAccessor.HttpContext.TraceIdentifier;
             _clientId = httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == "azp").Value;
+            _tenant = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "tenant").Value;
+            _mcaConfig = config.GetSection("MeaAuthorization").Get<IReadOnlyList<MeaAuthorization>>().FirstOrDefault(x => x.KommuneId == _tenant);
         }
 
         public async Task<ResultOrHttpError<CaseworkerList, Error>> GetAllCaseworkersAsync(int pageNumber)
         {
             var response = await _caseworkerHttpClient.GetAllCaseworkerDataFromMomentumCoreAsync
-                ("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber).ConfigureAwait(false);
+                ($"/punits/{_mcaConfig.PunitId}/caseworkers", pageNumber).ConfigureAwait(false);
 
             if (response.IsError)
             {

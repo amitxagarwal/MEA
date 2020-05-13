@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using Kmd.Momentum.Mea.Citizen.Model;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -65,7 +65,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         public async Task GetCitizenByCprNoSuccess()
         {
             //Arrange
-            var cprNumber = "0208682105";
+            var cprNumber = "0208682105";//we are hard coding the cpr number because we dont have any api in MEA which is returning cpr as response.
             var requestUri = $"/citizens/cpr/{cprNumber}";
 
             var client = _factory.CreateClient();
@@ -114,8 +114,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         public async Task GetCitizenByCitizenIdSuccess()
         {
             //Arrange
-            var citizenId = "70375a2b-14d2-4774-a9a2-ab123ebd2ff6";
-            var requestUri = $"/citizens/kss/{citizenId}";
+            var pageNumber = 1;
 
             var client = _factory.CreateClient();
 
@@ -123,6 +122,14 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+            var dataToGetCitizenId = await client.GetAsync($"/citizens?pagenumber={pageNumber}").ConfigureAwait(false);
+            var dataBody = await dataToGetCitizenId.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualData = JsonConvert.DeserializeObject<CitizenList>(dataBody);
+            var citizenId = actualData.Result.Select(x => x.CitizenId).FirstOrDefault();
+
+            var requestUri = $"/citizens/kss/{citizenId}";
+
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
@@ -136,11 +143,11 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
         }
 
         [SkipLocalFact]
-        public async Task CreateJournalNoteAsyncSuccess()
+        public async Task GetCitizenByCitizenIdFails()
         {
             //Arrange
-            var momentumCitizenId = "65cd9dba-96db-40b0-9f3b-d773881afc61";
-            var requestUri = $"/citizens/journal/{momentumCitizenId}";
+            var citizenId = "836e2ad4-d028-4e3d-bb01-fdd60bca9b81";
+            var requestUri = $"/citizens/kss/{citizenId}";
 
             var client = _factory.CreateClient();
 
@@ -148,6 +155,35 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+            //Act
+            var response = await client.GetAsync(requestUri).ConfigureAwait(false);
+            var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+             var error = "[\"An error occured while fetching the record(s) from Core Api\"]";
+
+            //Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            result.Should().BeEquivalentTo(error);
+        }
+
+        [SkipLocalFact]
+        public async Task CreateJournalNoteAsyncSuccess()
+        {
+            //Arrange
+            var pageNumber = 1;
+            var client = _factory.CreateClient();
+
+            var tokenHelper = new TokenGenerator();
+            var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+            var dataToGetCitizenId = await client.GetAsync($"/citizens?pagenumber={pageNumber}").ConfigureAwait(false);
+            var dataBody = await dataToGetCitizenId.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualData = JsonConvert.DeserializeObject<CitizenList>(dataBody);
+            var momentumCitizenId = actualData.Result.Select(x => x.CitizenId).FirstOrDefault();
+
+            var requestUri = $"/citizens/journal/{momentumCitizenId}";
 
             List<JournalNoteDocumentRequestModel> documentList = new List<JournalNoteDocumentRequestModel>()
             {

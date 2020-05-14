@@ -15,7 +15,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Health
     //[Authorize]
     public class HealthController : Controller
     {
-        private readonly HealthCheckService _healthCheckService ;
+        private readonly HealthCheckService _healthCheckService;
 
         /// <summary>
         /// Health Controller Constructor

@@ -1,8 +1,10 @@
-﻿namespace Kmd.Momentum.Mea.Caseworker.Model
+﻿using System;
+
+namespace Kmd.Momentum.Mea.Caseworker.Model
 {
     public class CaseworkerData
     {
-        public string Id { get; }
+        public Guid Id { get; }
 
         public string DisplayName { get; }
 
@@ -24,7 +26,7 @@
 
         public bool IsActive { get; }
 
-        public CaseworkerData(string id, string displayName, string givenName, string middleName, string initials,
+        public CaseworkerData(Guid id, string displayName, string givenName, string middleName, string initials,
            string caseworkerIdentifier, string description,
            bool isActive = true, bool isBookable = true, Email email = null, Phone phone = null)
         {

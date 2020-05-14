@@ -6,13 +6,10 @@ using Kmd.Momentum.Mea.TaskApi.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Kmd.Momentum.Mea.Caseworker

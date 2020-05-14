@@ -1,11 +1,12 @@
 ﻿using Kmd.Momentum.Mea.Caseworker.Model;
 using Moq;
+using System;
 
 namespace Kmd.Momentum.Mea.Tests.Caseworker
 {
     public class CaseworkerDataResponseModelBuilder
     {
-        private string caseworkerId = It.IsAny<string>();
+        private Guid caseworkerId = It.IsAny<Guid>();
         private string displayName = It.IsAny<string>();
         private string givenName = It.IsAny<string>();
         private string middleName = It.IsAny<string>();
@@ -23,7 +24,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
                 initials, email, phone, caseworkerIdentifier, description, true, true);
         }
 
-        public CaseworkerDataResponseModelBuilder WithCaseWorkerId(string caseworkerId)
+        public CaseworkerDataResponseModelBuilder WithCaseWorkerId(Guid caseworkerId)
         {
             this.caseworkerId = caseworkerId;
             return this;

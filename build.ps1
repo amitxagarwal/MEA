@@ -97,8 +97,8 @@ Param(
     [string]
     $DbRequired = "false",
 
-    # The $MeaAuthorizationAudience required for validate audience in testcases
-    [Parameter(Mandatory=true)]
+    # The MeaAuthorizationAudience required for validate audience in testcases
+    [Parameter(Mandatory=$true)]
     [string]    
     $MeaAuthorizationAudience
 )

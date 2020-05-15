@@ -95,7 +95,7 @@ Param(
     # The DbRequired for build database if it is true
     [Parameter(Mandatory=$false)]
     [string]
-    $DbRequired = "false"
+    $DbRequired = "false",
 
     # The $MeaAuthorizationAudience required for validate audience in testcases
     [Parameter(Mandatory=true)]

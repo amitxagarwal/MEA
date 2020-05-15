@@ -100,7 +100,7 @@ Param(
     # The $MeaAuthorizationAudience required for validate audience in testcases
     [Parameter(Mandatory=true)]
     [string]    
-    $MeaAuthorizationAudience = ""
+    $MeaAuthorizationAudience
 )
 
 function Compress-Directory {

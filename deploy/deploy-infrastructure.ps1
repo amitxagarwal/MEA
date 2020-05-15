@@ -163,7 +163,7 @@ try
     dbRequired = $DbRequired;
     keyVaultRequired = $KeyVaultRequired;
     keyVaultName = $KeyVaultName;
-    meaAuthorizationAudience = MeaAuthorizationAudience;
+    meaAuthorizationAudience = $MeaAuthorizationAudience;
     }
 
     Write-Host "Create or update ResourceGroup Tag"

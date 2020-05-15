@@ -92,7 +92,11 @@ Param
 
   [Parameter(Mandatory=$false)]
   [string]
-  $DbLoginPassword = 'Admin@123'  
+  $DbLoginPassword = 'Admin@123',
+
+  [Parameter(Mandatory=$true)]
+  [string]  
+  $MeaAuthorizationAudience
 )
 
 Push-Location $PSScriptRoot
@@ -158,7 +162,8 @@ try
     dbConnection = $DbConnection;
     dbRequired = $DbRequired;
     keyVaultRequired = $KeyVaultRequired;
-    keyVaultName = $KeyVaultName
+    keyVaultName = $KeyVaultName;
+    meaAuthorizationAudience = MeaAuthorizationAudience;
     }
 
     Write-Host "Create or update ResourceGroup Tag"

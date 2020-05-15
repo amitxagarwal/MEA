@@ -112,20 +112,37 @@ namespace Kmd.Momentum.Mea.Common.MeaHttpClient
 
             if (!response.IsSuccessStatusCode)
             {
-                if ((int)response.StatusCode >= (int)HttpStatusCode.BadRequest && (int)response.StatusCode < (int)HttpStatusCode.InternalServerError)
+                var errorFromResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (string.IsNullOrEmpty(errorFromResponse))
                 {
-                    var errorFromResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    var error = new Error(_correlationId, new string[] { "An error occured while creating records in Momentum Core System" }, "MEA");
-                    Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while creating records in Momentum Core System : {errorFromResponse}");
+                    var error = new Error(_correlationId, new string[] { "An error occured while fetching the record(s) from Core Api" }, "MEA");
+                    Log.ForContext("CorrelationId", _correlationId).Error("Error Occured while getting the data from Momentum Core System");
 
                     return new ResultOrHttpError<string, Error>(error, response.StatusCode);
                 }
 
-                var errorResponse = JsonConvert.DeserializeObject<Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                try
+                {
+                    var error = JsonConvert.DeserializeObject<Error>(errorFromResponse);
+                    if (error.Errors == null)
+                    {
+                        var errorIs = new Error(_correlationId, new string[] { errorFromResponse }, "MEA");
+                        Log.ForContext("CorrelationId", _correlationId).Error("Error Occured while getting the data from Momentum Core System");
 
-                Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while creating records in Momentum Core System {errorResponse}");
+                        return new ResultOrHttpError<string, Error>(errorIs, response.StatusCode);
+                    }
+                    Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System : {errorFromResponse}");
+                    return new ResultOrHttpError<string, Error>(error, response.StatusCode);
+                }
+                catch
+                {
+                    var error = new Error(_correlationId, new string[] { "An error occured while fetching the record(s) from Core Api", errorFromResponse }, "MEA");
+                    Log.ForContext("CorrelationId", _correlationId).Error($"Error Occured while getting the data from Momentum Core System : {errorFromResponse}");
 
-                return new ResultOrHttpError<string, Error>(errorResponse, response.StatusCode);
+                    return new ResultOrHttpError<string, Error>(error, response.StatusCode);
+                }
+
             }
 
             return new ResultOrHttpError<string, Error>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));

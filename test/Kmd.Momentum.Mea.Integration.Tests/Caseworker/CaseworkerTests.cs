@@ -73,7 +73,6 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
 
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
-
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
@@ -84,7 +83,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             actualResponse.Should().NotBeNull();
-            actualResponse.CaseworkerId.Should().BeEquivalentTo(caseworkerId);
+            actualResponse.CaseworkerId.Should().Be(caseworkerId);
         }
 
         [SkipLocalFact]

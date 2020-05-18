@@ -436,8 +436,7 @@
               ]
             }
           },
-          {
-            "condition": "[equals(parameters('isKeyVaultPolicyRequired'),'true')]",
+          {            
             "tenantId": "[parameters('tenantId')]",
             "objectId": "[parameters('appObjectId')]",
             "permissions": {

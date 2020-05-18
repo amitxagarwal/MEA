@@ -60,7 +60,6 @@ stages:
       isKeyVaultRequired: 'true'
       meaAuthorizationAudience: $(PhoenixMeaAuthorizationAudience)
 
-
 - stage: deploy_internal
   dependsOn: Build
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))

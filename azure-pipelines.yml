@@ -21,7 +21,7 @@ stages:
         packageType: 'sdk'
         useGlobalJson: true
     - task: NuGetAuthenticate@0
-    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -McaClientId "$(McaClientId)" -McaClientSecret "$(McaClientSecret)" -McaApiUri "$(McaApiUri)" -McaScope "$(McaScope)" -Environment "Build" -MeaClientId "$(MeaClientId)" -MeaClientSecret "$(MeaClientSecret)" -MeaScope "$(MeaScope)"
+    - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -McaClientId "$(McaClientId)" -McaClientSecret "$(McaClientSecret)" -McaApiUri "$(McaApiUri)" -McaScope "$(McaScope)" -Environment "Build" -MeaClientId "$(MeaClientId)" -MeaClientSecret "$(MeaClientSecret)" -MeaScope "$(MeaScope)" -MeaAuthorizationAudience $(PhoenixMeaAuthorizationAudience)
       displayName: run build.ps1
       failOnStderr: true
       env:
@@ -58,6 +58,7 @@ stages:
       clientSecret: $(McaClientSecret)
       isDbRequired: $(DbRequired)
       isKeyVaultRequired: 'true'
+      meaAuthorizationAudience: $(PhoenixMeaAuthorizationAudience)
 
 - stage: deploy_internal
   dependsOn: Build
@@ -80,6 +81,7 @@ stages:
       clientSecret: $(McaClientSecret)
       isDbRequired: $(DbRequired)
       isKeyVaultRequired: 'true'
+      meaAuthorizationAudience: $(InternalMeaAuthorizationAudience)
 
 - stage: deploy_external
   dependsOn: Build
@@ -102,3 +104,4 @@ stages:
       clientSecret: $(McaClientSecret)
       isDbRequired: $(DbRequired)
       isKeyVaultRequired: 'true'
+      meaAuthorizationAudience: $(ExternalMeaAuthorizationAudience)

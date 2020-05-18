@@ -444,8 +444,7 @@
               "secrets": [ "all" ]
             }
           }
-        ],
-        "enabledForDeployment": true,
+        ],        
         "vaultUri": "[variables('meaKeyVaultUri')]"
       }
     },  

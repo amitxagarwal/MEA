@@ -11,6 +11,7 @@ using Moq;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -38,34 +39,48 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             return context;
         }
 
+        private IConfiguration GetConifg()
+        {
+            var meaAuthList = new List<MeaAuthorization>();
+
+            meaAuthList.Add(new MeaAuthorization()
+            {
+                KommuneId = "159",
+                KommuneUrl = "0d1345f4-51e0-407e-9dc0-15a9d08326d7",
+                KommuneClientId = "4a7a4c73-f203-435e-b5c2-3cbba12f0285",
+                KommuneAccessIdentifier = "ClientSecret",
+                KommuneResource = "74b4f45c-4e9b-4be1-98f1-ea876d9edd11",
+                PunitId = "0d1345f4-51e0-407e-9dc0-15a9d08326d7"
+            });
+
+            IReadOnlyList<MeaAuthorization> _meaAuthList = meaAuthList;
+            var _meaObj = new
+            {
+                MeaAuthorization = _meaAuthList
+            };
+
+            var memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(_meaObj)));
+
+            IConfiguration _config = new ConfigurationBuilder().AddJsonStream(memoryStream).Build();
+
+            return _config;
+
+        }
+
         [Fact]
         public async Task GetAllCaseworkersSuccess()
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var configurationMoq = new Mock<IConfiguration>();
             var pageNumber = 1;
             var context = GetContext();
-            var meaAuthList = new List<MeaAuthorization>();
-
-            meaAuthList.Add(new MeaAuthorization()
-                {
-                    KommuneId = "159",
-                    KommuneUrl = "0d1345f4-51e0-407e-9dc0-15a9d08326d7",
-                    KommuneClientId = "4a7a4c73-f203-435e-b5c2-3cbba12f0285",
-                    KommuneAccessIdentifier = "ClientSecret",
-                    KommuneResource = "74b4f45c-4e9b-4be1-98f1-ea876d9edd11",
-                    PunitId = "0d1345f4-51e0-407e-9dc0-15a9d08326d7"
-                });
-
-            configurationMoq.Setup(x => x.GetSection(It.IsAny<string>()))
-                .Returns(JsonConvert.DeserializeObject<IConfigurationSection>(JsonConvert.SerializeObject(meaAuthList)));
-
+            var _config = GetConifg();
+            
             var caseworkerData = new List<CaseworkerDataResponseModel>()
-            {
-                new CaseworkerDataResponseModel(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())
-            };
+                {
+                    new CaseworkerDataResponseModel(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())
+                };
 
             var responseData = new CaseworkerList()
             {
@@ -76,9 +91,9 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             };
 
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber))
-                    .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(responseData)));
+                   .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(responseData)));
 
-            var caseWorkerService = new CaseworkerService(configurationMoq.Object, helperHttpClientMoq.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(_config, helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseWorkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
@@ -94,30 +109,16 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var configurationMoq = new Mock<IConfiguration>();
             var pageNumber = 0;
             var context = GetContext();
-            var meaAuthList = new List<MeaAuthorization>();
-
-            meaAuthList.Add(new MeaAuthorization()
-            {
-                KommuneId = "159",
-                KommuneUrl = "0d1345f4-51e0-407e-9dc0-15a9d08326d7",
-                KommuneClientId = "4a7a4c73-f203-435e-b5c2-3cbba12f0285",
-                KommuneAccessIdentifier = "ClientSecret",
-                KommuneResource = "74b4f45c-4e9b-4be1-98f1-ea876d9edd11",
-                PunitId = "0d1345f4-51e0-407e-9dc0-15a9d08326d7"
-            });
-
-            configurationMoq.Setup(x => x[It.IsAny<string>()])
-                .Returns(JsonConvert.SerializeObject(meaAuthList));
+            var _config = GetConifg();
 
             var error = new Error("123456", new string[] { "An Error Occured while retriving data of all caseworkers" }, "MCA");
 
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber))
                     .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(error, HttpStatusCode.BadRequest)));
 
-            var caseWorkerService = new CaseworkerService(configurationMoq.Object, helperHttpClientMoq.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(_config, helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseWorkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
@@ -133,30 +134,16 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var configurationMoq = new Mock<IConfiguration>();
             int pageNumber = -3;
             var context = GetContext();
-            var meaAuthList = new List<MeaAuthorization>();
-
-            meaAuthList.Add(new MeaAuthorization()
-            {
-                KommuneId = "159",
-                KommuneUrl = "0d1345f4-51e0-407e-9dc0-15a9d08326d7",
-                KommuneClientId = "4a7a4c73-f203-435e-b5c2-3cbba12f0285",
-                KommuneAccessIdentifier = "ClientSecret",
-                KommuneResource = "74b4f45c-4e9b-4be1-98f1-ea876d9edd11",
-                PunitId = "0d1345f4-51e0-407e-9dc0-15a9d08326d7"
-            });
-
-            configurationMoq.Setup(x => x[It.IsAny<string>()])
-                .Returns(JsonConvert.SerializeObject(meaAuthList));
+            var _config = GetConifg();
 
             var error = new Error("123456", new string[] { "The offset specified in a OFFSET clause may not be negative." }, "MCA");
 
             helperHttpClientMoq.Setup(x => x.GetAllCaseworkerDataFromMomentumCoreAsync("/punits/0d1345f4-51e0-407e-9dc0-15a9d08326d7/caseworkers", pageNumber))
                     .Returns(Task.FromResult(new ResultOrHttpError<CaseworkerList, Error>(error, HttpStatusCode.BadRequest)));
 
-            var caseWorkerService = new CaseworkerService(configurationMoq.Object, helperHttpClientMoq.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(_config, helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseWorkerService.GetAllCaseworkersAsync(pageNumber).ConfigureAwait(false);
@@ -172,23 +159,9 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var configurationMoq = new Mock<IConfiguration>();
             var id = It.IsAny<string>();
             var context = GetContext();
-            var meaAuthList = new List<MeaAuthorization>();
-
-            meaAuthList.Add(new MeaAuthorization()
-            {
-                KommuneId = "159",
-                KommuneUrl = "0d1345f4-51e0-407e-9dc0-15a9d08326d7",
-                KommuneClientId = "4a7a4c73-f203-435e-b5c2-3cbba12f0285",
-                KommuneAccessIdentifier = "ClientSecret",
-                KommuneResource = "74b4f45c-4e9b-4be1-98f1-ea876d9edd11",
-                PunitId = "0d1345f4-51e0-407e-9dc0-15a9d08326d7"
-            });
-
-            configurationMoq.Setup(x => x[It.IsAny<string>()])
-                .Returns(JsonConvert.SerializeObject(meaAuthList));
+            var _config = GetConifg();
 
             var response = new CaseworkerDataResponseModelBuilder().Build();
 
@@ -197,7 +170,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync($"employees/{id}"))
                    .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(responseData)));
 
-            var caseWorkerService = new CaseworkerService(configurationMoq.Object, helperHttpClientMoq.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(_config, helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseWorkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);
@@ -213,23 +186,9 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var configurationMoq = new Mock<IConfiguration>();
             var id = It.IsAny<string>();
             var context = GetContext();
-            var meaAuthList = new List<MeaAuthorization>();
-
-            meaAuthList.Add(new MeaAuthorization()
-            {
-                KommuneId = "159",
-                KommuneUrl = "0d1345f4-51e0-407e-9dc0-15a9d08326d7",
-                KommuneClientId = "4a7a4c73-f203-435e-b5c2-3cbba12f0285",
-                KommuneAccessIdentifier = "ClientSecret",
-                KommuneResource = "74b4f45c-4e9b-4be1-98f1-ea876d9edd11",
-                PunitId = "0d1345f4-51e0-407e-9dc0-15a9d08326d7"
-            });
-
-            configurationMoq.Setup(x => x[It.IsAny<string>()])
-                .Returns(JsonConvert.SerializeObject(meaAuthList));
+            var _config = GetConifg();
 
             var response = new CaseworkerDataResponseModelBuilder().Build();
 
@@ -238,7 +197,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             helperHttpClientMoq.Setup(x => x.GetCaseworkerDataByCaseworkerIdFromMomentumCoreAsync($"employees/{id}"))
                    .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
 
-            var caseWorkerService = new CaseworkerService(configurationMoq.Object, helperHttpClientMoq.Object, context.Object);
+            var caseWorkerService = new CaseworkerService(_config, helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseWorkerService.GetCaseworkerByIdAsync(id).ConfigureAwait(false);
@@ -253,26 +212,11 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var configurationMoq = new Mock<IConfiguration>();
             var id = It.IsAny<Guid>();
             var pageNumber = 1;
             var caseworkerId = It.IsAny<string>();
             var context = GetContext();
-
-            var meaAuthList = new List<MeaAuthorization>();
-
-            meaAuthList.Add(new MeaAuthorization()
-            {
-                KommuneId = "159",
-                KommuneUrl = "0d1345f4-51e0-407e-9dc0-15a9d08326d7",
-                KommuneClientId = "4a7a4c73-f203-435e-b5c2-3cbba12f0285",
-                KommuneAccessIdentifier = "ClientSecret",
-                KommuneResource = "74b4f45c-4e9b-4be1-98f1-ea876d9edd11",
-                PunitId = "0d1345f4-51e0-407e-9dc0-15a9d08326d7"
-            });
-
-            configurationMoq.Setup(x => x[It.IsAny<string>()])
-                .Returns(JsonConvert.SerializeObject(meaAuthList));
+            var _config = GetConifg();
 
             var TaskData = new List<TaskDataResponseModel>()
             {
@@ -291,7 +235,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
             helperHttpClientMoq.Setup(x => x.GetAllTasksByCaseworkerIdFromMomentumCoreAsync("/tasks/filtered", pageNumber, caseworkerId))
                                .Returns(Task.FromResult(new ResultOrHttpError<TaskList, Error>(responseData)));
 
-            var caseworkerService = new CaseworkerService(configurationMoq.Object, helperHttpClientMoq.Object, context.Object);
+            var caseworkerService = new CaseworkerService(_config, helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseworkerService.GetAllTasksForCaseworkerIdAsync(caseworkerId, pageNumber).ConfigureAwait(false);
@@ -307,33 +251,18 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
         {
             //Arrange
             var helperHttpClientMoq = new Mock<ICaseworkerHttpClientHelper>();
-            var configurationMoq = new Mock<IConfiguration>();
             var id = It.IsAny<string>();
             var pageNumber = 1;
             var caseworkerId = It.IsAny<string>();
             var context = GetContext();
-
-            var meaAuthList = new List<MeaAuthorization>();
-
-            meaAuthList.Add(new MeaAuthorization()
-            {
-                KommuneId = "159",
-                KommuneUrl = "0d1345f4-51e0-407e-9dc0-15a9d08326d7",
-                KommuneClientId = "4a7a4c73-f203-435e-b5c2-3cbba12f0285",
-                KommuneAccessIdentifier = "ClientSecret",
-                KommuneResource = "74b4f45c-4e9b-4be1-98f1-ea876d9edd11",
-                PunitId = "0d1345f4-51e0-407e-9dc0-15a9d08326d7"
-            });
-
-            configurationMoq.Setup(x => x[It.IsAny<string>()])
-                .Returns(JsonConvert.SerializeObject(meaAuthList));
+            var _config = GetConifg();
 
             var error = new Error("123456", new string[] { "An Error Occured while retriving tasks with given caseworkerId" }, "MCA");
 
             helperHttpClientMoq.Setup(x => x.GetAllTasksByCaseworkerIdFromMomentumCoreAsync("/tasks/filtered", pageNumber, caseworkerId))
                     .Returns(Task.FromResult(new ResultOrHttpError<TaskList, Error>(error, HttpStatusCode.BadRequest)));
 
-            var caseworkerService = new CaseworkerService(configurationMoq.Object, helperHttpClientMoq.Object, context.Object);
+            var caseworkerService = new CaseworkerService(_config, helperHttpClientMoq.Object, context.Object);
 
             //Act
             var result = await caseworkerService.GetAllTasksForCaseworkerIdAsync(caseworkerId, pageNumber).ConfigureAwait(false);

@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace Kmd.Momentum.Mea.Citizen.Model
 {
     public class CitizenDataResponseModel
     {
         [JsonProperty("id")]
-        public string CitizenId { get; }
+        public Guid CitizenId { get; }
 
         [JsonProperty("name")]
         public string DisplayName { get; }
@@ -37,7 +38,7 @@ namespace Kmd.Momentum.Mea.Citizen.Model
         [JsonProperty("isActive")]
         public bool IsActive { get; }
 
-        public CitizenDataResponseModel(string citizenId, string displayName, string givenName, string middleName, string initials, string email, string phone,
+        public CitizenDataResponseModel(Guid citizenId, string displayName, string givenName, string middleName, string initials, string email, string phone,
             string caseworkerIdentifier, string description,
             bool isActive = true, bool isBookable = true)
         {

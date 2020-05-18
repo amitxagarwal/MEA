@@ -102,7 +102,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
             return new ResultOrHttpError<string, Error>(content);
         }
 
-        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteInMomentumCoreAsync(string path, string momentumCitizenId, JournalNoteRequestModel requestModel)
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteInMomentumCoreAsync(string path, Guid momentumCitizenId, JournalNoteRequestModel requestModel)
         {
             List<JournalNoteAttachmentModel> attachmentList = new List<JournalNoteAttachmentModel>();
 
@@ -134,7 +134,7 @@ namespace Kmd.Momentum.Mea.MeaHttpClientHelper
                 Title = requestModel.Title,
                 Body = requestModel.Body,
                 Source = "Mea",
-                ReferenceId = momentumCitizenId,
+                ReferenceId = momentumCitizenId.ToString(),
                 JournalTypeId = requestModel.Type == JournalNoteType.SMS ? "022.247.000" : "022.420.000",
                 Attachments = attachmentList
             };

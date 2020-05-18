@@ -20,7 +20,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             _factory = factory;
         }
 
-        [SkipLocalFact]
+        [Fact]
         public async Task GetActiveCitizensSuccess()
         {
             //Arrange       
@@ -42,7 +42,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             actualResponse.TotalNoOfPages.Should().NotBe(0);
         }
 
-        [SkipLocalFact]
+        [Fact]
         public async Task GetActiveCitizensFails()
         {
             //Arrange       
@@ -61,7 +61,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
-        [SkipLocalFact]
+        [Fact]
         public async Task GetCitizenByCprNoSuccess()
         {
             //Arrange
@@ -83,10 +83,10 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             actualResponse.Should().NotBeNull();
-            actualResponse.CitizenId.Should().NotBeNullOrEmpty();
+            actualResponse.CitizenId.Should().NotBeEmpty();
         }
 
-        [SkipLocalFact]
+        [Fact]
         public async Task GetCitizenByCprNoFails()
         {
             //Arrange
@@ -110,7 +110,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             result.Should().BeEquivalentTo(error);
         }
 
-        [SkipLocalFact]
+        [Fact]
         public async Task GetCitizenByCitizenIdSuccess()
         {
             //Arrange
@@ -132,10 +132,10 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Citizens
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             actualResponse.Should().NotBeNull();
-            actualResponse.CitizenId.Should().BeEquivalentTo(citizenId);
+            actualResponse.CitizenId.Should().Equals(citizenId);
         }
 
-        [SkipLocalFact]
+        [Fact]
         public async Task CreateJournalNoteAsyncSuccess()
         {
             //Arrange

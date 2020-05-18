@@ -108,7 +108,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         [ProducesResponseType(401)]
         [Route("kss/{citizenId}")]
         [SwaggerOperation(OperationId = "GetCitizenById")]
-        public async Task<ActionResult<CitizenDataResponseModel>> GetCitizenById([Required] [FromRoute] string citizenId)
+        public async Task<ActionResult<CitizenDataResponseModel>> GetCitizenById([Required] [FromRoute] Guid citizenId)
         {
             var result = await _citizenService.GetCitizenByIdAsync(citizenId).ConfigureAwait(false);
 
@@ -140,7 +140,7 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Citizen
         [ProducesResponseType(401)]
         [Route("journal/{momentumCitizenId}")]
         [SwaggerOperation(OperationId = "CreateJournalNote",Tags =new[] { "Journal" })]        
-        public async Task<ActionResult> CreateJournalNote([Required] [FromRoute] string momentumCitizenId, [Required] [FromBody] JournalNoteRequestModel requestModel)
+        public async Task<ActionResult> CreateJournalNote([Required] [FromRoute] Guid momentumCitizenId, [Required] [FromBody] JournalNoteRequestModel requestModel)
         {
             var result = await _citizenService.CreateJournalNoteAsync(momentumCitizenId, requestModel).ConfigureAwait(false);
 

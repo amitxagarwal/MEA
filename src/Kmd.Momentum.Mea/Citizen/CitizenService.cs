@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -84,7 +85,7 @@ namespace Kmd.Momentum.Mea.Citizen
             return new ResultOrHttpError<CitizenDataResponseModel, Error>(citizenData);
         }
 
-        public async Task<ResultOrHttpError<CitizenDataResponseModel, Error>> GetCitizenByIdAsync(string citizenId)
+        public async Task<ResultOrHttpError<CitizenDataResponseModel, Error>> GetCitizenByIdAsync(Guid citizenId)
         {
             var response = await _citizenHttpClient.GetCitizenDataByCprOrCitizenIdFromMomentumCoreAsync($"citizens/{citizenId}").ConfigureAwait(false);
 
@@ -110,7 +111,7 @@ namespace Kmd.Momentum.Mea.Citizen
             return new ResultOrHttpError<CitizenDataResponseModel, Error>(citizenData);
         }
 
-        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsync(string momentumCitizenId, JournalNoteRequestModel requestModel)
+        public async Task<ResultOrHttpError<string, Error>> CreateJournalNoteAsync(Guid momentumCitizenId, JournalNoteRequestModel requestModel)
         {
             var response = await _citizenHttpClient.CreateJournalNoteInMomentumCoreAsync("journals/note", momentumCitizenId, requestModel).ConfigureAwait(false);
 

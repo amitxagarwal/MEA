@@ -48,7 +48,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
 
             var citizenDataResponse = new List<CitizenDataResponseModel>()
             {
-                new CitizenDataResponseModel(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                new CitizenDataResponseModel(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())
             };
 
@@ -203,7 +203,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             //Arrange
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = GetContext();
-            var citizenId = "1234567890";
+            var citizenId = It.IsAny<Guid>();
             var configurationMoq = new Mock<IConfiguration>();
 
             var citizenData = new CitizenDataResponseModelBuilder().Build();
@@ -231,7 +231,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             //Arrange
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = GetContext();
-            var citizenId = "1234567890";
+            var citizenId = It.IsAny<Guid>();
             var configurationMoq = new Mock<IConfiguration>();
 
             var citizenData = new CitizenDataResponseModelBuilder().Build();
@@ -258,16 +258,17 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = GetContext();
             var configurationMoq = new Mock<IConfiguration>();
+            var momentumCitizenId = It.IsAny<Guid>();
 
             var requestModel = new JournalNoteResponseBuilder().Build();
 
-            helperHttpClientMoq.Setup(x => x.CreateJournalNoteInMomentumCoreAsync("journals/note", "testCitizenId", requestModel))
+            helperHttpClientMoq.Setup(x => x.CreateJournalNoteInMomentumCoreAsync("journals/note", momentumCitizenId, requestModel))
                 .Returns(Task.FromResult(new ResultOrHttpError<string, Error>("")));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
 
             //Act
-            var result = await citizenService.CreateJournalNoteAsync("testCitizenId", requestModel).ConfigureAwait(false);
+            var result = await citizenService.CreateJournalNoteAsync(momentumCitizenId, requestModel).ConfigureAwait(false);
 
             //Asert
             result.Should().NotBeNull();
@@ -282,18 +283,19 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             var helperHttpClientMoq = new Mock<ICitizenHttpClientHelper>();
             var context = GetContext();
             var configurationMoq = new Mock<IConfiguration>();
+            var momentumCitizenId = It.IsAny<Guid>();
 
             var requestModel = new JournalNoteResponseBuilder().Build();
 
             var error = new Error("123456", new string[] { "Some error occured when creating note" }, "MCA");
 
-            helperHttpClientMoq.Setup(x => x.CreateJournalNoteInMomentumCoreAsync("journals/note", "testCitizenId", requestModel))
+            helperHttpClientMoq.Setup(x => x.CreateJournalNoteInMomentumCoreAsync("journals/note", momentumCitizenId, requestModel))
                 .Returns(Task.FromResult(new ResultOrHttpError<string, Error>(error, HttpStatusCode.BadRequest)));
 
             var citizenService = new CitizenService(helperHttpClientMoq.Object, configurationMoq.Object, context.Object);
 
             //Act
-            var result = await citizenService.CreateJournalNoteAsync("testCitizenId", requestModel).ConfigureAwait(false);
+            var result = await citizenService.CreateJournalNoteAsync(momentumCitizenId, requestModel).ConfigureAwait(false);
 
             //Asert            
             result.IsError.Should().BeTrue();

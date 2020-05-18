@@ -1,10 +1,11 @@
 ﻿using Kmd.Momentum.Mea.Citizen.Model;
+using System;
 
 namespace Kmd.Momentum.Mea.Tests.Citizen
 {
     public class CitizenDataResponseModelBuilder
     {
-        private string citizenId = "testCpr";
+        private Guid citizenId = Guid.NewGuid();
         private string displayName = "testBody";
         private string givenName = "testTitle";
         private string middleName = "testType";
@@ -21,7 +22,7 @@ namespace Kmd.Momentum.Mea.Tests.Citizen
             return new CitizenDataResponseModel(citizenId, displayName, givenName, middleName, initials, email, phone, caseworkerIdentifier, description, true, true);
         }
 
-        public CitizenDataResponseModelBuilder WithCpr(string citizenId)
+        public CitizenDataResponseModelBuilder WithCpr(Guid citizenId)
         {
             this.citizenId = citizenId;
             return this;

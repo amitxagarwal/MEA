@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Kmd.Momentum.Mea.Caseworker.Model
+namespace Kmd.Momentum.Mea.TaskApi.Model
 {
-    public class PUnitData
+   public class TaskPagedData
     {
         public string ReferenceId { get; set; }
 
@@ -17,7 +17,6 @@ namespace Kmd.Momentum.Mea.Caseworker.Model
 
         public IDictionary AdditionalValues { get; set; }
 
-        public IReadOnlyList<CaseworkerData> Data { get; set; }
+        public IReadOnlyList<TaskData> Data { get; set; }
     }
 }
-

@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 using System.Net.Http.Headers;
+using Kmd.Momentum.Mea.TaskApi.Model;
 
 namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
 {
@@ -109,5 +110,77 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
             result.Should().BeEquivalentTo(error);
         }
+
+        [SkipLocalFact]
+        public async Task GetCaseworkerByCaseworkerIdFailsDueToInvalidReq()
+        {
+            //Arrange
+            var caseworkerId = "0b328744-77ef-493f-abf4-295bb824a52bdfvsdgvdrgbd";
+            var requestUri = $"/caseworkers/kss/{caseworkerId}";
+
+            var client = _factory.CreateClient();
+
+            var tokenHelper = new TokenGenerator();
+            var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            //Act
+            var response = await client.GetAsync(requestUri).ConfigureAwait(false);
+            var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var error = "[\"{\\\"message\\\":\\\"The request is invalid.\\\"}\"]";
+
+            //Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            result.Should().BeEquivalentTo(error);
+        }
+
+        [SkipLocalFact]
+        public async Task GetAllTasksByCaseworkerIdSuccess()
+        {
+            //Arrange       
+            var client = _factory.CreateClient();
+            var caseworkerId = "836e2ad4-d028-4e3d-bb01-fdd60bca9b81";
+            var requestUri = $"/caseworkers/{caseworkerId}/tasks?pageNumber=1";
+            var tokenHelper = new TokenGenerator();
+            var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            //Act
+            var response = await client.GetAsync(requestUri).ConfigureAwait(false);
+            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualResponse = JsonConvert.DeserializeObject<TaskList>(responseBody);
+
+            //Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            actualResponse.Should().NotBeNull();
+            actualResponse.Result.Count.Should().BeGreaterThan(0);
+        }
+
+        [SkipLocalFact]
+        public async Task GetAllTasksByCaseworkerIdFails()
+        {
+            //Arrange       
+            var client = _factory.CreateClient();
+            var caseworkerId = "70375a2b-14d2-4774-a9a2-ab123ebd2ff6";
+            var requestUri = $"/caseworker/{caseworkerId}/tasks?pageNumber=1";
+            var tokenHelper = new TokenGenerator();
+            var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            //Act
+            var response = await client.GetAsync(requestUri).ConfigureAwait(false);
+            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualResponse = JsonConvert.DeserializeObject<TaskList>(responseBody);
+
+            //Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            responseBody.Should().BeNullOrEmpty();
+            actualResponse.Should().BeNull();
+        }
     }
+
 }
+

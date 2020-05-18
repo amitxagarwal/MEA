@@ -1,6 +1,7 @@
 ﻿using Kmd.Momentum.Mea.Caseworker;
 using Kmd.Momentum.Mea.Caseworker.Model;
 using Kmd.Momentum.Mea.Common.Authorization;
+using Kmd.Momentum.Mea.TaskApi.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -79,6 +80,37 @@ namespace Kmd.Momentum.Mea.Api.Controllers.Caseworker
         public async Task<ActionResult<CaseworkerData>> GetCaseworkerById([Required] [FromRoute] string caseworkerId)
         {
             var result = await _caseworkerService.GetCaseworkerByIdAsync(caseworkerId).ConfigureAwait(false);
+
+            if (result.IsError)
+            {
+                return StatusCode((int)(result.StatusCode ?? HttpStatusCode.BadRequest), result.Error.Errors);
+            }
+            else
+            {
+                return Ok(result.Result);
+            }
+        }
+
+        ///<summary>
+        ///Get all tasks for the caseworkers
+        ///</summary>
+        ///<response code="200">The caseworker detail by id is loaded successfully</response>
+        ///<response code="400">Bad request</response>
+        ///<response code="404">The List of tasks by caseworkerId is not found</response>
+        ///<response code="401">Couldn't get authorization to access Momentum Core Api</response>
+        ///<param name="caseworkerId">The caseworker id to access the records from Core system.</param>
+        ///<param name="pageNumber">The PageNumber to access the records from Core system. Minimum Value is 0</param>
+        ///<returns>List of Tasks for caseworkerId</returns>
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [Route("{caseworkerId}/tasks")]
+        [SwaggerOperation(OperationId = "getTasksbyCaseworker")]
+        public async Task<ActionResult<TaskData>> GetAllTasksByCaseworkerId([Required] [FromRoute] string caseworkerId, [FromQuery] int pageNumber = 0)
+        {
+            var result = await _caseworkerService.GetAllTasksForCaseworkerIdAsync(caseworkerId, pageNumber).ConfigureAwait(false);
 
             if (result.IsError)
             {

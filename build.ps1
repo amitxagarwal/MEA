@@ -95,7 +95,12 @@ Param(
     # The DbRequired for build database if it is true
     [Parameter(Mandatory=$false)]
     [string]
-    $DbRequired = "false"
+    $DbRequired = "false",
+
+    # The MeaAuthorizationAudience required for validate audience in testcases
+    [Parameter(Mandatory=$true)]
+    [string]    
+    $MeaAuthorizationAudience
 )
 
 function Compress-Directory {
@@ -136,7 +141,7 @@ try{
         }
 
         $branch = @{ $true = $SrcBranchName; $false = $(git symbolic-ref --short -q HEAD) }[$SrcBranchName -ne $NULL];    
-        $suffix = @{ $true = ""; $false = "$($branch.Substring(0, [math]::Min(10,$branch.Length)))-$revision"}[$branch -eq "master" -and $revision -ne "lo"]
+        $suffix = @{ $true = ""; $false = "$($($branch.Replace('_','-')).Substring(0, [math]::Min(10,$branch.Length)))-$revision"}[$branch -eq "master" -and $revision -ne "lo"]
         $commitHash = $(git rev-parse --short HEAD)
         $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
 
@@ -225,7 +230,7 @@ try {
     
     $branch = @{ $true = $SrcBranchName; $false = $(git symbolic-ref --short -q HEAD) }[$SrcBranchName -ne $NULL];
     $revision = @{ $true = "{0:00000}" -f [convert]::ToInt32("0" + $BuildId, 10); $false = "lo" }[$BuildId -ne $NULL];
-    $suffix = @{ $true = ""; $false = "$($branch.Substring(0, [math]::Min(10,$branch.Length)))-$revision"}[$branch -eq "master" -and $revision -ne "lo"]
+    $suffix = @{ $true = ""; $false = "$($($branch.Replace('_','-')).Substring(0, [math]::Min(10,$branch.Length)))-$revision"}[$branch -eq "master" -and $revision -ne "lo"]
     $commitHash = $(git rev-parse --short HEAD)
     $buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
 
@@ -308,6 +313,7 @@ try {
             ($env:KMD_MOMENTUM_MEA_ClientSecret = $MeaClientSecret); 
             ($env:KMD_MOMENTUM_MEA_ClientId = $MeaClientId); 
             ($env:KMD_MOMENTUM_MEA_Scope = $MeaScope);
+            ($env:MeaAuthorizationAudience = $MeaAuthorizationAudience);            
             ($env:ASPNETCORE_ENVIRONMENT = $Environment) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             
             if($LASTEXITCODE -ne 0) { exit 1 }

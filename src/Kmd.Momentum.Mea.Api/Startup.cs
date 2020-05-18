@@ -3,6 +3,7 @@ using Kmd.Momentum.Mea.Common.Authorization;
 using Kmd.Momentum.Mea.Common.Authorization.Caseworker;
 using Kmd.Momentum.Mea.Common.Authorization.Citizen;
 using Kmd.Momentum.Mea.Common.Authorization.Journal;
+using Kmd.Momentum.Mea.Common.Authorization.Tasks;
 using Kmd.Momentum.Mea.Common.DatabaseStore;
 using Kmd.Momentum.Mea.Common.Modules;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -104,8 +105,7 @@ namespace Kmd.Momentum.Mea.Api
                 ValidateIssuerSigningKey = true,
                 ValidAudiences = new[]
                 {
-                    "1d18d151-5192-47f1-a611-efa50dbdc431", // application id or client id
-                    "69d9693e-c4b7-4294-a29f-cddaebfa518b" // audience or aud claim value
+                    _configuration.GetValue<string>("MeaAuthorizationAudience")
                 }
             };
 
@@ -130,6 +130,11 @@ namespace Kmd.Momentum.Mea.Api
                     MeaCustomClaimAttributes.AudienceClaimTypeName,
                     MeaCustomClaimAttributes.TenantClaimTypeName,
                     MeaCustomClaimAttributes.ScopeClaimTypeName)));
+
+                options.AddPolicy(MeaCustomClaimAttributes.TaskRole, policy => policy.Requirements.Add(new MeaTaskClaimRequirement(
+                   MeaCustomClaimAttributes.AudienceClaimTypeName,
+                   MeaCustomClaimAttributes.TenantClaimTypeName,
+                   MeaCustomClaimAttributes.ScopeClaimTypeName)));
             });
 
             services.AddSwaggerGen(c =>

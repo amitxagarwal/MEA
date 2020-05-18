@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29911.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{685A15D1-CE41-46EB-91A6-1A3AAA776B8B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kmd.Momentum.Mea.Client", "src\kmd.momentum.mea.client\Kmd.Momentum.Mea.Client.csproj", "{794CC17D-BB50-4620-A485-C4B338520BC0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{6E13160C-B880-466C-B4A4-A54F61E247E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution", "solution", "{F0F0C062-C00C-4F61-947E-916264FEAA45}"
+	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+		build.ps1 = build.ps1
+		build.sh = build.sh
+		Directory.Build.props = Directory.Build.props
+		global.json = global.json
+		setup.ps1 = setup.ps1
+		setup.sh = setup.sh
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kmd.Momentum.Mea.Client.Sample", "sample\Kmd.Momentum.Mea.Client.Sample\Kmd.Momentum.Mea.Client.Sample.csproj", "{CE0B31FA-F7A3-4E86-B5A0-085F5A324BBF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{794CC17D-BB50-4620-A485-C4B338520BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{794CC17D-BB50-4620-A485-C4B338520BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{794CC17D-BB50-4620-A485-C4B338520BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{794CC17D-BB50-4620-A485-C4B338520BC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE0B31FA-F7A3-4E86-B5A0-085F5A324BBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE0B31FA-F7A3-4E86-B5A0-085F5A324BBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE0B31FA-F7A3-4E86-B5A0-085F5A324BBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE0B31FA-F7A3-4E86-B5A0-085F5A324BBF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{794CC17D-BB50-4620-A485-C4B338520BC0} = {685A15D1-CE41-46EB-91A6-1A3AAA776B8B}
+		{CE0B31FA-F7A3-4E86-B5A0-085F5A324BBF} = {6E13160C-B880-466C-B4A4-A54F61E247E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3E5AFE1F-363B-4AA6-AFAF-1ED4CB544BE5}
+	EndGlobalSection
+EndGlobal

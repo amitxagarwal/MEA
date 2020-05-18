@@ -21,6 +21,25 @@
         "description": "KeyVaultName is required for keyVault"
       }
     },
+    "isKeyVaultPolicyRequired": {
+      "type": "string",
+      "defaultValue": "false",
+      "metadata": {
+        "description": "If policy required to keyvault value is true else false"
+      }
+    },
+    "appObjectId": {
+      "type": "string",
+      "metadata": {
+        "description": "Applicaion oject id to give permission in keyvault policies"
+      }
+    },
+    "tenantId": {
+      "type": "string",
+      "metadata": {
+        "description": "Tenent Id for keyvault policies"
+      }
+    },
     "dbRequired": {
       "type": "string",
       "defaultValue": "false",
@@ -416,12 +435,20 @@
                 "all"
               ]
             }
+          },
+          {
+            "condition": "[equals(parameters('isKeyVaultPolicyRequired'),'true')]",
+            "tenantId": "[parameters('tenantId')]",
+            "objectId": "[parameters('appObjectId')]",
+            "permissions": {
+              "secrets": [ "all" ]
+            }
           }
         ],
         "enabledForDeployment": true,
         "vaultUri": "[variables('meaKeyVaultUri')]"
       }
-    },
+    },  
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
       "name": "[concat(variables('meaKeyVaultSecretStore'), '/', variables('secretName'))]",

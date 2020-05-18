@@ -38,7 +38,7 @@ jobs:
       meaAuthorizationAudience: ${{ parameters.meaAuthorizationAudience }}
       isKeyVaultPolicyRequired: ${{ parameters.isKeyVaultPolicyRequired }}
       appObjectId: ${{ parameters.appObjectId }}
-      tenantId: ${{ parameters.TenantId }}
+      tenantId: ${{ parameters.tenantId }}
 
     strategy:
       runOnce:

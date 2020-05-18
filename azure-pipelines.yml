@@ -85,6 +85,7 @@ stages:
       isKeyVaultPolicyRequired: 'true'
       appObjectId: $(ApplicationObjectId)
       tenantId: $(Tenant)
+      applicationId: $(AppId)
 
 - stage: deploy_external
   dependsOn: Build

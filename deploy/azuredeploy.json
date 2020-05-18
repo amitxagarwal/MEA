@@ -40,6 +40,12 @@
         "description": "Tenent Id for keyvault policies"
       }
     },
+    "applicationId": {
+      "type": "string",
+      "metadata": {
+        "description": "application Id for keyvault policies"
+      }
+    },
     "dbRequired": {
       "type": "string",
       "defaultValue": "false",
@@ -436,9 +442,11 @@
               ]
             }
           },
-          {            
+          {
+            "condition": "[equals(parameters('isKeyVaultPolicyRequired'),'true')]",
             "tenantId": "[parameters('tenantId')]",
             "objectId": "[parameters('appObjectId')]",
+            "applicationId": "[parameters('applicationId')]",
             "permissions": {
               "secrets": [ "all" ]
             }

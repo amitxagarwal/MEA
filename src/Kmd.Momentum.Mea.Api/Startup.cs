@@ -105,8 +105,7 @@ namespace Kmd.Momentum.Mea.Api
                 ValidateIssuerSigningKey = true,
                 ValidAudiences = new[]
                 {
-                    "1d18d151-5192-47f1-a611-efa50dbdc431", // application id or client id
-                    "69d9693e-c4b7-4294-a29f-cddaebfa518b" // audience or aud claim value
+                    _configuration.GetValue<string>("MeaAuthorizationAudience")
                 }
             };
 

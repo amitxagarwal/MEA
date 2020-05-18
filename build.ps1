@@ -95,7 +95,12 @@ Param(
     # The DbRequired for build database if it is true
     [Parameter(Mandatory=$false)]
     [string]
-    $DbRequired = "false"
+    $DbRequired = "false",
+
+    # The MeaAuthorizationAudience required for validate audience in testcases
+    [Parameter(Mandatory=$true)]
+    [string]    
+    $MeaAuthorizationAudience
 )
 
 function Compress-Directory {
@@ -308,6 +313,7 @@ try {
             ($env:KMD_MOMENTUM_MEA_ClientSecret = $MeaClientSecret); 
             ($env:KMD_MOMENTUM_MEA_ClientId = $MeaClientId); 
             ($env:KMD_MOMENTUM_MEA_Scope = $MeaScope);
+            ($env:MeaAuthorizationAudience = $MeaAuthorizationAudience);            
             ($env:ASPNETCORE_ENVIRONMENT = $Environment) | dotnet test -c Release --logger trx --verbosity="$BuildVerbosity" --no-build --no-restore
             
             if($LASTEXITCODE -ne 0) { exit 1 }

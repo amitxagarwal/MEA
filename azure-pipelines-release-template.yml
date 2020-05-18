@@ -15,8 +15,8 @@ parameters:
   isKeyVaultRequired: 'false'
   meaAuthorizationAudience: ""
   isKeyVaultPolicyRequired: ""
-  appObjectId: ""
-  tenantId: ""
+  appObjectId: "123"
+  tenantId: "123"
 
 jobs:
   - deployment: deploy_momentum_mea_${{ parameters.environmentNameSuffix }}

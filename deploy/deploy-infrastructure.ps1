@@ -102,13 +102,13 @@ Param
   [string]  
   $IsKeyVaultPolicyRequired = 'false',
     
-  [Parameter(Mandatory=$false)]
+  [Parameter(Mandatory=$true)]
   [string]  
-  $AppObjectId = ' ',
+  $AppObjectId,
 
-  [Parameter(Mandatory=$false)]
+  [Parameter(Mandatory=$true)]
   [string]  
-  $TenantId = ' '
+  $TenantId
 )
 
 Push-Location $PSScriptRoot

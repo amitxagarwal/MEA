@@ -18,7 +18,7 @@ stages:
     steps:
     - task: UseDotNet@2
       inputs:
-        packageType: 'sdk'
+        packageType: 'SDK'
         useGlobalJson: true
     - task: NuGetAuthenticate@0
     - pwsh: ./build.ps1 -PublishArtifactsToAzureDevOps:(("$(imageName)" -eq "windows-2019")) -ArtifactsStagingPath "$(Build.ArtifactStagingDirectory)" -McaClientId "$(McaClientId)" -McaClientSecret "$(McaClientSecret)" -McaApiUri "$(McaApiUri)" -McaScope "$(McaScope)" -Environment "Build" -MeaClientId "$(MeaClientId)" -MeaClientSecret "$(MeaClientSecret)" -MeaScope "$(MeaScope)" -MeaAuthorizationAudience $(PhoenixMeaAuthorizationAudience)

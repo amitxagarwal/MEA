@@ -36,8 +36,6 @@ namespace Kmd.Momentum.Mea.Client.Sample
 
         public string Cpr { get; set; }
 
-        public string Documents { get; set; }
-
         public string Title { get; set; }
 
         public string Type { get; set; }

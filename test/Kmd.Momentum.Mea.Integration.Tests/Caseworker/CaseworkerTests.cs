@@ -26,16 +26,16 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             var requestUri = "/caseworkers?pageNumber=1";
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
-
+            
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
-            var response = await client.GetAsync(requestUri).ConfigureAwait(false);
-            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<CaseworkerList>(responseBody);
+            var response = await client.GetAsync(requestUri).ConfigureAwait(false);            
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualResponse = JsonConvert.DeserializeObject<CaseworkerList>(responseBody);
             actualResponse.Should().NotBeNull();
             actualResponse.Result.Count.Should().BeGreaterThan(0);
         }

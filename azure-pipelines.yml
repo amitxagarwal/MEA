@@ -59,10 +59,6 @@ stages:
       isDbRequired: $(DbRequired)
       isKeyVaultRequired: 'true'
       meaAuthorizationAudience: $(PhoenixMeaAuthorizationAudience)
-      isKeyVaultPolicyRequired: 'true'
-      appObjectId: $(ApplicationObjectId)
-      tenantId: $(Tenant)
-      applicationId: $(AppId)
 
 - stage: deploy_internal
   dependsOn: Build

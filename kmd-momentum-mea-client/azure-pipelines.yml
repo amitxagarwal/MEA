@@ -32,5 +32,4 @@ stages:
       displayName: 'Create NuGet Package'
       inputs:
         command: pack
-        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/releases'        
-        nobuild: true
+        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/releases'       

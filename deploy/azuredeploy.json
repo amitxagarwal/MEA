@@ -441,20 +441,33 @@
                 "all"
               ]
             }
-          },
-          {
-            "condition": "[equals(parameters('isKeyVaultPolicyRequired'),'true')]",
-            "tenantId": "[parameters('tenantId')]",
-            "objectId": "[parameters('appObjectId')]",
-            "applicationId": "[parameters('applicationId')]",
-            "permissions": {
-              "secrets": [ "all" ]
-            }
           }
-        ],        
+        ],
         "vaultUri": "[variables('meaKeyVaultUri')]"
-      }
-    },  
+      },
+      "resources": [
+        {
+          "name": "ToTestInBuild",
+          "type": "Microsoft.KeyVault/vaults/accessPolicies",
+          "apiVersion": "2016-10-01",
+          "properties": {
+            "accessPolicies": [
+              {
+                "condition": "[equals(parameters('isKeyVaultPolicyRequired'),'true')]",
+                "tenantId": "[parameters('tenantId')]",
+                "objectId": "[parameters('appObjectId')]",
+                "applicationId": "[parameters('applicationId')]",
+                "permissions": {
+                  "secrets": [
+                    "all"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
       "name": "[concat(variables('meaKeyVaultSecretStore'), '/', variables('secretName'))]",

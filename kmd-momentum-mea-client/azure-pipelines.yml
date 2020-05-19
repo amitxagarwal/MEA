@@ -32,7 +32,8 @@ stages:
     - task: DotNetCoreCLI@2
       displayName: 'Create NuGet Package'
       inputs:
-        command: pack '$(Pipeline.Workspace)/s/kmd-momentum-mea-client/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+        command: pack 
+        projects: '$(Pipeline.Workspace)/s/kmd-momentum-mea-client/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
         packDirectory: '$(Build.ArtifactStagingDirectory)/packages/releases'
         nobuild: true
         nologo: true

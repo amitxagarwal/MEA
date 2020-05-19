@@ -61,7 +61,7 @@ Param
   [Parameter(Mandatory=$false)]
   [string]
   [ValidateSet("F1","FREE","D1","SHARED","B1","B2","B3","S1","S2","S3","P1V2","P2V2","P3V2","PC2","PC3","PC4","I1","I2","I3")]
-  $WebAppServicePlanSku = "B1",
+  $WebAppServicePlanSku = "F1",
 
   [Parameter(Mandatory=$false)]
   [bool]

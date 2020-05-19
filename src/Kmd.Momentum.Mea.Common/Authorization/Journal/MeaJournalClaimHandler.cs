@@ -19,13 +19,11 @@ namespace Kmd.Momentum.Mea.Common.Authorization.Journal
             _meaCustomClaimsCheck = meaCustomClaimsCheck ?? throw new ArgumentNullException(nameof(meaCustomClaimsCheck));
         }
 
-        public const string Aud = "69d9693e-c4b7-4294-a29f-cddaebfa518b";
-
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, MeaJournalClaimRequirement requirement)
         {
             var claims = _meaCustomClaimsCheck.FetchClaims(context, requirement.JournalAudience, requirement.JournalTenant, requirement.JournalScope);
 
-            if (claims != null && claims.Audience.Any(s => s == Aud) && CheckForValidScope(claims.Tenant, claims.Scope) is true)
+            if (claims != null && CheckForValidScope(claims.Tenant, claims.Scope) is true)
             {
                 context.Succeed(requirement);
             }

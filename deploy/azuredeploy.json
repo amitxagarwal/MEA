@@ -447,6 +447,9 @@
       },
       "resources": [
         {
+          "dependsOn": [
+            "[resourceId('Microsoft.KeyVault/vaults', variables('meaKeyVaultSecretStore'))]"            
+          ],
           "name": "add",
           "type": "Microsoft.KeyVault/vaults/accessPolicies",
           "apiVersion": "2016-10-01",

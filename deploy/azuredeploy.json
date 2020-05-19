@@ -447,12 +447,13 @@
       },
       "resources": [
         {
-          "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults', variables('meaKeyVaultSecretStore'))]"            
-          ],
-          "name": "add",
           "type": "Microsoft.KeyVault/vaults/accessPolicies",
           "apiVersion": "2016-10-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.KeyVault/vaults', variables('meaKeyVaultSecretStore'))]",
+            "[concat('Microsoft.Web/sites/', variables('webAppName'))]"
+          ],
+          "name": "[concat(variables('meaKeyVaultSecretStore'), '/ToTestOnBuild')]",
           "condition": "[equals(parameters('isKeyVaultPolicyRequired'),'true')]",
           "properties": {
             "accessPolicies": [

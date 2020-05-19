@@ -33,7 +33,6 @@ stages:
       displayName: 'Create NuGet Package'
       inputs:
         command: pack
-        projects: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
         packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
         packDirectory: '$(Build.ArtifactStagingDirectory)'
         

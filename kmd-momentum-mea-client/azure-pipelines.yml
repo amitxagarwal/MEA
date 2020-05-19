@@ -33,7 +33,7 @@ stages:
       displayName: 'Create NuGet Package'
       inputs:
         command: pack 
-        projects: '$(Pipeline.Workspace)/s/kmd-momentum-mea-client/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+        projects: '$(Pipeline.Workspace)/s/kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
         packDirectory: '$(Build.ArtifactStagingDirectory)/packages/releases'
         nobuild: true
         nologo: true

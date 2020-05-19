@@ -26,11 +26,11 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             var requestUri = "/caseworkers?pageNumber=1";
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
-            
+
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
-            var response = await client.GetAsync(requestUri).ConfigureAwait(false);            
+            var response = await client.GetAsync(requestUri).ConfigureAwait(false);
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -52,12 +52,12 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
-            var response = await client.GetAsync(requestUri).ConfigureAwait(false);
-            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<CaseworkerList>(responseBody);
+            var response = await client.GetAsync(requestUri).ConfigureAwait(false);            
 
             //Assert
             response.StatusCode.Should().Be((HttpStatusCode.NotFound));
+            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualResponse = JsonConvert.DeserializeObject<CaseworkerList>(responseBody);
             responseBody.Should().BeNullOrEmpty();
             actualResponse.Should().BeNull();
         }
@@ -77,11 +77,11 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
-            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<CaseworkerDataResponseModel>(responseBody);
-
+            
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualResponse = JsonConvert.DeserializeObject<CaseworkerDataResponseModel>(responseBody);
             actualResponse.Should().NotBeNull();
             actualResponse.CaseworkerId.Should().Be(caseworkerId);
         }
@@ -101,12 +101,12 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             //Act
-            var response = await client.GetAsync(requestUri).ConfigureAwait(false);
-            var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var error = "[\"An error occured while fetching the record(s) from Core Api\"]";
+            var response = await client.GetAsync(requestUri).ConfigureAwait(false);            
 
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var error = "[\"An error occured while fetching the record(s) from Core Api\"]";
             result.Should().BeEquivalentTo(error);
         }
 
@@ -126,11 +126,11 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
-            var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var error = "[\"{\\\"message\\\":\\\"The request is invalid.\\\"}\"]";
-
+            
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var error = "[\"{\\\"message\\\":\\\"The request is invalid.\\\"}\"]";
             result.Should().BeEquivalentTo(error);
         }
 
@@ -148,11 +148,11 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
-            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<TaskList>(responseBody);
-
+            
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualResponse = JsonConvert.DeserializeObject<TaskList>(responseBody);
             actualResponse.Should().NotBeNull();
             actualResponse.Result.Count.Should().BeGreaterThan(0);
         }
@@ -171,11 +171,11 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
-            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var actualResponse = JsonConvert.DeserializeObject<TaskList>(responseBody);
-
+            
             //Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualResponse = JsonConvert.DeserializeObject<TaskList>(responseBody);
             responseBody.Should().BeNullOrEmpty();
             actualResponse.Should().BeNull();
         }

@@ -20,7 +20,7 @@ namespace Kmd.Momentum.Mea.Tests.Caseworker
 
         public CaseworkerDataResponseModel Build()
         {
-            return new CaseworkerDataResponseModel(caseworkerId, displayName, givenName, middleName, 
+            return new CaseworkerDataResponseModel(caseworkerId, displayName, givenName, middleName,
                 initials, email, phone, caseworkerIdentifier, description, true, true);
         }
 

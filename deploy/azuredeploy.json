@@ -447,13 +447,13 @@
       },
       "resources": [
         {
-          "name": "ToTestInBuild",
+          "name": "add",
           "type": "Microsoft.KeyVault/vaults/accessPolicies",
           "apiVersion": "2016-10-01",
+          "condition": "[equals(parameters('isKeyVaultPolicyRequired'),'true')]",
           "properties": {
             "accessPolicies": [
               {
-                "condition": "[equals(parameters('isKeyVaultPolicyRequired'),'true')]",
                 "tenantId": "[parameters('tenantId')]",
                 "objectId": "[parameters('appObjectId')]",
                 "applicationId": "[parameters('applicationId')]",

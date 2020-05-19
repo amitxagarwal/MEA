@@ -453,7 +453,7 @@
             "[resourceId('Microsoft.KeyVault/vaults', variables('meaKeyVaultSecretStore'))]",
             "[concat('Microsoft.Web/sites/', variables('webAppName'))]"
           ],
-          "name": "[concat(variables('meaKeyVaultSecretStore'), '/ToTestOnBuild')]",
+          "name": "[concat(variables('meaKeyVaultSecretStore'), '/add')]",
           "condition": "[equals(parameters('isKeyVaultPolicyRequired'),'true')]",
           "properties": {
             "accessPolicies": [

@@ -2,7 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>kmd_momentum_mea_client</RootNamespace>    
+    <RootNamespace>kmd_momentum_mea_client</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
+    <PackageId>Kmd.Momentum.Mea.Client</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

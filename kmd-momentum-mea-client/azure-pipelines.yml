@@ -35,5 +35,5 @@ stages:
         command: pack
         packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
         packDirectory: '$(Build.ArtifactStagingDirectory)'
-        arguments: '--configuration "Debug"        
+        arguments: '--configuration "Debug"'
         

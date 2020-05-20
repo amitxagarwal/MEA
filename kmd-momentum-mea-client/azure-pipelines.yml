@@ -86,7 +86,7 @@ stages:
         command: 'push'
         packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/phoenix/*.nupkg'
         nuGetFeedType: 'internal'
-        publishVstsFeed: 'KmdMomentumMeaFeed/KmdMomentumMeaFeed'
+        publishVstsFeed: 'Momentum/KmdMomentumMeaFeed'
 
 - stage: deploy_internal
   condition: succeeded()
@@ -138,7 +138,7 @@ stages:
         command: 'push'
         packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/internal/*.nupkg'
         nuGetFeedType: 'internal'
-        publishVstsFeed: 'KmdMomentumMeaFeed/KmdMomentumMeaFeed'
+        publishVstsFeed: 'Momentum/KmdMomentumMeaFeed'
 
 - stage: deploy_external
   condition: succeeded()

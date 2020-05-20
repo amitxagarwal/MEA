@@ -30,12 +30,16 @@ stages:
         arguments: '--configuration "Release"'
 
     - task: DotNetCoreCLI@2
+      displayName: "Build NuGet"
+      inputs:
+        command: build
+        projects: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+        buildProperties: 'VersionSuffix="$(Build.BuildNumber)"'
+
+    - task: DotNetCoreCLI@2
       displayName: 'Create NuGet Package'
       inputs:
-        command: pack
-        buildProperties: 'VersionSuffix="$(Build.BuildNumber)"'
-        projects: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+        command: pack        
         packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
         packDirectory: '$(Build.ArtifactStagingDirectory)/packages/releases'
-        arguments: '--configuration "Debug"'
         verbosityPack: 'normal'

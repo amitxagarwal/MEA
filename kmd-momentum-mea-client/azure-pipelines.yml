@@ -77,7 +77,7 @@ stages:
 
     - publish: '$(Build.ArtifactStagingDirectory)/packages/phoenix'
       displayName: 'upload NuGet Package'
-      artifact: 'packages/phoenix'
+      artifact: 'phoenix'
 
     - task: DotNetCoreCLI@2
       displayName: 'Push NuGet Package'
@@ -129,7 +129,7 @@ stages:
 
     - publish: '$(Build.ArtifactStagingDirectory)/packages/internal'
       displayName: 'upload NuGet Package'
-      artifact: 'packages/internal'
+      artifact: 'internal'
 
     - task: DotNetCoreCLI@2
       displayName: 'Push NuGet Package'
@@ -180,7 +180,7 @@ stages:
 
     - publish: '$(Build.ArtifactStagingDirectory)/packages/external'
       displayName: 'upload NuGet Package'
-      artifact: 'packages/external'
+      artifact: 'external'
 
     - task: DotNetCoreCLI@2
       displayName: 'Push NuGet Package'

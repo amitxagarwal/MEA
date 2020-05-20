@@ -78,14 +78,14 @@ stages:
       displayName: 'upload NuGet Package'
       artifact: 'phoenix'
 
-    - task: DotNetCoreCLI@2
+    - task: NuGetCommand@2
       displayName: 'Push NuGet Package'
       condition: succeeded()
       inputs:
         command: 'push'
         packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/phoenix/*.nupkg'
         nuGetFeedType: 'internal'
-        publishVstsFeed: 'phoenix'
+        publishVstsFeed: 'KmdMomentumMeaFeed'
 
 - stage: deploy_internal
   condition: succeeded()
@@ -130,14 +130,14 @@ stages:
       displayName: 'upload NuGet Package'
       artifact: 'internal'
 
-    - task: DotNetCoreCLI@2
+    - task: NuGetCommand@2
       displayName: 'Push NuGet Package'
       condition: succeeded()
       inputs:
         command: 'push'
         packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/internal/*.nupkg'
         nuGetFeedType: 'internal'
-        publishVstsFeed: 'internal'
+        publishVstsFeed: 'KmdMomentumMeaFeed'
 
 - stage: deploy_external
   condition: succeeded()
@@ -181,7 +181,7 @@ stages:
       displayName: 'upload NuGet Package'
       artifact: 'external'
 
-    - task: DotNetCoreCLI@2
+    - task: NuGetCommand@2
       displayName: 'Push NuGet Package'
       condition: succeeded()
       inputs:

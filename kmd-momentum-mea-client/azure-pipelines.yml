@@ -27,6 +27,8 @@ stages:
 
     - task: DotNetCoreCLI@2
       displayName: "Build Solution"
+      env:
+        DOTNET_CLI_TELEMETRY_OPTOUT: 1
       inputs:
         command: build
         projects: './kmd-momentum-mea-client/Kmd-Momentum-Mea-Client.sln'

@@ -35,6 +35,9 @@ stages:
     pool:
       vmImage: "ubuntu-18.04"
 
+    workspace:
+      clean: all
+
     steps:
     - task: UseDotNet@2
       inputs:
@@ -63,6 +66,9 @@ stages:
     pool:
       vmImage: "ubuntu-18.04"
 
+    workspace:
+      clean: all
+
     steps:
     - task: UseDotNet@2
       inputs:
@@ -90,6 +96,9 @@ stages:
   - job:
     pool:
       vmImage: "ubuntu-18.04"
+
+    workspace:
+      clean: all
 
     steps:
     - task: UseDotNet@2

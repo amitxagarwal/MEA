@@ -6,11 +6,10 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <VersionPrefix>1.0.0</VersionPrefix>
     <PackageId>Kmd.Momentum.Mea.Client</PackageId>
-    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="code-model-v1" />
+    <None Remove="code-model-v1" />  
   </ItemGroup>
 
   <ItemGroup>

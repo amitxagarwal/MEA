@@ -77,7 +77,7 @@ stages:
       displayName: 'upload NuGet Package'
       artifact: 'packages'
 
-    - task: NuGetCommand@2
+    - task: DotNetCoreCLI@2
       displayName: 'Push NuGet Package'
       condition: succeeded()
       inputs:
@@ -128,7 +128,7 @@ stages:
       displayName: 'upload NuGet Package'
       artifact: 'packages'
 
-    - task: NuGetCommand@2
+    - task: DotNetCoreCLI@2
       displayName: 'Push NuGet Package'
       condition: succeeded()
       inputs:

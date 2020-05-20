@@ -189,4 +189,4 @@ stages:
         command: 'push'
         packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/*Test.nupkg'
         nuGetFeedType: 'external'
-        publishFeedCredentials: $(NugetSecrete)
+        publishFeedCredentials: 'test nuget'

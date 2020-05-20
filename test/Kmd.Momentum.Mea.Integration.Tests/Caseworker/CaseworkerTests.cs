@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Xunit;
 using System.Net.Http.Headers;
 using Kmd.Momentum.Mea.TaskApi.Model;
+using System.Linq;
 
 namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
 {
@@ -66,15 +67,19 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
         public async Task GetCaseworkerByCaseworkerIdSuccess()
         {
             //Arrange
-            var caseworkerId = "0b328744-77ef-493f-abf4-295bb824a52b";
-            var requestUri = $"/caseworkers/kss/{caseworkerId}";
-
             var client = _factory.CreateClient();
 
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var dataToGetCaseworkerId = await client.GetAsync("/caseworkers?pageNumber=1").ConfigureAwait(false);
+            var dataBody = await dataToGetCaseworkerId.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualData = JsonConvert.DeserializeObject<CaseworkerList>(dataBody);
+            var caseworkerId = actualData.Result.Select(x => x.CaseworkerId).FirstOrDefault();
+
+            var requestUri = $"/caseworkers/kss/{caseworkerId}";
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
@@ -140,12 +145,18 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Caseworker
         {
             //Arrange       
             var client = _factory.CreateClient();
-            var caseworkerId = "836e2ad4-d028-4e3d-bb01-fdd60bca9b81";
-            var requestUri = $"/caseworkers/{caseworkerId}/tasks?pageNumber=1";
+
             var tokenHelper = new TokenGenerator();
             var accessToken = await tokenHelper.GetToken().ConfigureAwait(false);
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var dataToGetCaseworkerId = await client.GetAsync("/caseworkers?pageNumber=1").ConfigureAwait(false);
+            var dataBody = await dataToGetCaseworkerId.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualData = JsonConvert.DeserializeObject<CaseworkerList>(dataBody);
+            var caseworkerId = actualData.Result.Select(x => x.CaseworkerId).FirstOrDefault();
+
+            var requestUri = $"/caseworkers/{caseworkerId}/tasks?pageNumber=1";
 
             //Act
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);

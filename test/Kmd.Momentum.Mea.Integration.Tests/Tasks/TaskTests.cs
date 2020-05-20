@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
+using Kmd.Momentum.Mea.Caseworker.Model;
 using Kmd.Momentum.Mea.TaskApi.Model;
 using Newtonsoft.Json;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -23,9 +25,6 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Tasks
         public async Task UpdateTaskstatusSuccess()
         {
             //Arrange
-            var taskId = "926902af-b2e1-46f2-b441-a829842437b3";
-
-            var requestUri = $"/tasks/{taskId}/update";
 
             var client = _factory.CreateClient();
 
@@ -34,6 +33,17 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Tasks
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
+            var dataToGetCaseworkerId = await client.GetAsync("/caseworkers?pageNumber=1").ConfigureAwait(false);
+            var dataToGetCaseworkerIdBody = await dataToGetCaseworkerId.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualdataToGetCaseworkerId = JsonConvert.DeserializeObject<CaseworkerList>(dataToGetCaseworkerIdBody);
+            var caseworkerId = actualdataToGetCaseworkerId.Result.Select(x => x.CaseworkerId).FirstOrDefault();
+
+            var dataToGetTaskId = await client.GetAsync($"/caseworkers/{caseworkerId}/tasks?pageNumber=1");
+            var dataToGetTaskIdBody = await dataToGetTaskId.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actualdataToGetTaskId = JsonConvert.DeserializeObject<TaskList>(dataToGetTaskIdBody);
+            var taskId = actualdataToGetTaskId.Result.Select(x => x.TaskId).FirstOrDefault();
+
+            var requestUri = $"/tasks/{taskId}/update";
 
             var taskUpdateStatus = new TaskUpdateStatus()
             {
@@ -57,7 +67,7 @@ namespace Kmd.Momentum.Mea.Integration.Tests.Tasks
         {
             //Arrange
             var taskId = "70375a2b-14d2-4774-a9a2-ab123ebd2ff6";
-            var requestUri = $"/task/{taskId}/updates";
+            var requestUri = $"/tasks/{taskId}/updates";
 
             var client = _factory.CreateClient();
 

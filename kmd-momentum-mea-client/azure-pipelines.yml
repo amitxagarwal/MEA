@@ -178,10 +178,6 @@ stages:
         packDirectory: '$(Build.ArtifactStagingDirectory)/packages'
         verbosityPack: 'normal'
 
-    - publish: '$(Build.ArtifactStagingDirectory)/packages/*Test.nupkg'
-      displayName: 'upload NuGet Package'
-      artifact: 'packages'
-
     - task: DotNetCoreCLI@2
       displayName: 'Push NuGet Package'
       condition: succeeded()

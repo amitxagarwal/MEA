@@ -72,10 +72,10 @@ stages:
         command: pack        
         packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
         buildProperties: 'VersionSuffix="phoenix$(Build.BuildId)"'
-        packDirectory: '$(Build.ArtifactStagingDirectory)/packages'
+        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/phoenix'
         verbosityPack: 'normal'
 
-    - publish: '$(Build.ArtifactStagingDirectory)/packages/*phoenix*.nupkg'
+    - publish: '$(Build.ArtifactStagingDirectory)/packages/phoenix'
       displayName: 'upload NuGet Package'
       artifact: 'packages'
 
@@ -84,7 +84,7 @@ stages:
       condition: succeeded()
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/*phoenix*.nupkg'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/phoenix'
         nuGetFeedType: 'internal'
         publishVstsFeed: 'phoenix'
 
@@ -124,10 +124,10 @@ stages:
         command: pack        
         packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
         buildProperties: 'VersionSuffix="internal$(Build.BuildId)"'
-        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/'
+        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/internal'
         verbosityPack: 'normal'
 
-    - publish: '$(Build.ArtifactStagingDirectory)/packages/*internal*.nupkg'
+    - publish: '$(Build.ArtifactStagingDirectory)/packages/internal'
       displayName: 'upload NuGet Package'
       artifact: 'packages'
 
@@ -136,7 +136,7 @@ stages:
       condition: succeeded()
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/*internal*.nupkg'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/internal'
         nuGetFeedType: 'internal'
         publishVstsFeed: 'internal'
 
@@ -175,14 +175,18 @@ stages:
       inputs:
         command: pack        
         packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
-        packDirectory: '$(Build.ArtifactStagingDirectory)/packages'
+        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/external'
         verbosityPack: 'normal'
+
+    - publish: '$(Build.ArtifactStagingDirectory)/packages/external'
+      displayName: 'upload NuGet Package'
+      artifact: 'packages'
 
     - task: DotNetCoreCLI@2
       displayName: 'Push NuGet Package'
       condition: succeeded()
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/*Test.nupkg'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/external'
         nuGetFeedType: 'external'
         publishFeedCredentials: 'test nuget'

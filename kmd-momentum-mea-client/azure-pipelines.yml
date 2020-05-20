@@ -10,6 +10,7 @@ stages:
       matrix:
         linux: { imageName: "ubuntu-18.04" }
         mac: { imageName: "macos-10.14" }
+        windows: { imageName: "windows-2019" }
       maxParallel: 3
     pool:
       vmImage: $(imageName)

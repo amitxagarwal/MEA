@@ -36,6 +36,7 @@ stages:
         arguments: '--configuration "Release"'
 
 - stage: deploy_phoenix
+  dependsOn: Build
   jobs:
   - job:
     pool:
@@ -81,6 +82,7 @@ stages:
         publishVstsFeed: 'Test'
 
 - stage: deploy_internal
+  dependsOn: Build
   jobs:
   - job:
     pool:
@@ -126,6 +128,7 @@ stages:
         publishVstsFeed: 'Test'
 
 - stage: deploy_external
+  dependsOn: Build
   jobs:
   - job:
     pool:

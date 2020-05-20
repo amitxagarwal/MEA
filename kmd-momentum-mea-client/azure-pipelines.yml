@@ -70,15 +70,19 @@ stages:
         command: pack        
         packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
         buildProperties: 'VersionSuffix="phoenix$(Build.BuildId)"'
-        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/releases'
+        packDirectory: '$(Build.ArtifactStagingDirectory)/packages'
         verbosityPack: 'normal'
+
+    - publish: '$(Build.ArtifactStagingDirectory)/packages'
+      displayName: 'upload NuGet Package'
+      artifact: 'packages'
 
     - task: NuGetCommand@2
       displayName: 'Push NuGet Package'
       condition: succeeded()
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/releases/*phoenix*.nupkg'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/*phoenix*.nupkg'
         nuGetFeedType: 'internal'
         publishVstsFeed: 'Test'
 
@@ -117,15 +121,19 @@ stages:
         command: pack        
         packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
         buildProperties: 'VersionSuffix="internal$(Build.BuildId)"'
-        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/releases'
+        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/'
         verbosityPack: 'normal'
+
+    - publish: '$(Build.ArtifactStagingDirectory)/packages'
+      displayName: 'upload NuGet Package'
+      artifact: 'packages'
 
     - task: NuGetCommand@2
       displayName: 'Push NuGet Package'
       condition: succeeded()
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/releases/*internal*.nupkg'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/*internal*.nupkg'
         nuGetFeedType: 'internal'
         publishVstsFeed: 'Test'
 
@@ -163,5 +171,5 @@ stages:
       inputs:
         command: pack        
         packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
-        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/releases'
+        packDirectory: '$(Build.ArtifactStagingDirectory)/packages'
         verbosityPack: 'normal'

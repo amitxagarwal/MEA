@@ -15,6 +15,9 @@ stages:
     pool:
       vmImage: $(imageName)
 
+    workspace:
+      clean: all
+
     steps:
     - task: UseDotNet@2
       inputs:

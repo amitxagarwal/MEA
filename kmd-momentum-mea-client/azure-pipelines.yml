@@ -63,6 +63,14 @@ stages:
         packDirectory: '$(Build.ArtifactStagingDirectory)/packages/releases'
         verbosityPack: 'normal'
 
+    - task: NuGetCommand@2
+      displayName: 'Push NuGet Package'
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Pipeline.Workspace)/packages/releases/*phoenix*.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'Test'
+
 - stage: deploy_internal
   jobs:
   - job:
@@ -93,6 +101,14 @@ stages:
         buildProperties: 'VersionSuffix="internal$(Build.BuildId)"'
         packDirectory: '$(Build.ArtifactStagingDirectory)/packages/releases'
         verbosityPack: 'normal'
+
+    - task: NuGetCommand@2
+      displayName: 'Push NuGet Package'
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Pipeline.Workspace)/packages/releases/*internal*.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'Test'
 
 - stage: deploy_external
   jobs:

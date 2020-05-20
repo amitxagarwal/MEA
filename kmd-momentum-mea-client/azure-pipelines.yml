@@ -83,7 +83,7 @@ stages:
       condition: succeeded()
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/phoenix'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/phoenix/*.nupkg'
         nuGetFeedType: 'internal'
         publishVstsFeed: 'phoenix'
 
@@ -135,7 +135,7 @@ stages:
       condition: succeeded()
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/internal'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/internal/*.nupkg'
         nuGetFeedType: 'internal'
         publishVstsFeed: 'internal'
 
@@ -186,6 +186,6 @@ stages:
       condition: succeeded()
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/external'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/external/*.nupkg'
         nuGetFeedType: 'external'
         publishFeedCredentials: 'test nuget'

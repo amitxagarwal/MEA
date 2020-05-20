@@ -8,9 +8,9 @@ stages:
   - job: build
     strategy:
       matrix:
-        linux: { imageName: "ubuntu-latest" }
-        mac: { imageName: "macos-latest" }
-        windows: { imageName: "windows-latest" }
+        linux: { imageName: "ubuntu-18.04" }
+        mac: { imageName: "macos-10.14" }
+        windows: { imageName: "windows-2019" }
       maxParallel: 3
     pool:
       vmImage: $(imageName)
@@ -29,18 +29,85 @@ stages:
         projects: './kmd-momentum-mea-client/Kmd-Momentum-Mea-Client.sln'
         arguments: '--configuration "Release"'
 
+- stage: deploy_phoenix
+  jobs:
+  - job:
+    pool:
+      vmImage: "ubuntu-18.04"
+
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        useGlobalJson: true
+        workingDirectory: "$(Pipeline.Workspace)/s/kmd-momentum-mea-client/"
+
     - task: DotNetCoreCLI@2
       displayName: "Build NuGet"
       inputs:
         command: build
         projects: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
-        buildProperties: 'VersionSuffix="$(Build.BuildNumber)"'
 
     - task: DotNetCoreCLI@2
       displayName: 'Create NuGet Package'
       inputs:
         command: pack        
         packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
-        buildProperties: 'VersionSuffix="$(Build.BuildNumber)"'
+        buildProperties: 'VersionSuffix="phoenix$(Build.BuildId)"'
+        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/releases'
+        verbosityPack: 'normal'
+
+- stage: deploy_internal
+  jobs:
+  - job:
+    pool:
+      vmImage: "ubuntu-18.04"
+
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        useGlobalJson: true
+        workingDirectory: "$(Pipeline.Workspace)/s/kmd-momentum-mea-client/"
+
+    - task: DotNetCoreCLI@2
+      displayName: "Build NuGet"
+      inputs:
+        command: build
+        projects: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Create NuGet Package'
+      inputs:
+        command: pack        
+        packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+        buildProperties: 'VersionSuffix="internal$(Build.BuildId)"'
+        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/releases'
+        verbosityPack: 'normal'
+
+- stage: deploy_external
+  jobs:
+  - job:
+    pool:
+      vmImage: "ubuntu-18.04"
+
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        useGlobalJson: true
+        workingDirectory: "$(Pipeline.Workspace)/s/kmd-momentum-mea-client/"
+
+    - task: DotNetCoreCLI@2
+      displayName: "Build NuGet"
+      inputs:
+        command: build
+        projects: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Create NuGet Package'
+      inputs:
+        command: pack        
+        packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
         packDirectory: '$(Build.ArtifactStagingDirectory)/packages/releases'
         verbosityPack: 'normal'

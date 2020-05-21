@@ -41,7 +41,7 @@ stages:
         contents: |
           **/*.csproj
           **/*.png
-          **/*.cs
+          **/Kmd.Momentum.Mea.Client.dll
         targetFolder: '$(Build.ArtifactStagingDirectory)/project'
 
     - task: CopyFiles@2

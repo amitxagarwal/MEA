@@ -28,14 +28,14 @@ jobs:
               DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
             inputs:
               command: build
-              projects: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+              projects: './*.nupkg'
 
           - task: DotNetCoreCLI@2
             displayName: 'Create NuGet Package'
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'true'))
             inputs:
               command: pack
-              packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+              packagesToPack: './*.nupkg'
               buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
               packDirectory: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
               verbosityPack: 'normal'

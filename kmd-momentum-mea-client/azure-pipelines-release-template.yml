@@ -34,7 +34,7 @@ jobs:
               DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
             inputs:
               command: build
-              projects: "./Kmd.Momentum.Mea.Client.csproj"
+              projects: "$(Pipeline.Workspace)/project/Kmd.Momentum.Mea.Client.csproj"
               workingDirectory: "$(Pipeline.Workspace)/project/"
 
           - task: DotNetCoreCLI@2
@@ -42,7 +42,7 @@ jobs:
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'true'))
             inputs:
               command: pack
-              packagesToPack: './Kmd.Momentum.Mea.Client.csproj'
+              packagesToPack: "$(Pipeline.Workspace)/project/Kmd.Momentum.Mea.Client.csproj"
               buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
               packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
               verbosityPack: 'normal'
@@ -53,7 +53,7 @@ jobs:
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'false'))
             inputs:
               command: pack
-              packagesToPack: './Kmd.Momentum.Mea.Client.csproj'
+              packagesToPack: "$(Pipeline.Workspace)/project/Kmd.Momentum.Mea.Client.csproj"
               packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
               verbosityPack: 'normal'
               nobuild: true

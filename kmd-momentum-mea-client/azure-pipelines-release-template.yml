@@ -22,7 +22,7 @@ jobs:
             displayName: "Download artifacts"
 
           - task: DotNetCoreCLI@2
-            displayName: 'Create NuGet Package - $(Environment) Version'
+            displayName: 'Create NuGet Package - Dynamic Version'
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'true'))
             inputs:
               command: pack
@@ -32,7 +32,7 @@ jobs:
               verbosityPack: 'normal'
 
           - task: DotNetCoreCLI@2
-            displayName: 'Create NuGet Package - $(Environment) Version'
+            displayName: 'Create NuGet Package - Static Version'
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'false'))
             inputs:
               command: pack

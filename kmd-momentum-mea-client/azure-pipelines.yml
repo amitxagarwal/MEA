@@ -35,6 +35,16 @@ stages:
         command: build
         projects: './kmd-momentum-mea-client/Kmd-Momentum-Mea-Client.sln'
 
+    - task: CopyFiles@2
+      inputs:
+        contents: '**bin\Debug\*.nupkg'
+        targetFolder: '$(Build.ArtifactStagingDirectory)\build'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: '$(Build.ArtifactStagingDirectory)\build'
+        artifactName: build
+
 - stage: deploy_phoenix
   condition: succeeded()
   dependsOn: Build

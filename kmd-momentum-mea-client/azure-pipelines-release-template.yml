@@ -29,7 +29,6 @@ jobs:
             inputs:
               command: build
               projects: './project/Kmd.Momentum.Mea.Client.csproj'
-              projects: './project/Kmd.Momentum.Mea.Client.csproj'
 
           - task: DotNetCoreCLI@2
             displayName: 'Pack NuGet with dynamic version'

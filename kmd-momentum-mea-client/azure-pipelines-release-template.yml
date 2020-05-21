@@ -20,12 +20,6 @@ jobs:
 
           - download: current
 
-          - task: UseDotNet@2
-            inputs:
-              packageType: 'sdk'              
-              useGlobalJson: true
-              workingDirectory: "$(Pipeline.Workspace)/project/"
-
           - task: DotNetCoreCLI@2
             displayName: 'Pack NuGet with dynamic version'
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'true'))

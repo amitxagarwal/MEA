@@ -24,7 +24,7 @@ jobs:
             inputs:
               packageType: 'sdk'              
               useGlobalJson: true
-              workingDirectory: "$(Pipeline.Workspace)/1/project/"
+              workingDirectory: "$(Pipeline.Workspace)/project/"
 
           - task: DotNetCoreCLI@2
             displayName: 'Pack NuGet with dynamic version'
@@ -32,21 +32,21 @@ jobs:
             inputs:
               command: pack
               buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
-              packDirectory: '$(Pipeline.Workspace)/1/packages/$(Environment)'
+              packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
               verbosityPack: 'normal'
-              workingDirectory: '$(Pipeline.Workspace)/1/project/'
+              workingDirectory: '$(Pipeline.Workspace)/project/'
 
           - task: DotNetCoreCLI@2
             displayName: 'Pack NuGet without dynamic version'
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'false'))
             inputs:
               command: pack
-              packDirectory: '$(Pipeline.Workspace)/1/packages/$(Environment)'
+              packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
               verbosityPack: 'normal'
               nobuild: true
-              workingDirectory: '$(Pipeline.Workspace)/1/project/'
+              workingDirectory: '$(Pipeline.Workspace)/project/'
               
-          - publish: '$(Pipeline.Workspace)/1/packages/$(Environment)'
+          - publish: '$(Pipeline.Workspace)/packages/$(Environment)'
             displayName: 'upload NuGet Package'
             artifact: '$(Environment)'
 
@@ -55,7 +55,7 @@ jobs:
             condition: succeeded()
             inputs:
               command: 'push'
-              packagesToPush: '$(Pipeline.Workspace)/1/packages/$(Environment)/*.nupkg'
+              packagesToPush: '$(Pipeline.Workspace)/packages/$(Environment)/*.nupkg'
               nuGetFeedType: $(FeedType)
               publishVstsFeed: 'Momentum/KmdMomentumMeaFeed' #Required only when "nuGetFeedType" is "internal"
               publishFeedCredentials: 'test nuget'  #Required only when "nuGetFeedType" is "external"

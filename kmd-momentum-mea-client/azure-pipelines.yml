@@ -40,153 +40,28 @@ stages:
   condition: succeeded()
   dependsOn: Build
   jobs:
-  - job:
-    pool:
-      vmImage: "ubuntu-18.04"
-
-    workspace:
-      clean: all
-
-    steps:
-    - task: UseDotNet@2
-      condition: succeeded()
-      inputs:
-        packageType: 'sdk'
-        useGlobalJson: true
-        workingDirectory: "$(Pipeline.Workspace)/s/kmd-momentum-mea-client/"
-
-    - task: DotNetCoreCLI@2
-      displayName: "Build NuGet"
-      condition: succeeded()
-      env:
-        DOTNET_CLI_TELEMETRY_OPTOUT: 1
-        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-      inputs:
-        command: build
-        projects: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Create NuGet Package'
-      condition: succeeded()
-      inputs:
-        command: pack        
-        packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
-        buildProperties: 'VersionSuffix="phoenix$(Build.BuildId)"'
-        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/phoenix'
-        verbosityPack: 'normal'
-
-    - publish: '$(Build.ArtifactStagingDirectory)/packages/phoenix'
-      displayName: 'upload NuGet Package'
-      artifact: 'phoenix'
-
-    - task: NuGetCommand@2
-      displayName: 'Push NuGet Package'
-      condition: succeeded()
-      inputs:
-        command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/phoenix/*.nupkg'
-        nuGetFeedType: 'internal'
-        publishVstsFeed: 'Momentum/KmdMomentumMeaFeed'
+  - template: azure-pipelines-release-template.yml
+    parameters:
+      environment: phoenix
+      isDynamicVersion: true
+      feedType: internal # value should be "internal" or 'external' only
 
 - stage: deploy_internal
   condition: succeeded()
   dependsOn: Build
   jobs:
-  - job:
-    pool:
-      vmImage: "ubuntu-18.04"
+  - template: azure-pipelines-release-template.yml
+    parameters:
+      environment: internal
+      isDynamicVersion: true
+      feedType: external # value should be "internal" or 'external' only
 
-    workspace:
-      clean: all
-
-    steps:
-    - task: UseDotNet@2
-      condition: succeeded()
-      inputs:
-        packageType: 'sdk'
-        useGlobalJson: true
-        workingDirectory: "$(Pipeline.Workspace)/s/kmd-momentum-mea-client/"
-
-    - task: DotNetCoreCLI@2
-      displayName: "Build NuGet"
-      condition: succeeded()
-      env:
-        DOTNET_CLI_TELEMETRY_OPTOUT: 1
-        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-      inputs:
-        command: build
-        projects: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Create NuGet Package'
-      condition: succeeded()
-      inputs:
-        command: pack        
-        packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
-        buildProperties: 'VersionSuffix="internal$(Build.BuildId)"'
-        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/internal'
-        verbosityPack: 'normal'
-
-    - publish: '$(Build.ArtifactStagingDirectory)/packages/internal'
-      displayName: 'upload NuGet Package'
-      artifact: 'internal'
-
-    - task: NuGetCommand@2
-      displayName: 'Push NuGet Package'
-      condition: succeeded()
-      inputs:
-        command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/internal/*.nupkg'
-        nuGetFeedType: 'internal'
-        publishVstsFeed: 'Momentum/KmdMomentumMeaFeed'
-
-- stage: deploy_external
+- stage: deploy_phoenix
   condition: succeeded()
   dependsOn: Build
   jobs:
-  - job:
-    pool:
-      vmImage: "ubuntu-18.04"
-
-    workspace:
-      clean: all
-
-    steps:
-    - task: UseDotNet@2
-      condition: succeeded()
-      inputs:
-        packageType: 'sdk'
-        useGlobalJson: true
-        workingDirectory: "$(Pipeline.Workspace)/s/kmd-momentum-mea-client/"
-
-    - task: DotNetCoreCLI@2
-      displayName: "Build NuGet"
-      condition: succeeded()
-      env:
-        DOTNET_CLI_TELEMETRY_OPTOUT: 1
-        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-      inputs:
-        command: build
-        projects: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Create NuGet Package'
-      condition: succeeded()
-      inputs:
-        command: pack        
-        packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
-        packDirectory: '$(Build.ArtifactStagingDirectory)/packages/external'
-        verbosityPack: 'normal'
-
-    - publish: '$(Build.ArtifactStagingDirectory)/packages/external'
-      displayName: 'upload NuGet Package'
-      artifact: 'external'
-
-    - task: NuGetCommand@2
-      displayName: 'Push NuGet Package'
-      condition: succeeded()
-      inputs:
-        command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/external/*.nupkg'
-        nuGetFeedType: 'external'
-        publishFeedCredentials: 'test nuget'
+  - template: azure-pipelines-release-template.yml
+    parameters:
+      environment: external
+      isDynamicVersion: false
+      feedType: external # value should be "internal" or 'external' only

@@ -1,0 +1,70 @@
+parameters:
+  environment: phoenix
+  isDynamicVersion: true
+  feedType: internal # value should be "internal" or 'external' only
+
+jobs:
+  - deployment: deploy_${{ parameters.environment }}
+    pool: { vmImage: 'ubuntu-18.04' }
+    environment: momentum_mea_${{ parameters.environment }}
+    variables:
+      Environment: ${{ parameters.environment }}
+      IsDynamicVersion: ${{ parameters.isDynamicVersion }}
+      FeedType: ${{ parameters.feedType }}
+      
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - task: UseDotNet@2
+            condition: succeeded()
+            inputs:
+              packageType: 'sdk'
+              useGlobalJson: true
+              workingDirectory: "$(Pipeline.Workspace)/s/kmd-momentum-mea-client/"
+
+          - task: DotNetCoreCLI@2
+            displayName: "Build NuGet"
+            condition: succeeded()
+            env:
+              DOTNET_CLI_TELEMETRY_OPTOUT: 1
+              DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+            inputs:
+            command: build
+            projects: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Create NuGet Package'
+            condition: and(succeeded(),eq(variables['isDynamicVersion'],'true'))
+            inputs:
+              command: pack
+              packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+              buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
+              packDirectory: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
+              verbosityPack: 'normal'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Create NuGet Package'
+            condition: and(succeeded(),eq(variables['isDynamicVersion'],'false'))
+            inputs:
+              command: pack
+              packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+              packDirectory: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
+              verbosityPack: 'normal'
+              nobuild: true
+              
+          - publish: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
+            displayName: 'upload NuGet Package'
+            artifact: '$(Environment)'
+
+          - task: NuGetCommand@2
+            displayName: 'Push NuGet Package'
+            condition: succeeded()
+            inputs:
+              command: 'push'
+              packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)/*.nupkg'
+              nuGetFeedType: $(Internal)
+              publishVstsFeed: 'Momentum/KmdMomentumMeaFeed' #Required only when "nuGetFeedType" is "internal"
+              publishFeedCredentials: 'test nuget'  #Required only when "nuGetFeedType" is "external"

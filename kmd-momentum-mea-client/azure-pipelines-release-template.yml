@@ -25,19 +25,19 @@ jobs:
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'true'))
             inputs:
               command: pack
-              packagesToPack: '**/*.csproj'
               buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
               packDirectory: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
               verbosityPack: 'normal'
+
 
           - task: DotNetCoreCLI@2
             displayName: 'Pack NuGet without dynamic version'
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'false'))
             inputs:
               command: pack
-              packagesToPack: '**/*.csproj'
               packDirectory: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
               verbosityPack: 'normal'
+              nobuild: true
               
           - publish: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
             displayName: 'upload NuGet Package'

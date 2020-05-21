@@ -23,6 +23,7 @@ jobs:
           - task: UseDotNet@2
             inputs:
               packageType: 'sdk'              
+              useGlobalJson: true
               workingDirectory: "$(Pipeline.Workspace)/1/project/"
 
           - task: DotNetCoreCLI@2

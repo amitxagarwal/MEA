@@ -58,6 +58,12 @@
         "description": "Database Connection String"
       }
     },
+    "meaAuthorizationAudience": {
+      "type": "string",
+      "metadata": {
+        "description": "Mea Audiencen to authorize user"
+      }
+    },
     "clientSecret": {
       "type": "string",
       "metadata": {
@@ -265,6 +271,10 @@
               "value": "[parameters('dbName')]"
             },
             {
+              "name": "MeaAuthorizationAudience",
+              "value": "[parameters('meaAuthorizationAudience')]"
+            },
+            {
               "name": "KMD_MOMENTUM_MEA_ConnectionStrings:MeaDatabase",
               "value": "[parameters('dbConnection')]"
             },
@@ -358,6 +368,10 @@
             {
               "name": "DbName",
               "value": "[parameters('dbName')]"
+            },
+            {
+              "name": "MeaAuthorizationAudience",
+              "value": "[parameters('meaAuthorizationAudience')]"
             },
             {
               "name": "KMD_MOMENTUM_MEA_ConnectionStrings:MeaDatabase",

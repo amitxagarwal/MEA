@@ -38,7 +38,10 @@ stages:
       condition: and(succeeded(),eq(variables['imageName'],'ubuntu-18.04'))
       inputs:
         SourceFolder: './kmd-momentum-mea-client/src/kmd.momentum.mea.client'
-        contents: '**'
+        contents: |
+          **/*.csproj
+          **/*.png
+          **/*.cs
         targetFolder: '$(Build.ArtifactStagingDirectory)/project'
 
     - task: CopyFiles@2

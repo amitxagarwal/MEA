@@ -55,7 +55,7 @@ stages:
       isDynamicVersion: true
       feedType: external # value should be "internal" or 'external' only
 
-- stage: deploy_phoenix
+- stage: deploy_external
   condition: succeeded()
   dependsOn: Build
   jobs:

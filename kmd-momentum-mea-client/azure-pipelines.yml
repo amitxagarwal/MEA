@@ -36,10 +36,11 @@ stages:
 
     - task: CopyFiles@2
       condition: and(succeeded(),eq(variables['imageName'],'ubuntu-18.04'))
-      inputs:        
-        contents: '**/kmd.momentum.mea.client/*'
+      inputs:
+        SourceFolder: './kmd-momentum-mea-client/src/kmd.momentum.mea.client'
+        contents: '**'
         targetFolder: '$(Build.ArtifactStagingDirectory)/project'
-        flattenFolders: true
+
 
     - task: PublishBuildArtifacts@1
       condition: and(succeeded(),eq(variables['imageName'],'ubuntu-18.04'))

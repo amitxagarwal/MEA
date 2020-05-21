@@ -37,12 +37,12 @@ stages:
 
     - task: CopyFiles@2
       inputs:
-        contents: '**bin\Debug\*.nupkg'
-        targetFolder: '$(Build.ArtifactStagingDirectory)\build'
+        contents: '**/bin/Debug/*.nupkg'
+        targetFolder: '$(Build.ArtifactStagingDirectory)/build'
 
     - task: PublishBuildArtifacts@1
       inputs:
-        pathToPublish: '$(Build.ArtifactStagingDirectory)\build'
+        pathToPublish: '$(Build.ArtifactStagingDirectory)/build'
         artifactName: build
 
 - stage: deploy_phoenix

@@ -18,13 +18,6 @@ jobs:
         deploy:
           steps:
 
-          - task: UseDotNet@2
-            condition: succeeded()
-            inputs:
-              packageType: 'sdk'
-              useGlobalJson: true
-              workingDirectory: "$(Pipeline.Workspace)/s/kmd-momentum-mea-client/"
-
           - task: DotNetCoreCLI@2
             displayName: "Build NuGet"
             condition: succeeded()

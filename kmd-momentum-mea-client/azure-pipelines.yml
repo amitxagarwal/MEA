@@ -34,7 +34,6 @@ stages:
       inputs:
         command: build
         projects: './kmd-momentum-mea-client/Kmd-Momentum-Mea-Client.sln'
-        arguments: '--configuration "Release"'
 
 - stage: deploy_phoenix
   condition: succeeded()

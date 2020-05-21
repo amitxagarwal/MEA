@@ -32,8 +32,8 @@ jobs:
               DOTNET_CLI_TELEMETRY_OPTOUT: 1
               DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
             inputs:
-            command: build
-            projects: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+              command: build
+              projects: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
 
           - task: DotNetCoreCLI@2
             displayName: 'Create NuGet Package'

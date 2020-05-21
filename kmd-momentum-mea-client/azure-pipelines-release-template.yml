@@ -21,21 +21,21 @@ jobs:
           - download: current
 
           - task: DotNetCoreCLI@2
-            displayName: 'Create NuGet Package'
+            displayName: 'Pack NuGet with dynamic version'
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'true'))
             inputs:
               command: pack
-              packagesToPack: '*.nupkg'
+              packagesToPack: '*./*.nupkg'
               buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
               packDirectory: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
               verbosityPack: 'normal'
 
           - task: DotNetCoreCLI@2
-            displayName: 'Create NuGet Package'
+            displayName: 'Pack NuGet without dynamic version'
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'false'))
             inputs:
               command: pack
-              packagesToPack: './kmd-momentum-mea-client/src/kmd.momentum.mea.client/Kmd.Momentum.Mea.Client.csproj'
+              packagesToPack: '*.nupkg'
               packDirectory: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
               verbosityPack: 'normal'
               nobuild: true

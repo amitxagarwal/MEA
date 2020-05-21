@@ -38,8 +38,7 @@ jobs:
               command: pack
               packagesToPack: "$(Pipeline.Workspace)/project/Kmd.Momentum.Mea.Client.csproj"
               packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
-              verbosityPack: 'normal'
-              nobuild: true
+              verbosityPack: 'normal'              
               workingDirectory: "$(Pipeline.Workspace)/project/"
               
           - publish: '$(Pipeline.Workspace)/packages/$(Environment)'

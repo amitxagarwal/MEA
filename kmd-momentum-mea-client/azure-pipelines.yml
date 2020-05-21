@@ -60,7 +60,7 @@ stages:
     parameters:
       environment: phoenix
       isDynamicVersion: true
-      feedType: internal # value should be "internal" or 'external' only
+      feedType: internal # value must be "internal" or 'external' only
 
 - stage: deploy_internal
   condition: succeeded()
@@ -70,7 +70,7 @@ stages:
     parameters:
       environment: internal
       isDynamicVersion: true
-      feedType: external # value should be "internal" or 'external' only
+      feedType: external # value must be "internal" or 'external' only
 
 - stage: deploy_external
   condition: succeeded()
@@ -80,4 +80,4 @@ stages:
     parameters:
       environment: external1
       isDynamicVersion: false
-      feedType: external # value should be "internal" or 'external' only
+      feedType: external # value must be "internal" or 'external' only

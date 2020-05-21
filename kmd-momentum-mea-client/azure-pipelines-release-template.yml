@@ -25,7 +25,7 @@ jobs:
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'true'))
             inputs:
               command: pack
-              packagesToPack: "$(Pipeline.Workspace)/project/Kmd.Momentum.Mea.Client.csproj"
+              packagesToPack: "./Kmd.Momentum.Mea.Client.csproj"
               buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
               packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
               verbosityPack: 'normal'
@@ -36,7 +36,7 @@ jobs:
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'false'))
             inputs:
               command: pack
-              packagesToPack: "$(Pipeline.Workspace)/project/Kmd.Momentum.Mea.Client.csproj"
+              packagesToPack: "Kmd.Momentum.Mea.Client.csproj"
               packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
               verbosityPack: 'normal'              
               workingDirectory: "$(Pipeline.Workspace)/project/"

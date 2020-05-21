@@ -26,18 +26,21 @@ jobs:
             inputs:
               command: pack
               buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
+              packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
               verbosityPack: 'normal'
-
+              workingDirectory: '$(Pipeline.Workspace)'
 
           - task: DotNetCoreCLI@2
             displayName: 'Pack NuGet without dynamic version'
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'false'))
             inputs:
               command: pack
+              packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
               verbosityPack: 'normal'
               nobuild: true
+              workingDirectory: '$(Pipeline.Workspace)'
               
-          - publish: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
+          - publish: '$(Pipeline.Workspace)/packages/$(Environment)'
             displayName: 'upload NuGet Package'
             artifact: '$(Environment)'
 
@@ -46,7 +49,7 @@ jobs:
             condition: succeeded()
             inputs:
               command: 'push'
-              packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)/*.nupkg'
+              packagesToPush: '$(Pipeline.Workspace)/packages/$(Environment)/*.nupkg'
               nuGetFeedType: $(FeedType)
               publishVstsFeed: 'Momentum/KmdMomentumMeaFeed' #Required only when "nuGetFeedType" is "internal"
               publishFeedCredentials: 'test nuget'  #Required only when "nuGetFeedType" is "external"

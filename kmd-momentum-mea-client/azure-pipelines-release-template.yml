@@ -26,7 +26,6 @@ jobs:
             inputs:
               command: pack
               buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
-              packDirectory: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
               verbosityPack: 'normal'
 
 
@@ -35,7 +34,6 @@ jobs:
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'false'))
             inputs:
               command: pack
-              packDirectory: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
               verbosityPack: 'normal'
               nobuild: true
               

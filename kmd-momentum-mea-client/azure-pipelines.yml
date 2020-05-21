@@ -35,6 +35,7 @@ stages:
         projects: './kmd-momentum-mea-client/Kmd-Momentum-Mea-Client.sln'
 
     - task: CopyFiles@2
+      displayName: "Copy Project"
       condition: and(succeeded(),eq(variables['imageName'],'ubuntu-18.04'))
       inputs:
         SourceFolder: './kmd-momentum-mea-client/src/kmd.momentum.mea.client'
@@ -44,14 +45,8 @@ stages:
           **/bin/Debug/**
         targetFolder: '$(Build.ArtifactStagingDirectory)/project'
 
-    - task: CopyFiles@2
-      condition: and(succeeded(),eq(variables['imageName'],'ubuntu-18.04'))
-      inputs:
-        SourceFolder: './kmd-momentum-mea-client/'
-        contents: 'global.json'
-        targetFolder: '$(Build.ArtifactStagingDirectory)/project'
-
     - task: PublishBuildArtifacts@1
+      displayName: "Publish Artifacts"
       condition: and(succeeded(),eq(variables['imageName'],'ubuntu-18.04'))
       inputs:
         pathToPublish: '$(Build.ArtifactStagingDirectory)/project'

@@ -19,34 +19,33 @@ jobs:
           steps:
 
           - download: current
+            displayName: "Download artifacts"
 
           - task: DotNetCoreCLI@2
-            displayName: 'Pack NuGet with dynamic version'
+            displayName: 'Create NuGet Package - $(Environment) Version'
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'true'))
             inputs:
               command: pack
-              packagesToPack: "./Kmd.Momentum.Mea.Client.csproj"
+              packagesToPack: "$(Pipeline.Workspace)/project/Kmd.Momentum.Mea.Client.csproj"
               buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
               packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
               verbosityPack: 'normal'
-              workingDirectory: "$(Pipeline.Workspace)/project/"
 
           - task: DotNetCoreCLI@2
-            displayName: 'Pack NuGet without dynamic version'
+            displayName: 'Create NuGet Package - $(Environment) Version'
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'false'))
             inputs:
               command: pack
-              packagesToPack: "Kmd.Momentum.Mea.Client.csproj"
+              packagesToPack: "$(Pipeline.Workspace)/project/Kmd.Momentum.Mea.Client.csproj"
               packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
               verbosityPack: 'normal'              
-              workingDirectory: "$(Pipeline.Workspace)/project/"
               
           - publish: '$(Pipeline.Workspace)/packages/$(Environment)'
             displayName: 'upload NuGet Package'
             artifact: '$(Environment)'
 
           - task: NuGetCommand@2
-            displayName: 'Push NuGet Package'
+            displayName: 'Publish NuGet Package'
             condition: succeeded()
             inputs:
               command: 'push'

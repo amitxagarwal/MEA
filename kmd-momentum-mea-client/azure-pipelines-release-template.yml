@@ -21,6 +21,17 @@ jobs:
           - download: current
 
           - task: DotNetCoreCLI@2
+            displayName: "Build NuGet"
+            condition: succeeded()
+            env:
+              DOTNET_CLI_TELEMETRY_OPTOUT: 1
+              DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+            inputs:
+              command: build
+              projects: './project/Kmd.Momentum.Mea.Client.csproj'
+              projects: './project/Kmd.Momentum.Mea.Client.csproj'
+
+          - task: DotNetCoreCLI@2
             displayName: 'Pack NuGet with dynamic version'
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'true'))
             inputs:

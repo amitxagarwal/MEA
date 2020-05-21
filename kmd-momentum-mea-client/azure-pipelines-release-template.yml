@@ -21,21 +21,11 @@ jobs:
           - download: current
 
           - task: DotNetCoreCLI@2
-            displayName: "Build NuGet"
-            condition: succeeded()
-            env:
-              DOTNET_CLI_TELEMETRY_OPTOUT: 1
-              DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-            inputs:
-              command: build
-              projects: '*.nupkg'
-
-          - task: DotNetCoreCLI@2
             displayName: 'Create NuGet Package'
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'true'))
             inputs:
               command: pack
-              packagesToPack: './*.nupkg'
+              packagesToPack: '*.nupkg'
               buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
               packDirectory: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
               verbosityPack: 'normal'

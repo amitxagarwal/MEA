@@ -25,7 +25,7 @@ jobs:
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'true'))
             inputs:
               command: pack
-              packagesToPack: '*./*.nupkg'
+              packagesToPack: '$(Pipeline.Workspace)/*.nupkg'
               buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
               packDirectory: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
               verbosityPack: 'normal'
@@ -35,7 +35,7 @@ jobs:
             condition: and(succeeded(),eq(variables['isDynamicVersion'],'false'))
             inputs:
               command: pack
-              packagesToPack: '*.nupkg'
+              packagesToPack: '$(Pipeline.Workspace)/*.nupkg'
               packDirectory: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)'
               verbosityPack: 'normal'
               nobuild: true

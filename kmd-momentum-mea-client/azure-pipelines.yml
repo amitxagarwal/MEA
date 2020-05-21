@@ -38,7 +38,7 @@ stages:
     - task: CopyFiles@2
       condition: and(succeeded(),eq(variables['imageName'],'ubuntu-18.04'))
       inputs:
-        contents: './*/bin/Debug/*.nupkg'
+        contents: '**/bin/Debug/*.nupkg'
         targetFolder: '$(Build.ArtifactStagingDirectory)/build'
 
     - task: PublishBuildArtifacts@1

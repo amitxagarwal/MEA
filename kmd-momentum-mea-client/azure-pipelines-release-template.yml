@@ -28,7 +28,7 @@ jobs:
               DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
             inputs:
               command: build
-              projects: './*.nupkg'
+              projects: '*.nupkg'
 
           - task: DotNetCoreCLI@2
             displayName: 'Create NuGet Package'

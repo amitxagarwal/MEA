@@ -6,7 +6,7 @@ parameters:
 jobs:
   - deployment: deploy_${{ parameters.environment }}
     pool: { vmImage: 'ubuntu-18.04' }
-    environment: momentum_mea_${{ parameters.environment }}
+
     variables:
       Environment: ${{ parameters.environment }}
       IsDynamicVersion: ${{ parameters.isDynamicVersion }}

@@ -37,15 +37,15 @@ stages:
     - task: CopyFiles@2
       condition: and(succeeded(),eq(variables['imageName'],'ubuntu-18.04'))
       inputs:        
-        contents: '**/bin/Debug/*.nupkg'
-        targetFolder: '$(Build.ArtifactStagingDirectory)/build'
+        contents: '**/kmd.momentum.mea.client/*'
+        targetFolder: '$(Build.ArtifactStagingDirectory)/project'
         flattenFolders: true
 
     - task: PublishBuildArtifacts@1
       condition: and(succeeded(),eq(variables['imageName'],'ubuntu-18.04'))
       inputs:
-        pathToPublish: '$(Build.ArtifactStagingDirectory)/build'
-        artifactName: build
+        pathToPublish: '$(Build.ArtifactStagingDirectory)/project'
+        artifactName: project
 
 - stage: deploy_phoenix
   condition: succeeded()

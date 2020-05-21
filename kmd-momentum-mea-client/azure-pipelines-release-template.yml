@@ -6,7 +6,7 @@ parameters:
 jobs:
   - deployment: deploy_${{ parameters.environment }}
     pool: { vmImage: 'ubuntu-18.04' }
-
+    environment: momentum_mea_${{ parameters.environment }}
     variables:
       Environment: ${{ parameters.environment }}
       IsDynamicVersion: ${{ parameters.isDynamicVersion }}
@@ -58,6 +58,6 @@ jobs:
             inputs:
               command: 'push'
               packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/$(Environment)/*.nupkg'
-              nuGetFeedType: $(Internal)
+              nuGetFeedType: $(FeedType)
               publishVstsFeed: 'Momentum/KmdMomentumMeaFeed' #Required only when "nuGetFeedType" is "internal"
               publishFeedCredentials: 'test nuget'  #Required only when "nuGetFeedType" is "external"

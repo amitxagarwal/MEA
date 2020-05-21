@@ -61,6 +61,6 @@ stages:
   jobs:
   - template: azure-pipelines-release-template.yml
     parameters:
-      environment: external
+      environment: external1
       isDynamicVersion: false
       feedType: external # value should be "internal" or 'external' only

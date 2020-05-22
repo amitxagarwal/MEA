@@ -24,13 +24,13 @@ jobs:
           - task: DotNetCoreCLI@2
             displayName: 'Create NuGet Package'
             condition: succeeded()
+            env:
+              DOTNET_CLI_TELEMETRY_OPTOUT: 1
             inputs:
               command: pack
               packagesToPack: "$(Pipeline.Workspace)/project/Kmd.Momentum.Mea.Client.csproj"              
               packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
               verbosityPack: 'normal'
-              env:
-                DOTNET_CLI_TELEMETRY_OPTOUT: 1
               ${{ if eq(variables['isDynamicVersion'], true) }}:
                 buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
               

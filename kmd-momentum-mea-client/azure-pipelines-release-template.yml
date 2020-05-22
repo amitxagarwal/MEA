@@ -22,24 +22,15 @@ jobs:
             displayName: "Download artifacts"
 
           - task: DotNetCoreCLI@2
-            displayName: 'Create NuGet Package - Dynamic Version'
-            condition: and(succeeded(),eq(variables['isDynamicVersion'],'true'))
+            displayName: 'Create NuGet Package'
+            condition: succeeded()
             inputs:
               command: pack
-              packagesToPack: "$(Pipeline.Workspace)/project/Kmd.Momentum.Mea.Client.csproj"
-              buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
+              packagesToPack: "$(Pipeline.Workspace)/project/Kmd.Momentum.Mea.Client.csproj"              
               packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
               verbosityPack: 'normal'
-
-          - task: DotNetCoreCLI@2
-            displayName: 'Create NuGet Package - Static Version'
-            condition: and(succeeded(),eq(variables['isDynamicVersion'],'false'))
-            inputs:
-              command: pack
-              packagesToPack: "$(Pipeline.Workspace)/project/Kmd.Momentum.Mea.Client.csproj"
-              buildProperties: 'VersionSuffix=""'
-              packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
-              verbosityPack: 'normal'   
+              ${{ if eq(variables['isDynamicVersion'], true) }}:
+                buildProperties: 'VersionSuffix="$(Environment)$(Build.BuildId)"'
               
           - publish: '$(Pipeline.Workspace)/packages/$(Environment)'
             displayName: 'upload NuGet Package'

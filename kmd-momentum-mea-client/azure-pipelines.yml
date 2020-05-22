@@ -41,6 +41,7 @@ stages:
         SourceFolder: './kmd-momentum-mea-client/src/kmd.momentum.mea.client'
         contents: |
           **/*.csproj
+          **/*.png
           **/bin/Debug/**
         targetFolder: '$(Build.ArtifactStagingDirectory)/project'
 

@@ -20,6 +20,7 @@ jobs:
 
           - download: current
             displayName: "Download artifacts"
+            condition: succeeded()
 
           - task: DotNetCoreCLI@2
             displayName: 'Create NuGet Package'
@@ -36,6 +37,7 @@ jobs:
               
           - publish: '$(Pipeline.Workspace)/packages/$(Environment)'
             displayName: 'upload NuGet Package'
+            condition: succeeded()
             artifact: '$(Environment)'
 
           - task: NuGetCommand@2

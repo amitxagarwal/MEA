@@ -53,7 +53,7 @@ stages:
         artifactName: project
 
 - stage: deploy_phoenix
-  condition: succeeded()
+  condition: and(succeeded(), in(variables['Build.Reason'], 'PullRequest','Manual'))
   dependsOn: Build
   jobs:
   - template: azure-pipelines-release-template.yml
@@ -63,7 +63,7 @@ stages:
       feedType: internal # value must be "internal" or 'external' only
 
 - stage: deploy_internal
-  condition: succeeded()
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
   dependsOn: Build
   jobs:
   - template: azure-pipelines-release-template.yml
@@ -73,7 +73,7 @@ stages:
       feedType: internal # value must be "internal" or 'external' only
 
 - stage: deploy_external
-  condition: succeeded()
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   dependsOn: Build
   jobs:
   - template: azure-pipelines-release-template.yml

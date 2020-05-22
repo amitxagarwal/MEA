@@ -37,9 +37,9 @@ jobs:
             inputs:
               command: pack
               packagesToPack: "$(Pipeline.Workspace)/project/Kmd.Momentum.Mea.Client.csproj"
+              buildProperties: 'VersionSuffix=""'
               packDirectory: '$(Pipeline.Workspace)/packages/$(Environment)'
-              verbosityPack: 'normal'
-              nobuild: true
+              verbosityPack: 'normal'   
               
           - publish: '$(Pipeline.Workspace)/packages/$(Environment)'
             displayName: 'upload NuGet Package'

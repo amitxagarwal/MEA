@@ -82,6 +82,10 @@ stages:
       isDbRequired: $(DbRequired)
       isKeyVaultRequired: 'true'
       meaAuthorizationAudience: $(InternalMeaAuthorizationAudience)
+      isKeyVaultPolicyRequired: 'true'
+      appObjectId: $(ApplicationObjectId)
+      tenantId: $(Tenant)
+      applicationId: $(AppId)
 
 - stage: deploy_external
   dependsOn: Build

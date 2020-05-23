@@ -96,7 +96,23 @@ Param
 
   [Parameter(Mandatory=$true)]
   [string]  
-  $MeaAuthorizationAudience
+  $MeaAuthorizationAudience,
+  
+  [Parameter(Mandatory=$false)]
+  [string]  
+  $IsKeyVaultPolicyRequired = 'false',
+    
+  [Parameter(Mandatory=$true)]
+  [string]  
+  $AppObjectId,
+
+  [Parameter(Mandatory=$true)]
+  [string]  
+  $TenantId,
+
+  [Parameter(Mandatory=$true)]
+  [string]  
+  $ApplicationId
 )
 
 Push-Location $PSScriptRoot
@@ -164,6 +180,10 @@ try
     keyVaultRequired = $KeyVaultRequired;
     keyVaultName = $KeyVaultName;
     meaAuthorizationAudience = $MeaAuthorizationAudience;
+    isKeyVaultPolicyRequired = $IsKeyVaultPolicyRequired;
+    appObjectId = $AppObjectId;
+    tenantId = $TenantId;
+    applicationId= $ApplicationId;
     }
 
     Write-Host "Create or update ResourceGroup Tag"

@@ -26,5 +26,10 @@
         /// kommune Resource Id for getting token
         /// </summary>     
         public string KommuneResource { get; set; }
+
+        /// <summary>
+        /// ProductionUnit_Id for the Kommunes
+        /// </summary>     
+        public string PunitId { get; set; }
     }
 }

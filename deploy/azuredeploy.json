@@ -21,6 +21,31 @@
         "description": "KeyVaultName is required for keyVault"
       }
     },
+    "isKeyVaultPolicyRequired": {
+      "type": "string",
+      "defaultValue": "false",
+      "metadata": {
+        "description": "If policy required to keyvault value is true else false"
+      }
+    },
+    "appObjectId": {
+      "type": "string",
+      "metadata": {
+        "description": "Applicaion oject id to give permission in keyvault policies"
+      }
+    },
+    "tenantId": {
+      "type": "string",
+      "metadata": {
+        "description": "Tenent Id for keyvault policies"
+      }
+    },
+    "applicationId": {
+      "type": "string",
+      "metadata": {
+        "description": "application Id for keyvault policies"
+      }
+    },
     "dbRequired": {
       "type": "string",
       "defaultValue": "false",
@@ -418,9 +443,34 @@
             }
           }
         ],
-        "enabledForDeployment": true,
         "vaultUri": "[variables('meaKeyVaultUri')]"
-      }
+      },
+      "resources": [
+        {
+          "type": "Microsoft.KeyVault/vaults/accessPolicies",
+          "apiVersion": "2016-10-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.KeyVault/vaults', variables('meaKeyVaultSecretStore'))]",
+            "[concat('Microsoft.Web/sites/', variables('webAppName'))]"
+          ],
+          "name": "[concat(variables('meaKeyVaultSecretStore'), '/add')]",
+          "condition": "[equals(parameters('isKeyVaultPolicyRequired'),'true')]",
+          "properties": {
+            "accessPolicies": [
+              {
+                "tenantId": "[parameters('tenantId')]",
+                "objectId": "[parameters('appObjectId')]",
+                "applicationId": "[parameters('applicationId')]",
+                "permissions": {
+                  "secrets": [
+                    "all"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
